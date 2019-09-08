@@ -25,7 +25,7 @@ namespace WorldServer.Game
         public const float UPDATE_DISTANCE = 155f;
         public const float INTERACT_DISTANCE = 5.0f;
         public const byte MAX_LEVEL = 25; //Alpha level cap
-        public const string WELCOME_MESSAGE = "Welcome to Alpha WoW";
+        public const string WELCOME_MESSAGE = "Welcome to Alpha Legends!";
         public const float EMOTE_RANGE = 50f;
         public const float SAY_RANGE = 50f;
         public const float YELL_RANGE = 300f;
