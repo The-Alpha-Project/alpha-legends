@@ -1197,6 +1197,12 @@ namespace WorldServer.Game.Objects
                 }
             }
             else*/
+            if (!CanUseAttackType(attType)) // Player is not shapeshifted but can't use his equipped weapon (disarm)
+            {
+                weapon_mindamage = this.Damage.BaseAmount;
+                weapon_maxdamage = this.Damage.Maximum;
+            }
+
             min_damage = ((this.Damage.BaseAmount + weapon_mindamage / weapon_speed) + (attack_power / 14)) * weapon_speed * dual_wield_penalty;
             max_damage = ((this.Damage.Maximum + weapon_maxdamage / weapon_speed) + (attack_power / 14)) * weapon_speed * dual_wield_penalty;
         }
