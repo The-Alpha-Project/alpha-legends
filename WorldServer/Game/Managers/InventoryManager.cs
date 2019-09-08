@@ -249,7 +249,7 @@ namespace WorldServer.Game.Managers
             if (weapon != null)
                 player.BaseAttackTime = weapon.Template.WeaponSpeed;
             else
-                player.BaseAttackTime = 1000;
+                player.BaseAttackTime = 1400;
         }
 
         public void Save()

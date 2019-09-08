@@ -1127,6 +1127,7 @@ namespace WorldServer.Game.Objects
             float weapon_mindamage = 0;
             float weapon_maxdamage = 0;
             float weapon_speed = 1.4f;
+            float dual_wield_penalty = 1f;
 
             float attack_power = 1; //Calulating this via vanilla formula as AP wasn't in Alpha
             switch (this.Class)
@@ -1156,19 +1157,23 @@ namespace WorldServer.Game.Objects
 
 
             if (attType == AttackTypes.BASE_ATTACK)
+            {
                 weapon = this.Inventory.Backpack.GetItem((byte)InventorySlots.SLOT_MAINHAND);
+                dual_wield_penalty = 1f;
+            }
             else
+            { 
                 weapon = this.Inventory.Backpack.GetItem((byte)InventorySlots.SLOT_OFFHAND);
+                dual_wield_penalty = 0.5f;
+            }
 
             if (weapon != null)
             {
                 weapon_mindamage = weapon.Template.DamageStats[0].Min;
                 weapon_maxdamage = weapon.Template.DamageStats[0].Max;
-                weapon_speed = weapon.Template.WeaponSpeed / 100;
+                weapon_speed = weapon.Template.WeaponSpeed / 1000;
             }
 
-
-            float base_value = (((this.Damage.Maximum + this.Damage.Current) / 2) + (attack_power / 14)) * weapon_speed;
             //float base_pct = GetModifierValue(unitMod, UnitModifierType.BASE_PCT);
             //float total_value = GetModifierValue(unitMod, UnitModifierType.TOTAL_VALUE);
             //float total_pct = addTotalPct ? GetModifierValue(unitMod, UnitModifierType.TOTAL_PCT) : 1.0f;
@@ -1192,21 +1197,8 @@ namespace WorldServer.Game.Objects
                 }
             }
             else*/
-            if (!CanUseAttackType(attType))      //check if player not in form but still can't use (disarm case)
-            {
-                //off attack, set values to 0
-                if (attType != AttackTypes.BASE_ATTACK)
-                {
-                    min_damage = 0;
-                    max_damage = 0;
-                    return;
-                }
-                weapon_mindamage = this.Damage.BaseAmount;
-                weapon_maxdamage = this.Damage.Maximum;
-            }
-
-            min_damage = ((base_value + weapon_mindamage)); // * base_pct + total_value) * total_pct;
-            max_damage = ((base_value + weapon_maxdamage)); // * base_pct + total_value) * total_pct;
+            min_damage = ((this.Damage.BaseAmount + weapon_mindamage / weapon_speed) + (attack_power / 14)) * weapon_speed * dual_wield_penalty;
+            max_damage = ((this.Damage.Maximum + weapon_maxdamage / weapon_speed) + (attack_power / 14)) * weapon_speed * dual_wield_penalty;
         }
 
         public void LeaveCombat()
@@ -1291,7 +1283,7 @@ namespace WorldServer.Game.Objects
                 this.Dirty = false;
             }
 
-            Regenerate();        }
+        }
 
         public void UpdateSurroundingPlayers()
         {
