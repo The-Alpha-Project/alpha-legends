@@ -223,10 +223,8 @@ namespace WorldServer.Game.Objects
             GridManager.Instance.AddOrGet(this, true);
 
             foreach (Item item in Database.Items.Where(x => x.Value.Player == this.Guid).Select(x => x.Value))
-                try
-                {
+                if (item != null)
                     this.Inventory.GetBag(item.Bag).AddItem(item, item.CurrentSlot);
-                } catch (Exception){}
         }
 
         public void Login()
