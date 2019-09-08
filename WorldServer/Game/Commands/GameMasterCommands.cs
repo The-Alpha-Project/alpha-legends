@@ -4,6 +4,7 @@ using WorldServer.Game.Objects;
 using WorldServer.Game.Objects.PlayerExtensions;
 using WorldServer.Game.Structs;
 using WorldServer.Game.Managers;
+using WorldServer.Packets.Handlers;
 using WorldServer.Storage;
 using Common.Constants;
 using WorldServer.Game.Objects.PlayerExtensions.Skill;
@@ -151,6 +152,13 @@ namespace WorldServer.Game.Commands
             int z = Read<int>(args, 2);
             uint map = Read<uint>(args, 3);
             player.Teleport(map, new Quaternion(x, y, z, 0));
+        }
+
+        public static void Speed(Player player, string[] args) 
+        {
+            int speed_modifier = Read<int>(args, 0);
+            if (speed_modifier > 1)
+                MiscHandler.HandleForceSpeedChange(ref player.Client, player.RunningSpeed * speed_modifier);
         }
     }
 }

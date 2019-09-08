@@ -46,11 +46,13 @@ namespace WorldServer.Packets.Handlers
             mananger.Send(packet);
         }
 
-        public static void HandleForceSpeedChange(ref WorldManager manager)
+        public static void HandleForceSpeedChange(ref WorldManager manager, float speed)
         {
             PacketWriter pw = new PacketWriter(Opcodes.SMSG_FORCE_SPEED_CHANGE);
             pw.WriteUInt64(manager.Character.Guid);
-            pw.WriteFloat(manager.Character.RunningSpeed);
+            if (speed <= 0f)
+                speed = manager.Character.RunningSpeed;
+            pw.WriteFloat(speed);
             manager.Send(pw);
         }
 

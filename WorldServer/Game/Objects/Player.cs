@@ -1343,8 +1343,10 @@ namespace WorldServer.Game.Objects
             this.IsAttacking = false;
             this.Attackers.Clear();
             this.InCombat = false;
-            this.UnitFlags = 0;
-            this.DynamicFlags = 0;
+
+            this.UnitFlags = (uint)Common.Constants.UnitFlags.UNIT_FLAG_STANDARD;
+            this.DynamicFlags = (uint)UnitDynamicTypes.UNIT_DYNAMIC_NONE;
+            this.StandState = (byte)Common.Constants.StandState.UNIT_STANDING;
         }
 
         public void Regenerate()

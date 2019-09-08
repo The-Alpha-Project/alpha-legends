@@ -45,7 +45,7 @@ namespace WorldServer.Network
                     WorldManager World = new WorldManager();
                     World.Socket = worldListener.AcceptSocket();
 
-                    Thread NewThread = new Thread(World.Recieve);
+                    Thread NewThread = new Thread(World.Receive);
                     NewThread.Start();
                 }
             }

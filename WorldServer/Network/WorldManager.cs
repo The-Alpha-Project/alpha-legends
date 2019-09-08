@@ -27,7 +27,7 @@ namespace WorldServer.Network
             PacketReader pkt = new PacketReader(buffer);
 
             if (Enum.IsDefined(typeof(Opcodes), pkt.Opcode))
-                Log.Message(LogType.DUMP, "Recieved OPCODE: {0}, LENGTH: {1}", pkt.Opcode, pkt.Size);
+                Log.Message(LogType.DUMP, "Received OPCODE: {0}, LENGTH: {1}", pkt.Opcode, pkt.Size);
             else
                 Log.Message(LogType.DUMP, "UNKNOWN OPCODE: {0}, LENGTH: {1}", pkt.Opcode, pkt.Size);
 
@@ -36,7 +36,7 @@ namespace WorldServer.Network
             Log.Message();
         }
 
-        public void Recieve()
+        public void Receive()
         {
             PacketWriter writer = new PacketWriter(Opcodes.SMSG_AUTH_CHALLENGE);
             writer.WriteUInt8(0);

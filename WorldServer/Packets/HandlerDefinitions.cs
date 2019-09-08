@@ -47,8 +47,8 @@ namespace WorldServer.Packets
 
             //Movement opcodes
             PacketManager.DefineOpcodeHandler(Opcodes.CMSG_WORLD_TELEPORT, WorldHandler.HandleWorldTeleport);
-            PacketManager.DefineOpcodeHandler(Opcodes.MSG_MOVE_WORLDPORT_ACK, WorldHandler.HandleWorldPortAck);
             PacketManager.DefineOpcodeHandler(Opcodes.SMSG_MOVE_WORLDPORT_ACK, WorldHandler.HandleWorldPortAck);
+            PacketManager.DefineOpcodeHandler(Opcodes.MSG_MOVE_WORLDPORT_ACK, WorldHandler.HandleWorldPortAck);
             PacketManager.DefineOpcodeHandler(Opcodes.MSG_MOVE_START_FORWARD, MovementHandler.HandleMovementStatus);
             PacketManager.DefineOpcodeHandler(Opcodes.MSG_MOVE_START_BACKWARD, MovementHandler.HandleMovementStatus);
             PacketManager.DefineOpcodeHandler(Opcodes.MSG_MOVE_STOP, MovementHandler.HandleMovementStatus);

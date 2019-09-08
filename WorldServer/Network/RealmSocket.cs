@@ -55,7 +55,7 @@ namespace WorldServer.Network
                     RealmManager Realm = new RealmManager();
                     Realm.realmSocket = realmListener.AcceptSocket();
 
-                    Thread NewThread = new Thread(Realm.RecieveRealm);
+                    Thread NewThread = new Thread(Realm.ReceiveRealm);
                     NewThread.Start();
                 }
             }
@@ -71,7 +71,7 @@ namespace WorldServer.Network
                     RealmManager Proxy = new RealmManager();
                     Proxy.proxySocket = proxyListener.AcceptSocket();
 
-                    Thread NewThread = new Thread(Proxy.RecieveProxy);
+                    Thread NewThread = new Thread(Proxy.ReceiveProxy);
                     NewThread.Start();
                 }
             }

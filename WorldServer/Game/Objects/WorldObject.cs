@@ -16,7 +16,7 @@ namespace WorldServer.Game.Objects
         public ObjectTypes ObjectType = ObjectTypes.TYPE_OBJECT;
 
         public float WalkSpeed = 2.5f;
-        public float RunningSpeed = 7.0f;
+        public float RunningSpeed = 20f;//7.0f;
         public float SwimSpeed = 4.7222223f;
         public float TurnRate = 3.141593f;
         public uint MovementFlags = 0;

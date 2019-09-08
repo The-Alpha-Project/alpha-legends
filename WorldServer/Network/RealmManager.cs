@@ -41,12 +41,12 @@ namespace WorldServer.Network
             realmSocket.Close();
         }
 
-        public void RecieveRealm()
+        public void ReceiveRealm()
         {
             HandleRealmList(this);
         }
 
-        public void RecieveProxy()
+        public void ReceiveProxy()
         {
             HandleProxyConnection(this);
         }
