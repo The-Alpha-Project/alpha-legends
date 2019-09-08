@@ -349,7 +349,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
                 completeable = false;
 
             if (p.Quests.ContainsKey(quest.QuestId))
-                if (p.Quests[quest.QuestId]?.Rewarded == true)
+                if ((p.Quests[quest.QuestId] != null) && (p.Quests[quest.QuestId].Rewarded == true))
                     completeable = false;
 
             PacketWriter packet = new PacketWriter(Opcodes.SMSG_QUESTGIVER_REQUEST_ITEMS);
@@ -367,7 +367,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
             {
                 packet.WriteUInt32(quest.ReqItemId[i]);
                 packet.WriteUInt32(quest.ReqItemCount[i]);
-                packet.WriteUInt32(Database.ItemTemplates.TryGet(quest.ReqItemId[i])?.DisplayID ?? 0);
+                packet.WriteUInt32(Database.ItemTemplates.TryGet(quest.ReqItemId[i]) != null ? Database.ItemTemplates.TryGet(quest.ReqItemId[i]).DisplayID : 0);
             }
 
             packet.WriteUInt32(2);
@@ -394,7 +394,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
             {
                 packet.WriteUInt32(quest.RewChoiceItemId[i]);
                 packet.WriteUInt32(quest.RewChoiceItemCount[i]);
-                packet.WriteUInt32(Database.ItemTemplates.TryGet(quest.RewChoiceItemId[i])?.DisplayID ?? 0);
+                packet.WriteUInt32(Database.ItemTemplates.TryGet(quest.RewChoiceItemId[i]) != null ? Database.ItemTemplates.TryGet(quest.RewChoiceItemId[i]).DisplayID : 0);
             }
 
             //Reward items

@@ -30,7 +30,7 @@ namespace WorldServer.Game.Objects
         public static SpellFailedReason InvokeHandler(SpellEffects command, SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
         {
             if (EffectHandlers.ContainsKey(command))
-                return EffectHandlers[command]?.Invoke(Spell, Targets, Index, Item) ?? SpellFailedReason.SPELL_FAILED_NO_REASON;
+                return EffectHandlers[command] != null ? EffectHandlers[command].Invoke(Spell, Targets, Index, Item) : SpellFailedReason.SPELL_FAILED_NO_REASON;
             else
                 return SpellFailedReason.SPELL_FAILED_ERROR;
         }

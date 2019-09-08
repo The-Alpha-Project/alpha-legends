@@ -72,8 +72,8 @@ namespace WorldServer.Packets.Handlers
                         continue;
 
                     var item = c.Inventory.Backpack.Items.Values.FirstOrDefault(x => x.Type == (InventoryTypes)i);
-                    writer.WriteUInt32(item?.Template?.DisplayID ?? 0); // DisplayId
-                    writer.WriteUInt8((byte)(item?.Type ?? 0)); // InventoryType
+                    writer.WriteUInt32(item != null ? item.Template.DisplayID : 0); // DisplayId
+                    writer.WriteUInt8(item != null ? (byte)(item.Type) : (byte)0); // InventoryType
                 }
             }
 

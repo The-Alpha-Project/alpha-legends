@@ -319,11 +319,16 @@ namespace Common.Database
 
             public ColumnInfo(string column)
             {
+                this.Columns = new List<string>();
+                this.IsArray = false;
+
                 this.Columns.Add(column);
             }
 
             public ColumnInfo(string[] columns)
             {
+                this.Columns = new List<string>();
+
                 this.Columns.AddRange(columns);
                 this.IsArray = true;
             }

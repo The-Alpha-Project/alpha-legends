@@ -110,12 +110,16 @@ namespace WorldServer.Game.Objects
 
         public Player(ulong guid)
         {
+            this.TeleportSemaphore = false;
+            this.TeleportShortSemaphore = false;
             this.ObjectType |= ObjectTypes.TYPE_PLAYER;
             this.Guid = guid;
         }
 
         public Player(ref MySqlDataReader dr)
         {
+            this.TeleportSemaphore = false;
+            this.TeleportShortSemaphore = false;
             this.ObjectType |= ObjectTypes.TYPE_PLAYER;
             this.AccountId = Convert.ToUInt32(dr["account"]);
             this.Guid = Convert.ToUInt64(dr["guid"]);
@@ -223,7 +227,7 @@ namespace WorldServer.Game.Objects
             GridManager.Instance.AddOrGet(this, true);
 
             foreach (Item item in Database.Items.Where(x => x.Value.Player == this.Guid).Select(x => x.Value))
-                if (item != null)
+                if (this.Inventory.GetBag(item.Bag) != null)
                     this.Inventory.GetBag(item.Bag).AddItem(item, item.CurrentSlot);
         }
 
@@ -923,14 +927,15 @@ namespace WorldServer.Game.Objects
             }
 
             //Stack Items : return
-            if (srcItem.Entry == dstItem?.Entry && dstItem.Template.MaxStackCount > dstItem.StackCount)
+            if ((dstItem != null) && (srcItem.Entry == dstItem.Entry) && (dstItem.Template.MaxStackCount > dstItem.StackCount))
             {
                 uint diff = dstItem.Template.MaxStackCount - dstItem.StackCount;
                 if (diff >= srcItem.StackCount)
                 {
                     //Destroy src stack
                     dstItem.StackCount += srcItem.StackCount;
-                    this.Inventory.GetBag(srcbagslot)?.RemoveItemInSlot(srcslot);
+                    if (this.Inventory.GetBag(srcbagslot) != null)
+                        this.Inventory.GetBag(srcbagslot).RemoveItemInSlot(srcslot);
                 }
                 else
                 {
@@ -946,8 +951,10 @@ namespace WorldServer.Game.Objects
             //Do the actual transfer here
 
             //Remove items
-            this.Inventory.GetBag(srcbagslot)?.RemoveItemInSlot(srcslot);
-            this.Inventory.GetBag(dstbagslot)?.RemoveItemInSlot(dstslot);
+            if (this.Inventory.GetBag(srcbagslot) != null)
+                this.Inventory.GetBag(srcbagslot).RemoveItemInSlot(srcslot);
+            if (this.Inventory.GetBag(dstbagslot) != null)
+                this.Inventory.GetBag(dstbagslot).RemoveItemInSlot(dstslot);
 
             if (srcItem.IsContainer && InventoryManager.IsBagPos(srcbagslot, srcslot) && srcIsBackpack)
             {
@@ -979,8 +986,10 @@ namespace WorldServer.Game.Objects
                 this.Inventory.AddBag(srcslot, (Container)dstItem);
 
             //Add items
-            this.Inventory.GetBag(dstbagslot)?.AddItem(srcItem, dstslot);
-            this.Inventory.GetBag(srcbagslot)?.AddItem(dstItem, srcslot);
+            if (this.Inventory.GetBag(dstbagslot) != null)
+                this.Inventory.GetBag(dstbagslot).AddItem(srcItem, dstslot);
+            if (this.Inventory.GetBag(srcbagslot) != null)
+                this.Inventory.GetBag(srcbagslot).AddItem(dstItem, srcslot);
 
             if ((srcslot == (byte)InventorySlots.SLOT_MAINHAND && srcIsBackpack) ||
                 (dstslot == (byte)InventorySlots.SLOT_MAINHAND && dstIsBackpack))
@@ -994,8 +1003,8 @@ namespace WorldServer.Game.Objects
             uint srcbagslot = (uint)(srcbag == 255 ? 23 : srcbag);
             uint dstbagslot = (uint)(dstbag == 255 ? 23 : dstbag);
 
-            Item srcitem = this.Inventory.GetBag(srcbagslot)?.GetItem(srcslot);
-            Item dstitem = this.Inventory.GetBag(dstbagslot)?.GetItem(dstslot);
+            Item srcitem = this.Inventory.GetBag(srcbagslot) != null ? this.Inventory.GetBag(srcbagslot).GetItem(srcslot) : null;
+            Item dstitem = this.Inventory.GetBag(dstbagslot) != null ? this.Inventory.GetBag(dstbagslot).GetItem(dstslot) : null;
             if (srcitem == null)
             {
                 SendEquipError(InventoryError.EQUIP_ERR_ITEM_NOT_FOUND, srcitem, null);
@@ -1041,7 +1050,7 @@ namespace WorldServer.Game.Objects
                 }
                 else
                 {
-                    if (this.Inventory.GetBag(dstbagslot)?.AddItem(clone) == true)
+                    if ((this.Inventory.GetBag(dstbagslot) != null) && (this.Inventory.GetBag(dstbagslot).AddItem(clone) == true))
                         srcitem.StackCount -= count;
                 }
 
@@ -1061,10 +1070,10 @@ namespace WorldServer.Game.Objects
             if (error != InventoryError.EQUIP_ERR_OK)
             {
                 if (error == InventoryError.EQUIP_ERR_CANT_EQUIP_LEVEL_I)
-                    pw.WriteUInt32(item1?.Template.LevelReq ?? 0);
+                    pw.WriteUInt32(item1 != null ? item1.Template.LevelReq : 0);
 
-                pw.WriteUInt64(item1?.Guid ?? this.Guid);
-                pw.WriteUInt64(item2?.Guid ?? this.Guid);
+                pw.WriteUInt64(item1 != null ? item1.Guid : this.Guid);
+                pw.WriteUInt64(item2 != null ? item2.Guid : this.Guid);
                 pw.WriteUInt8(0);
             }
 

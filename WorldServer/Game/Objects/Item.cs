@@ -33,6 +33,7 @@ namespace WorldServer.Game.Objects
 
         public Item()
         {
+            this.IsSoulbound = false;
             this.Guid = Globals.ITEM_GUID + 1;
             while (Database.Items.ContainsKey(this.Guid))
                 this.Guid++;
@@ -43,6 +44,7 @@ namespace WorldServer.Game.Objects
 
         public Item(uint entry)
         {
+            this.IsSoulbound = false;
             this.Guid = Globals.ITEM_GUID + 1;
             while (Database.Items.ContainsKey(this.Guid))
                 this.Guid++;
@@ -58,6 +60,7 @@ namespace WorldServer.Game.Objects
 
         public Item(ref MySqlDataReader dr)
         {
+            this.IsSoulbound = false;
             this.Guid = Convert.ToUInt64(dr["item"]) | (ulong)HIGH_GUID.HIGHGUID_ITEM;
             this.Owner = Convert.ToUInt64(dr["owner"]);
             this.Bag = Convert.ToUInt32(dr["bag"]);

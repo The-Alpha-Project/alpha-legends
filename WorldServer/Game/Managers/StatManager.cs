@@ -59,7 +59,7 @@ namespace WorldServer.Game.Managers
             character.Damage.Maximum += (uint)equipped.Sum(x => x.Template.DamageStats[0].Max);
             character.Damage.Current += (uint)equipped.Sum(x => x.Template.DamageStats[0].Min);
 
-            character.BaseAttackTime += (equipped.FirstOrDefault(x => x.CurrentSlot == (uint)InventorySlots.SLOT_MAINHAND)?.Template.WeaponSpeed ?? 0) / 4;
+            character.BaseAttackTime += (equipped.FirstOrDefault(x => x.CurrentSlot == (uint)InventorySlots.SLOT_MAINHAND) != null ? equipped.FirstOrDefault(x => x.CurrentSlot == (uint)InventorySlots.SLOT_MAINHAND).Template.WeaponSpeed : 0) / 4;
 
             //Stat update
             foreach (Item item in equipped)
