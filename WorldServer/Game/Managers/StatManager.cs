@@ -98,29 +98,5 @@ namespace WorldServer.Game.Managers
             character.ParryPercentage = 5f + ((character.Level * 5f) * 0.04f);
             character.DodgePercentage = 5f + ((character.Level * 5f) * 0.04f);
         }
-
-        public float GetSpiritRegenRate()
-        {
-            float addValue = 0f;
-            float spirit = character.Spirit.Current;
-
-            switch (character.Class)
-            {
-                case (byte)Classes.CLASS_DRUID:
-                case (byte)Classes.CLASS_PALADIN:
-                case (byte)Classes.CLASS_WARLOCK:
-                    addValue = (character.Spirit.Current / 5 + 15);
-                    break;
-                case (byte)Classes.CLASS_MAGE:
-                case (byte)Classes.CLASS_PRIEST:
-                    addValue = (character.Spirit.Current / 4 + 15);
-                    break;
-                case (byte)Classes.CLASS_SHAMAN:
-                    addValue = (character.Spirit.Current / 5 + 17);
-                    break;
-            }
-            return addValue /= 2.0f; //This returns the per second update amount
-        }
-
     }
 }

@@ -45,7 +45,7 @@ namespace WorldServer.Packets.Handlers
             packet.WriteFloat(0.01666667f);
             mananger.Send(packet);
         }
-
+       
         public static void HandleForceSpeedChange(ref WorldManager manager, float speed)
         {
             PacketWriter pw = new PacketWriter(Opcodes.SMSG_FORCE_SPEED_CHANGE);

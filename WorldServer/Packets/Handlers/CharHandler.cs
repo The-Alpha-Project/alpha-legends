@@ -216,12 +216,7 @@ namespace WorldServer.Packets.Handlers
             manager.Send(pw);
 
             manager.Character.SwingError = 0;
-            manager.Character.CombatTarget = 0;
             manager.Character.IsAttacking = false;
-            manager.Character.InCombat = false;
-
-            Flag.RemoveFlag(ref manager.Character.UnitFlags, (uint)UnitFlags.UNIT_FLAG_IN_COMBAT);
-            GridManager.Instance.SendSurrounding(manager.Character.BuildUpdate(), manager.Character);
         }
 
         public static void HandleAttackStop(ref PacketReader packet, ref WorldManager manager)

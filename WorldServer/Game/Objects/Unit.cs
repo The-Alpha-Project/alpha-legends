@@ -304,6 +304,8 @@ namespace WorldServer.Game.Objects
             //Fighting already
             if (IsAttacking)
             {
+                if (!InCombat)
+                    InCombat = true;
                 //Fighting same target already
                 if (CombatTarget == victim.Guid)
                     return true;
@@ -315,6 +317,7 @@ namespace WorldServer.Game.Objects
                 CombatTarget = victim.Guid;
                 IsAttacking = true;
                 InCombat = true;
+                victim.InCombat = true;
 
                 if (victim.IsTypeOf(ObjectTypes.TYPE_UNIT) && !victim.IsTypeOf(ObjectTypes.TYPE_PLAYER))
                 {
@@ -746,6 +749,10 @@ namespace WorldServer.Game.Objects
                     if (!c.IsAttacking) //Set attacking state
                     {
                         c.IsAttacking = true;
+                    }
+
+                    if (!c.InCombat)
+                    {
                         c.InCombat = true;
                         c.CombatTarget = this.Guid;
                     }

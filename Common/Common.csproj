@@ -96,6 +96,7 @@
     <Compile Include="Singleton\Singleton.cs" />
     <Compile Include="Singleton\SingletonBase.cs" />
     <Compile Include="Helpers\Extensions.cs" />
+    <Compile Include="Constants\FormulaData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

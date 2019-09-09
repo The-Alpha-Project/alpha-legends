@@ -1224,6 +1224,12 @@ namespace WorldServer.Game.Objects
             this.SetAttackTimer(AttackTypes.BASE_ATTACK, 0);
             if (Inventory.HasOffhandWeapon())
                 this.SetAttackTimer(AttackTypes.OFFHAND_ATTACK, 0);
+
+            this.CombatTarget = 0;
+            this.InCombat = false;
+
+            Flag.RemoveFlag(ref UnitFlags, (uint)Common.Constants.UnitFlags.UNIT_FLAG_IN_COMBAT);
+            GridManager.Instance.SendSurrounding(this.BuildUpdate(), this);
         }
 
         public void GetXPForNextLevel()
@@ -1284,6 +1290,7 @@ namespace WorldServer.Game.Objects
                     LootExtension.LootRelease(this, this);
             }
 
+            this.Regenerate();
             this.AttackUpdate();
             this.UpdateTeleport(time);
 
@@ -1344,6 +1351,8 @@ namespace WorldServer.Game.Objects
             this.Attackers.Clear();
             this.InCombat = false;
 
+            this.SetRoot(false);
+
             this.UnitFlags = (uint)Common.Constants.UnitFlags.UNIT_FLAG_STANDARD;
             this.DynamicFlags = (uint)UnitDynamicTypes.UNIT_DYNAMIC_NONE;
             this.StandState = (byte)Common.Constants.StandState.UNIT_STANDING;
@@ -1351,53 +1360,94 @@ namespace WorldServer.Game.Objects
 
         public void Regenerate()
         {
-            if (this.InCombat || this.IsAttacking)
+            if (this.IsDead || Health.Current == 0)
                 return;
 
-            bool dirty = false;
+            if (Globals.Time > LastRegen + 20000000) // each 2 seconds(
+            {
+                float health_regen = 0;
+                int level_index = (Level < 0 || Level > 60 ? 60 : Level) - 1;
+                float mana_regen = Mana.BaseAmount * 0.02f;
+                if (!this.InCombat)
+                    mana_regen = (float) ((0.001f + (Spirit.Current * 
+                        Math.Sqrt(Intellect.Current) * FormulaData.BaseManaRegen[level_index])) * 5f);
+                switch (Class)
+                {
+                    case (byte)Classes.CLASS_DRUID:
+                        health_regen = Spirit.Current * 0.09f + 6.5f;
+                        break;
+                    case (byte)Classes.CLASS_HUNTER:
+                        health_regen = Spirit.Current * 0.25f + 6f;
+                        break;
+                    case (byte)Classes.CLASS_PRIEST:
+                    case (byte)Classes.CLASS_MAGE:
+                        health_regen = Spirit.Current * 0.1f + 6f;
+                        break;
+                    case (byte)Classes.CLASS_PALADIN:
+                        health_regen = Spirit.Current * 0.25f + 6f;
+                        break;
+                    case (byte)Classes.CLASS_ROGUE:
+                        health_regen = Spirit.Current * 0.5f + 2f;
+                        break;
+                    case (byte)Classes.CLASS_SHAMAN:
+                        health_regen = Spirit.Current * 0.11f + 7f;
+                        break;
+                    case (byte)Classes.CLASS_WARLOCK:
+                        health_regen = Spirit.Current * 0.07f + 6f;
+                        break;
+                    case (byte)Classes.CLASS_WARRIOR:
+                        health_regen = Spirit.Current * 0.8f + 6f;
+                        break;
+                }
+                if (Race == (byte)Races.RACE_TROLL)
+                    health_regen = (float)(health_regen * (this.InCombat ? 0.1f : 1.1f));
+                if (this.IsSitting)
+                    health_regen = health_regen * 1.33f;
 
-            if (this.Health.Current < this.Health.Maximum)
-            {
-                dirty = true;
-                this.Health.Current += 5;
-            }
-            if (this.Mana.Current < this.Mana.Maximum)
-            {
-                dirty = true;
-                this.Mana.Current += 5;
-            }
-            if (this.Energy.Current < this.Energy.Maximum)
-            {
-                dirty = true;
-                this.Energy.Current += 5;
-            }
-            if (this.Focus.Current < this.Focus.Maximum)
-            {
-                dirty = true;
-                this.Focus.Current += 5;
-            }
-            if (this.Rage.Current > 0)
-            {
-                dirty = true;
-                this.Rage.Current -= 5;
-            }
+                if (Race == (byte)Races.RACE_TROLL || !this.InCombat)
+                {
+                    if (this.Health.Current + health_regen >= Health.Maximum)
+                        this.Health.Current = Health.Maximum;
+                    else if (this.Health.Current < this.Health.Maximum)
+                        this.Health.Current += (uint)health_regen;
+                }
 
-            if (dirty && LastRegen <= Globals.Time) //Cap to every second
-            {
-                LastRegen = Globals.GetFutureTime(1);
+                if (mana_regen < 1f)
+                    mana_regen = 1;
+                if (this.Mana.Current + mana_regen >= Mana.Maximum)
+                    this.Mana.Current = Mana.Maximum;
+                else if (this.Mana.Current < this.Mana.Maximum)
+                    this.Mana.Current += (uint) mana_regen;
+
+                if (this.Energy.Current + 20 >= Energy.Maximum)
+                    this.Energy.Current = Energy.Maximum;
+                else if (this.Energy.Current < this.Energy.Maximum)
+                    this.Energy.Current += 20;
+
+                if (this.Focus.Current + 5 >= Focus.Maximum)
+                    this.Focus.Current = Focus.Maximum;
+                else if (this.Focus.Current < this.Focus.Maximum)
+                    this.Focus.Current += 5;
+
+                if (!this.InCombat || !this.IsAttacking)
+                {
+                    if (this.Rage.Current - 5 < 0)
+                        this.Rage.Current = 0;
+                    else
+                        this.Rage.Current -= 5;
+                }
+
+                LastRegen = Globals.Time;
                 this.Dirty = true;
             }
-
         }
 
         public void AttackUpdate()
         {
-            if (!this.IsAttacking)
+            if (!this.IsAttacking && CombatTarget == 0)
             {
                 if (this.InCombat)
                     this.LeaveCombat();
-
-                //this.Regenerate();
                 return;
             }
 

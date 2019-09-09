@@ -244,7 +244,6 @@ namespace WorldServer.Game.Managers
 
         public void SetBaseAttackTime()
         {
-            player.BaseAttackTime = 1;
             Item weapon = Backpack.GetItem((byte)InventorySlots.SLOT_MAINHAND);
             if (weapon != null)
                 player.BaseAttackTime = weapon.Template.WeaponSpeed;

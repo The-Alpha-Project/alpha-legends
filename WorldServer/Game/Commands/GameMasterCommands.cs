@@ -142,7 +142,8 @@ namespace WorldServer.Game.Commands
 
         public static void GPS(Player player, string[] args)
         {
-            ChatManager.Instance.SendSystemMessage(player, "X: " + player.Location.X + ", Y: " + player.Location.Y + ", Z: " + player.Location.Z);
+            ChatManager.Instance.SendSystemMessage(player, string.Format("X: {0}, Y: {1}, Z: {2}, Map: {3}", 
+                player.Location.X, player.Location.Y, player.Location.Z, player.Map));
         }
 
         public static void Teleport(Player player, string[] args)
