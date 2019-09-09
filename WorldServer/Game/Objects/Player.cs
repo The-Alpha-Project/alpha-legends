@@ -1406,6 +1406,8 @@ namespace WorldServer.Game.Objects
 
                 if (Race == (byte)Races.RACE_TROLL || !this.InCombat)
                 {
+                    if (health_regen < 1f)
+                        health_regen = 1f;
                     if (this.Health.Current + health_regen >= Health.Maximum)
                         this.Health.Current = Health.Maximum;
                     else if (this.Health.Current < this.Health.Maximum)
