@@ -203,6 +203,7 @@ namespace WorldServer.Game.Objects
                 Mana.Current = Mana.Maximum;
             }
 
+            this.IsGM = Database.Accounts.GetById(this.AccountId).GMLevel > 0;
             this.UnitFlags = 0;
             this.PlayerFlags = 0;
             this.DynamicFlags = 0;
@@ -420,18 +421,15 @@ namespace WorldServer.Game.Objects
                 Item item = Database.ItemTemplates.CreateItemOrContainer(entry);
                 item.Type = (InventoryTypes)startItems.m_InventoryType[i];
                 item.DisplayID = (uint)startItems.m_DisplayItemID[i];
+                item.CreateItem();
 
                 if (Database.Items.TryAdd(item) || Database.Items.ContainsKey(item.Guid))
                 {
                     uint slot = (uint)item.EquipSlot;
-                    if (this.Inventory.IsSlotEmpty(slot))
-                    {
-                        if (slot == (uint)InventorySlots.SLOT_MAINHAND)
-                            this.BaseAttackTime = item.Template.WeaponSpeed;
+                    if (slot == (uint)InventorySlots.SLOT_MAINHAND)
+                        this.BaseAttackTime = item.Template.WeaponSpeed;
 
-                        item.CreateItem();
-                        this.Inventory.AddItem(item, slot, InventorySlots.SLOT_INBACKPACK);
-                    }
+                    this.Inventory.AddItem(item, slot, InventorySlots.SLOT_INBACKPACK);
                 }
             }
         }
