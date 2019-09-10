@@ -111,6 +111,13 @@ namespace WorldServer.Game.Managers
             return this.Containers.Values.FirstOrDefault(x => x.Guid == guid);
         }
 
+        public Boolean IsSlotEmpty(uint slot)
+        {
+            foreach (Container cont in this.Containers.Values)
+                if (cont.Slots.ContainsKey(slot))
+                    return false;
+            return true;
+        }
 
         public bool AddItem(Item item)
         {
