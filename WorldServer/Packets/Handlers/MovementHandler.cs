@@ -64,5 +64,14 @@ namespace WorldServer.Packets.Handlers
                 // TODO: Reset speed to normal if player is not GM
             }
         }
+
+        public static void HandleSwimSpeedCheat(ref PacketReader packet, ref WorldManager manager)
+        {
+            Player c = manager.Character;
+            if (c != null && !c.IsGM)
+            {
+                // TODO: Reset speed to normal if player is not GM
+            }
+        }
     }
 }
