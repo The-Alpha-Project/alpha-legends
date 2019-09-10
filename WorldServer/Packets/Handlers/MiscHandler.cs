@@ -51,7 +51,7 @@ namespace WorldServer.Packets.Handlers
             PacketWriter pw = new PacketWriter(Opcodes.SMSG_FORCE_SPEED_CHANGE);
             pw.WriteUInt64(manager.Character.Guid);
             if (speed <= 0f)
-                speed = manager.Character.RunningSpeed;
+                speed = 7.0f; // Default run speed
             pw.WriteFloat(speed);
             manager.Send(pw);
         }

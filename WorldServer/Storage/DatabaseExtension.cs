@@ -20,6 +20,11 @@ namespace WorldServer.Storage
             return Accounts.Values.FirstOrDefault(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
         }
 
+        public static Account GetById(this DbSet<uint, Account> Accounts, uint AccountId)
+        {
+            return Accounts.Values.FirstOrDefault(x => x.Id == AccountId);
+        }
+
         public static List<Player> GetAllByAccount(this DbSet<ulong, Player> Players, uint AccountId)
         {
             return Players.Values.Where(x => x.AccountId == AccountId).ToList();

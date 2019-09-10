@@ -55,5 +55,14 @@ namespace WorldServer.Packets.Handlers
             if (c.Group != null)
                 c.Group.SendAllPartyStatus();
         }
+
+        public static void HandleRunSpeedCheat(ref PacketReader packet, ref WorldManager manager)
+        {
+            Player c = manager.Character;
+            if (c != null && !c.IsGM)
+            {
+                // TODO: Reset speed to normal if player is not GM
+            }
+        }
     }
 }

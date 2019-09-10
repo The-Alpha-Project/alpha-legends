@@ -15,8 +15,11 @@ namespace WorldServer.Packets.Handlers
 
         public static void HandleWorldTeleport(ref PacketReader packet, ref WorldManager manager)
         {
-            packet.ReadUInt32();
-            manager.Character.Teleport(packet.ReadUInt8(), packet.ReadQuaternion());
+            if (manager.Character.IsGM)
+            {
+                packet.ReadUInt32();
+                manager.Character.Teleport(packet.ReadUInt8(), packet.ReadQuaternion());
+            }
         }
 
         public static void HandleWorldTeleportAck(ref PacketReader packet, ref WorldManager manager)

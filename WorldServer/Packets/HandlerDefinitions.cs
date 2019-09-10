@@ -71,6 +71,7 @@ namespace WorldServer.Packets
             PacketManager.DefineOpcodeHandler(Opcodes.MSG_MOVE_ROOT, MovementHandler.HandleMovementStatus);
             PacketManager.DefineOpcodeHandler(Opcodes.MSG_MOVE_UNROOT, MovementHandler.HandleMovementStatus);
             PacketManager.DefineOpcodeHandler(Opcodes.MSG_MOVE_HEARTBEAT, MovementHandler.HandleMovementStatus);
+            PacketManager.DefineOpcodeHandler(Opcodes.MSG_MOVE_SET_RUN_SPEED_CHEAT, MovementHandler.HandleRunSpeedCheat);
 
             //Trade Opcodes
             PacketManager.DefineOpcodeHandler(Opcodes.CMSG_INITIATE_TRADE, TradeHandler.HandleInitiateTradeOpcode);

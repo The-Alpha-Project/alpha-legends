@@ -33,6 +33,7 @@ namespace WorldServer.Game.Objects
         public uint AccountId;
         [JsonIgnore]
         public WorldManager Client;
+        public Boolean IsGM;
         public string Name;
         public byte Race;
         public byte RaceMask;
@@ -77,10 +78,10 @@ namespace WorldServer.Game.Objects
         public Dictionary<uint, Quest> Quests = new Dictionary<uint, Quest>();
         public Dictionary<uint, PlayerSpell> Spells = new Dictionary<uint, PlayerSpell>();
         public Dictionary<byte, ActionButton> ActionButtons = new Dictionary<byte, ActionButton>();
-        
+
         //Social
         public List<ulong> FriendList = new List<ulong>();
-        public List<ulong> IgnoreList = new List<ulong>();        
+        public List<ulong> IgnoreList = new List<ulong>();
 
         //Teleport
         public bool TeleportSemaphore { get; private set; } = false;
@@ -122,6 +123,7 @@ namespace WorldServer.Game.Objects
             this.TeleportShortSemaphore = false;
             this.ObjectType |= ObjectTypes.TYPE_PLAYER;
             this.AccountId = Convert.ToUInt32(dr["account"]);
+            this.IsGM = Database.Accounts.GetById(this.AccountId).GMLevel > 0;
             this.Guid = Convert.ToUInt64(dr["guid"]);
             this.Name = dr["name"].ToString();
             this.Race = Convert.ToByte(dr["race"]);
@@ -1169,7 +1171,7 @@ namespace WorldServer.Game.Objects
                 dual_wield_penalty = 1f;
             }
             else
-            { 
+            {
                 weapon = this.Inventory.Backpack.GetItem((byte)InventorySlots.SLOT_OFFHAND);
                 dual_wield_penalty = 0.5f;
             }
@@ -1369,7 +1371,7 @@ namespace WorldServer.Game.Objects
                 int level_index = (Level < 0 || Level > 60 ? 60 : Level) - 1;
                 float mana_regen = Mana.BaseAmount * 0.02f;
                 if (!this.InCombat)
-                    mana_regen = (float) ((0.001f + (Spirit.Current * 
+                    mana_regen = (float)((0.001f + (Spirit.Current *
                         Math.Sqrt(Intellect.Current) * FormulaData.BaseManaRegen[level_index])) * 5f);
                 switch (Class)
                 {
@@ -1419,7 +1421,7 @@ namespace WorldServer.Game.Objects
                 if (this.Mana.Current + mana_regen >= Mana.Maximum)
                     this.Mana.Current = Mana.Maximum;
                 else if (this.Mana.Current < this.Mana.Maximum)
-                    this.Mana.Current += (uint) mana_regen;
+                    this.Mana.Current += (uint)mana_regen;
 
                 if (this.Energy.Current + 20 >= Energy.Maximum)
                     this.Energy.Current = Energy.Maximum;
@@ -1790,7 +1792,7 @@ namespace WorldServer.Game.Objects
             List<MySqlParameter> parameters = new List<MySqlParameter>();
             sb.AppendLine("INSERT INTO character_social (`guid`,`friend`,`ignore`) VALUES ");
 
-            if(FriendList.Count > 0)
+            if (FriendList.Count > 0)
             {
                 for (int i = 0; i < FriendList.Count; i++)
                 {
@@ -1804,7 +1806,7 @@ namespace WorldServer.Game.Objects
                 BaseContext.ExecuteCommand(Globals.CONNECTION_STRING, sb.ToString(), parameters);
             }
 
-            if(IgnoreList.Count > 0)
+            if (IgnoreList.Count > 0)
             {
                 parameters.Clear();
 
@@ -1823,7 +1825,7 @@ namespace WorldServer.Game.Objects
 
         private void LoadSocial()
         {
-            if(Database.SocialList.ContainsKey(this.Guid))
+            if (Database.SocialList.ContainsKey(this.Guid))
             {
                 this.IgnoreList.Clear();
                 this.FriendList.Clear();

@@ -29,7 +29,7 @@ namespace WorldServer.Game.Commands
 
         public static bool InvokeHandler(string command, Player player)
         {
-            if (command != null)
+            if (command != null && player.IsGM)
             {
                 string[] lines = command.Split(' ');
                 string[] args = new string[lines.Length - 1];

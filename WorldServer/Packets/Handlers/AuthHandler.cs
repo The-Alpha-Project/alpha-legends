@@ -33,7 +33,7 @@ namespace WorldServer.Packets.Handlers
                     {
                         account = new Account();
                         account.Name = name;
-                        account.GMLevel = 3;
+                        account.GMLevel = 0;
                         account.SetPassword(pass);
                         account.IP = ((IPEndPoint)manager.Socket.RemoteEndPoint).Address.ToString();
 
