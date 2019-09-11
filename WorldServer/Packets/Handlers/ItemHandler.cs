@@ -55,12 +55,42 @@ namespace WorldServer.Packets.Handlers
             manager.Character.SwapItem(srcbag, srcslot, dstbag, dstslot);
         }
 
+        public static Boolean HandleItemEquipAction(byte srcslot, byte dstslot, ref WorldManager manager)
+        {
+            // TODO: Currently everything works based in the main backpack, we need to add support for more bags. Even additem works only for the main backpack.
+            Boolean error = false;
+            byte bag = (byte)InventorySlots.SLOT_INBACKPACK;
+
+            if (dstslot == (byte)InventorySlots.SLOT_MAINHAND && manager.Character.Inventory.HasOffhandWeapon() &&
+                manager.Character.GetItem(bag, srcslot).Type == InventoryTypes.TWOHANDEDWEAPON)
+            {
+                if (manager.Character.Inventory.CanStoreItem(manager.Character.GetItem(bag, srcslot).Entry, 1))
+                    manager.Character.SwapItem(bag, (byte)InventorySlots.SLOT_OFFHAND, bag, (byte)manager.Character.Inventory.GetNextAvailableSlot());
+                else
+                    error = true;
+            }
+            else if (dstslot == (byte)InventorySlots.SLOT_OFFHAND && manager.Character.Inventory.HasTwoHandWeapon())
+            {
+                if (manager.Character.Inventory.CanStoreItem(manager.Character.GetItem(bag, (byte)InventorySlots.SLOT_MAINHAND).Entry, 1))
+                    manager.Character.SwapItem(bag, (byte)InventorySlots.SLOT_MAINHAND, bag, (byte)manager.Character.Inventory.GetNextAvailableSlot());
+                else
+                    error = true;
+            }
+
+            if (error)
+                manager.Character.SendEquipError(InventoryError.EQUIP_ERR_INVENTORY_FULL, manager.Character.GetItem(bag, srcslot), manager.Character.GetItem(bag, dstslot));
+
+            return !error;
+        }
+
         public static void HandleSwapInventoryItem(ref PacketReader packet, ref WorldManager manager)
         {
             byte srcslot = packet.ReadUInt8();
             byte dstslot = packet.ReadUInt8();
             byte bag = (byte)InventorySlots.SLOT_INBACKPACK;
-            manager.Character.SwapItem(bag, srcslot, bag, dstslot);
+
+            if (HandleItemEquipAction(srcslot, dstslot, ref manager))
+                manager.Character.SwapItem(bag, srcslot, bag, dstslot);
         }
 
         public static void HandleAutoEquipItem(ref PacketReader packet, ref WorldManager manager)
@@ -75,7 +105,9 @@ namespace WorldServer.Packets.Handlers
                 return;
 
             dstslot = (byte)srcItem.EquipSlot;
-            manager.Character.SwapItem(srcbagslot, srcslot, (byte)InventorySlots.SLOT_INBACKPACK, dstslot);
+
+            if (HandleItemEquipAction(srcslot, dstslot, ref manager))
+                manager.Character.SwapItem(srcbagslot, srcslot, (byte)InventorySlots.SLOT_INBACKPACK, dstslot);
         }
 
         public static void HandleAutostoreBagItem(ref PacketReader packet, ref WorldManager manager)

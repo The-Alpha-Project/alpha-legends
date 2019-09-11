@@ -124,7 +124,7 @@ namespace WorldServer.Game.Objects
         }
 
 
-        private int NextSlot()
+        public int NextSlot()
         {
             uint startslot = (IsBackpack ? (uint)InventorySlots.SLOT_INBACKPACK : 0);
             for (uint i = startslot; i < this.TotalSlots; i++)

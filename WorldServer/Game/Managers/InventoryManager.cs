@@ -205,6 +205,15 @@ namespace WorldServer.Game.Managers
             return false;
         }
 
+        public int GetNextAvailableSlot()
+        {
+            foreach (Container bag in Containers.Values)
+            {
+                if (!bag.IsFull)
+                    return bag.NextSlot();
+            }
+            return -1;
+        }
 
         public uint GetEntryCount(uint entry)
         {
@@ -235,10 +244,27 @@ namespace WorldServer.Game.Managers
             return null;
         }
 
+        public bool HasMainWeapon()
+        {
+            Item main = Backpack.GetItem((byte)InventorySlots.SLOT_MAINHAND);
+            if (main != null)
+                return main.Type == InventoryTypes.WEAPONMAINHAND;
+            return false;
+        }
+
         public bool HasOffhandWeapon()
         {
-            Item weapon = Backpack.GetItem((byte)InventoryTypes.WEAPONOFFHAND);
-            return weapon != null;
+            return Backpack.GetItem((byte)InventoryTypes.WEAPONOFFHAND) != null ||
+                Backpack.GetItem((byte)InventoryTypes.HOLDABLE) != null ||
+                Backpack.GetItem((byte)InventoryTypes.SHIELD) != null;
+        }
+
+        public bool HasTwoHandWeapon()
+        {
+            Item main = Backpack.GetItem((byte)InventorySlots.SLOT_MAINHAND);
+            if (main != null)
+                return main.Type == InventoryTypes.TWOHANDEDWEAPON;
+            return false;
         }
 
         public void SetBaseAttackTime()
