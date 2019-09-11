@@ -37,7 +37,7 @@ namespace WorldServer.Game
 
         //Update Variables
         public static long Time { get { return DateTime.Now.Ticks; } } // A single tick represents one hundred nanoseconds or one ten-millionth of a second. There are 10,000 ticks in a millisecond.
-        public static long TimeMillis { get { return Time / TimeSpan.TicksPerMillisecond; } }
+        public static long TimeMillis { get { return (Time / TimeSpan.TicksPerMillisecond) / 1000; } }
 
         //Basic GUID system
         public static ulong ITEM_GUID = (ulong)HIGH_GUID.HIGHGUID_ITEM;

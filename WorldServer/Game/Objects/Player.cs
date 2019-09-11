@@ -1305,8 +1305,7 @@ namespace WorldServer.Game.Objects
             this.UpdateTeleport(time);
 
             // Played time
-            // TimeMillis returns nanoseconds so we need to convert them into milliseconds
-            long now = Globals.TimeMillis / 1000;
+            long now = Globals.TimeMillis;
             if (now > this.LastTick && this.LastTick > 0)
             {
                 UInt32 elapsed = (UInt32)(now - this.LastTick);
