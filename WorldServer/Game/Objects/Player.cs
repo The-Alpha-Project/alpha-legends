@@ -1763,12 +1763,15 @@ namespace WorldServer.Game.Objects
             this.SaveSocial();
         }
 
+        /// <summary>
+        /// Save character base information into DB
+        /// </summary>
         private void SaveBase()
         {
             List<string> columns = new List<string>() {
                 "account", "guid", "name", "race", "class", "gender", "level","xp", "money", "skin", "face", "hairstyle",
-                "haircolour","facialhair","bankslots","position_x","position_y","position_z","orientation","map","talentpoints",
-                "skillpoints"
+                "haircolour","facialhair","bankslots","position_x","position_y","position_z","orientation","map",
+                "totaltime", "leveltime", "talentpoints", "skillpoints"
             };
 
             List<MySqlParameter> parameters = new List<MySqlParameter>()
@@ -1793,6 +1796,8 @@ namespace WorldServer.Game.Objects
                 new MySqlParameter("@position_z", this.Location.Z),
                 new MySqlParameter("@orientation", this.Orientation),
                 new MySqlParameter("@map", this.Map),
+                new MySqlParameter("@totaltime", this.TotalTime),
+                new MySqlParameter("@leveltime", this.LevelTime),
                 new MySqlParameter("@talentpoints", this.TalentPoints),
                 new MySqlParameter("@skillpoints", this.SkillPoints),
             };
