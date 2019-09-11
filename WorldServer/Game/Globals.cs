@@ -36,7 +36,8 @@ namespace WorldServer.Game
         public static readonly string CONNECTION_STRING = ConfigurationManager.AppSettings["ConnectionString"];
 
         //Update Variables
-        public static long Time { get { return DateTime.Now.Ticks; } }
+        public static long Time { get { return DateTime.Now.Ticks; } } // A single tick represents one hundred nanoseconds or one ten-millionth of a second. There are 10,000 ticks in a millisecond.
+        public static long TimeMillis { get { return Time / TimeSpan.TicksPerMillisecond; } }
 
         //Basic GUID system
         public static ulong ITEM_GUID = (ulong)HIGH_GUID.HIGHGUID_ITEM;

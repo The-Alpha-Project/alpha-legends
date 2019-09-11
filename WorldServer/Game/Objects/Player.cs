@@ -50,6 +50,8 @@ namespace WorldServer.Game.Objects
         public uint PetLevel;
         public uint PetFamily;
         public bool IsOnline = false;
+        public UInt32 TotalTime;
+        public UInt32 LevelTime;
         public TStat XP = new TStat();
         public uint TalentPoints;
         public uint SkillPoints;
@@ -72,6 +74,7 @@ namespace WorldServer.Game.Objects
         //Misc
         public byte SwingError = 0;
         private long LastRegen = 0;
+        private long LastTick = 0;
 
         public HashSet<int> Talents = new HashSet<int>();
         public Dictionary<ushort, MirrorSkillInfo> Skills = new Dictionary<ushort, MirrorSkillInfo>();
@@ -143,6 +146,8 @@ namespace WorldServer.Game.Objects
             this.Location.Z = Convert.ToSingle(dr["position_z"]);
             this.Orientation = Convert.ToSingle(dr["orientation"]);
             this.Map = Convert.ToUInt32(dr["map"]);
+            this.TotalTime = Convert.ToUInt32(dr["totaltime"]);
+            this.LevelTime = Convert.ToUInt32(dr["leveltime"]);
             this.SkillPoints = Convert.ToUInt32(dr["skillpoints"]);
             this.TalentPoints = Convert.ToUInt32(dr["talentpoints"]);
             //this.TaxiNodes = Convert.ToInt32(dr["taximask"]);
@@ -214,6 +219,7 @@ namespace WorldServer.Game.Objects
             Inventory.SetBaseAttackTime();
             this.ChatFlag = ChatFlags.CHAT_TAG_NONE;
             this.LastRegen = 0;
+            this.LastTick = 0;
 
             this.TransportID = 0;
             this.TransportOrientation = 0;
@@ -626,6 +632,7 @@ namespace WorldServer.Game.Objects
                 return;
 
             this.Level = level;
+            this.LevelTime = 0;
             SetLevelStats();
             SetBaseStats();
 
@@ -1297,6 +1304,16 @@ namespace WorldServer.Game.Objects
             this.AttackUpdate();
             this.UpdateTeleport(time);
 
+            // Played time
+            long now = Globals.TimeMillis / 100;
+            if (now > this.LastTick && this.LastTick > 0)
+            {
+                UInt32 elapsed = (UInt32)(now - this.LastTick);
+                this.TotalTime += elapsed;        // Total played time
+                this.LevelTime += elapsed;        // Level played time
+            }
+            this.LastTick = now;
+
             if (this.Dirty) //Combine all updates to one call per update
             {
                 if (this.Group != null)
@@ -1305,7 +1322,6 @@ namespace WorldServer.Game.Objects
                 this.Client.Send(BuildUpdate(UpdateTypes.UPDATE_FULL, true));
                 this.Dirty = false;
             }
-
         }
 
         public void UpdateSurroundingPlayers()
@@ -1366,7 +1382,7 @@ namespace WorldServer.Game.Objects
             if (this.IsDead || Health.Current == 0)
                 return;
 
-            if (Globals.Time > LastRegen + 20000000) // each 2 seconds(
+            if (Globals.Time > LastRegen + 20000000) // each 2 seconds
             {
                 float health_regen = 0;
                 int level_index = (Level < 0 || Level > 60 ? 60 : Level) - 1;

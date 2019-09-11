@@ -88,8 +88,8 @@ namespace WorldServer.Packets.Handlers
         public static void HandlePlayedTime(ref PacketReader packet, ref WorldManager manager)
         {
             PacketWriter pw = new PacketWriter(Opcodes.SMSG_PLAYED_TIME);
-            pw.WriteUInt32(0); //TotalTime
-            pw.WriteUInt32(0); //LevelTime
+            pw.WriteUInt32(manager.Character.TotalTime); //TotalTime
+            pw.WriteUInt32(manager.Character.LevelTime); //LevelTime
             manager.Send(pw);
         }
 
