@@ -61,7 +61,7 @@ namespace WorldServer.Packets.Handlers
             Player c = manager.Character;
             if (c != null && !c.IsGM)
             {
-                // TODO: Reset speed to normal if player is not GM
+                MiscHandler.HandleForceSpeedChange(ref c.Client, 7.0f);
             }
         }
 
@@ -70,7 +70,7 @@ namespace WorldServer.Packets.Handlers
             Player c = manager.Character;
             if (c != null && !c.IsGM)
             {
-                // TODO: Reset speed to normal if player is not GM
+                MiscHandler.HandleForceSpeedChange(ref c.Client, 4.7222223f);
             }
         }
     }

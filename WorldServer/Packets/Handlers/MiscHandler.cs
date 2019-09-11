@@ -49,9 +49,11 @@ namespace WorldServer.Packets.Handlers
         public static void HandleForceSpeedChange(ref WorldManager manager, float speed)
         {
             PacketWriter pw = new PacketWriter(Opcodes.SMSG_FORCE_SPEED_CHANGE);
-            pw.WriteUInt64(manager.Character.Guid);
+            //pw.WriteUInt64(manager.Character.Guid);
             if (speed <= 0f)
                 speed = 7.0f; // Default run speed
+            else if (speed >= 56f)
+                speed = 56f; // Max speed without weird issues
             pw.WriteFloat(speed);
             manager.Send(pw);
         }
