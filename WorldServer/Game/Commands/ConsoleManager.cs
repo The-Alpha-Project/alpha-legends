@@ -65,6 +65,9 @@ namespace WorldServer.Game.Commands
             DefineCommand("tel", GameMasterCommands.Teleport);
             DefineCommand("speed", GameMasterCommands.Speed);
             DefineCommand("swim", GameMasterCommands.Swim);
+            DefineCommand("morph", GameMasterCommands.Morph);
+            DefineCommand("morphf", GameMasterCommands.MorphForward);
+            DefineCommand("morphb", GameMasterCommands.MorphBackwards);
         }
     }
 }

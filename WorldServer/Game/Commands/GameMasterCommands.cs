@@ -155,14 +155,42 @@ namespace WorldServer.Game.Commands
             player.Teleport(map, new Quaternion(x, y, z, 0));
         }
 
+        private static void ApplySpeedAction(Player player, float speed, Boolean IsRun)
+        {
+            MiscHandler.HandleForceSpeedChange(ref player.Client, speed, IsRun);
+        }
+
         public static void Speed(Player player, string[] args) 
         {
-            MiscHandler.HandleForceSpeedChange(ref player.Client, 7.0f * Read<int>(args, 0), true);
+           ApplySpeedAction(player, 7.0f * Read<float>(args, 0), true);
         }
 
         public static void Swim(Player player, string[] args)
         {
-            MiscHandler.HandleForceSpeedChange(ref player.Client, 4.7222223f * Read<int>(args, 0), false);
+            ApplySpeedAction(player, 4.7222223f * Read<float>(args, 0), false);
+        }
+
+        private static void ApplyMorphAction(Player player, uint morph, Boolean announce = false)
+        {
+            player.DisplayID = morph;
+            player.Client.Send(player.BuildUpdate());
+            if (announce)
+                ChatManager.Instance.SendSystemMessage(player, string.Format("Current Display ID: {0}.", player.DisplayID));
+        }
+
+        public static void Morph(Player player, string[] args)
+        {
+            ApplyMorphAction(player, Read<uint>(args, 0));
+        }
+
+        public static void MorphForward(Player player, string[] args)
+        {
+            ApplyMorphAction(player, player.DisplayID += 1, true);
+        }
+
+        public static void MorphBackwards(Player player, string[] args)
+        {
+            ApplyMorphAction(player, player.DisplayID -= 1, true);
         }
     }
 }
