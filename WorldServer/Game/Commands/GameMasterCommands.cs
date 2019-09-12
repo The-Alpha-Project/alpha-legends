@@ -159,7 +159,14 @@ namespace WorldServer.Game.Commands
         {
             int speed_modifier = Read<int>(args, 0);
             if (speed_modifier > 1)
-                MiscHandler.HandleForceSpeedChange(ref player.Client, 7.0f * speed_modifier);
+                MiscHandler.HandleForceSpeedChange(ref player.Client, 7.0f * speed_modifier, true);
+        }
+
+        public static void Swim(Player player, string[] args)
+        {
+            int speed_modifier = Read<int>(args, 0);
+            if (speed_modifier > 1)
+                MiscHandler.HandleForceSpeedChange(ref player.Client, 4.7222223f * speed_modifier, false);
         }
     }
 }
