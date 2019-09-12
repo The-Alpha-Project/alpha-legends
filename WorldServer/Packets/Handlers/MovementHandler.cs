@@ -61,7 +61,7 @@ namespace WorldServer.Packets.Handlers
             Player c = manager.Character;
             if (c != null && !c.IsGM)
             {
-                MiscHandler.HandleForceSpeedChange(ref c.Client, 7.0f);
+                MiscHandler.HandleForceSpeedChange(ref c.Client, 7.0f, true);
             }
         }
 
@@ -70,7 +70,7 @@ namespace WorldServer.Packets.Handlers
             Player c = manager.Character;
             if (c != null && !c.IsGM)
             {
-                MiscHandler.HandleForceSpeedChange(ref c.Client, 4.7222223f);
+                MiscHandler.HandleForceSpeedChange(ref c.Client, 4.7222223f, false);
             }
         }
     }

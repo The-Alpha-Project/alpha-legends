@@ -46,12 +46,11 @@ namespace WorldServer.Packets.Handlers
             mananger.Send(packet);
         }
        
-        public static void HandleForceSpeedChange(ref WorldManager manager, float speed)
+        public static void HandleForceSpeedChange(ref WorldManager manager, float speed, Boolean IsRun)
         {
-            PacketWriter pw = new PacketWriter(Opcodes.SMSG_FORCE_SPEED_CHANGE);
-            //pw.WriteUInt64(manager.Character.Guid);
+            PacketWriter pw = new PacketWriter(IsRun ? Opcodes.SMSG_FORCE_SPEED_CHANGE : Opcodes.SMSG_FORCE_SWIM_SPEED_CHANGE);
             if (speed <= 0f)
-                speed = 7.0f; // Default run speed
+                speed = IsRun ? 7.0f : 4.7222223f; // Default speed
             else if (speed >= 56f)
                 speed = 56f; // Max speed without weird issues
             pw.WriteFloat(speed);

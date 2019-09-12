@@ -157,16 +157,12 @@ namespace WorldServer.Game.Commands
 
         public static void Speed(Player player, string[] args) 
         {
-            int speed_modifier = Read<int>(args, 0);
-            if (speed_modifier > 1)
-                MiscHandler.HandleForceSpeedChange(ref player.Client, 7.0f * speed_modifier, true);
+            MiscHandler.HandleForceSpeedChange(ref player.Client, 7.0f * Read<int>(args, 0), true);
         }
 
         public static void Swim(Player player, string[] args)
         {
-            int speed_modifier = Read<int>(args, 0);
-            if (speed_modifier > 1)
-                MiscHandler.HandleForceSpeedChange(ref player.Client, 4.7222223f * speed_modifier, false);
+            MiscHandler.HandleForceSpeedChange(ref player.Client, 4.7222223f * Read<int>(args, 0), false);
         }
     }
 }

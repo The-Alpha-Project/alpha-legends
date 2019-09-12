@@ -64,6 +64,7 @@ namespace WorldServer.Game.Commands
             DefineCommand("gps", GameMasterCommands.GPS);
             DefineCommand("tel", GameMasterCommands.Teleport);
             DefineCommand("speed", GameMasterCommands.Speed);
+            DefineCommand("swim", GameMasterCommands.Swim);
         }
     }
 }
