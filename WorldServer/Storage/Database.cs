@@ -31,6 +31,7 @@ namespace WorldServer.Storage
         public static DbSet<uint, CreatureTemplate> CreatureTemplates;
         public static DbSet<uint, ItemTemplate> ItemTemplates;
         public static GroupedDbSet<ulong, List<SocialList>> SocialList;
+        public static DbSet<uint, Worldports> Worldports;
 
         public static DbSet<uint, Account> Accounts;
         public static DbSet<ulong, Creature> Creatures;
@@ -63,6 +64,7 @@ namespace WorldServer.Storage
             VendorSpells = new GroupedDbSet<uint, List<VendorSpell>>(QueryDefault + "npc_trainer", "Vendor Spells");
             CreatureTemplates = new DbSet<uint, CreatureTemplate>();
             ItemTemplates = new DbSet<uint, ItemTemplate>();
+            Worldports = new DbSet<uint, Worldports>();
 
             Accounts = new DbSet<uint, Account>(false, true);
             Creatures = new DbSet<ulong, Creature>(true);

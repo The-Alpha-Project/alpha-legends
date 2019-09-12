@@ -101,7 +101,7 @@ namespace WorldServer.Network
             try
             {
                 Socket.EndSend(result);
-            } catch (System.Net.Sockets.SocketException ex)
+            } catch (Exception ex)
             {
                 Log.Message(LogType.ERROR, "{0}", ex.Message);
             }

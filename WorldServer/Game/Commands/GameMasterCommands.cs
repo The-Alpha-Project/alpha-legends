@@ -155,6 +155,14 @@ namespace WorldServer.Game.Commands
             player.Teleport(map, new Quaternion(x, y, z, 0));
         }
 
+        public static void Port(Player player, string[] args)
+        {
+            string name = Read<string>(args, 0);
+            foreach (Worldports port in Database.Worldports.Values)
+                if (port.Name.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+                    player.Teleport(port.Map, new Quaternion(port.X, port.Y, port.Z, 0));
+        }
+
         private static void ApplySpeedAction(Player player, float speed, Boolean IsRun)
         {
             MiscHandler.HandleForceSpeedChange(ref player.Client, speed, IsRun);

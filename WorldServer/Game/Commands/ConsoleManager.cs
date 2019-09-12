@@ -63,6 +63,7 @@ namespace WorldServer.Game.Commands
             DefineCommand("setpower", GameMasterCommands.SetPower);
             DefineCommand("gps", GameMasterCommands.GPS);
             DefineCommand("tel", GameMasterCommands.Teleport);
+            DefineCommand("port", GameMasterCommands.Port);
             DefineCommand("speed", GameMasterCommands.Speed);
             DefineCommand("swim", GameMasterCommands.Swim);
             DefineCommand("morph", GameMasterCommands.Morph);
