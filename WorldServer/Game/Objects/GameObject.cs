@@ -61,7 +61,7 @@ namespace WorldServer.Game.Objects
         public GameObject(ref MySqlDataReader dr)
         {
             this.ObjectType |= ObjectTypes.TYPE_GAMEOBJECT;
-            this.Guid = Convert.ToUInt64(dr["spawn_id"]) | (ulong)HIGH_GUID.HIGHGUID_GAMEOBJECT;
+            this.Guid = Convert.ToUInt64(dr["spawn_id"])/* | (ulong)HIGH_GUID.HIGHGUID_GAMEOBJECT*/; // Removed because gobject guids were wrong, not sure if it's needed...
             this.Entry = Convert.ToUInt32(dr["spawn_entry"]);
             this.Map = Convert.ToUInt32(dr["spawn_map"]);
             this.Location = new Vector(Convert.ToSingle(dr["spawn_positionX"]),
@@ -176,7 +176,7 @@ namespace WorldServer.Game.Objects
                                 y_lowest = y_i;
                             }
                             p.Teleport(p.Map, new Quaternion(x_lowest, y_lowest, this.Location.Z, this.Orientation));
-                            p.SetStandState((byte) StandState.UNIT_SITTINGCHAIRLOW);
+                            p.SetStandState((byte)((uint)StandState.UNIT_SITTINGCHAIRLOW + height));
                         }
                     }
                     break;
