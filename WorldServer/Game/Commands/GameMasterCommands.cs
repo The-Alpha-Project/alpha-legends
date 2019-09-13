@@ -200,5 +200,39 @@ namespace WorldServer.Game.Commands
         {
             ApplyMorphAction(player, player.DisplayID -= 1, true);
         }
+
+        public static void ListTickets(Player player, string[] args)
+        {
+            if (Database.Tickets.Values.Count > 0)
+                foreach(Ticket ticket in Database.Tickets.Values)
+                    ChatManager.Instance.SendSystemMessage(player, string.Format("[{0}] from {1} ({2}).", ticket.Id, ticket.CharacterName, 
+                        ticket.SubmitTime.ToString("dd-MM-yyyy HH:mm")));
+            else
+                ChatManager.Instance.SendSystemMessage(player, "There are no open tickets.");
+        }
+
+        public static void ReadTicket(Player player, string[] args)
+        {
+            uint id = Read<uint>(args, 0);
+            Ticket ticket = Database.Tickets.TryGet(id);
+            if (ticket != null)
+                ChatManager.Instance.SendSystemMessage(player, string.Format("Player \"{0}\" from account \"{1}\" says ({2}): {3}", ticket.CharacterName,
+                    ticket.AccountName, ticket.IsBug ? "bug" : "suggestion", ticket.TextBody));
+            else
+                ChatManager.Instance.SendSystemMessage(player, "Can't find that ticket.");
+        }
+
+        public static void DeleteTicket(Player player, string[] args)
+        {
+            uint id = Read<uint>(args, 0);
+            if (Database.Tickets.TryRemove(id))
+            {
+                ChatManager.Instance.SendSystemMessage(player, string.Format("Ticket {0} succesfully removed.", id));
+                Database.Tickets.UpdateChanges();
+            }
+            else
+                ChatManager.Instance.SendSystemMessage(player, "Can't find that ticket.");
+
+        }
     }
 }

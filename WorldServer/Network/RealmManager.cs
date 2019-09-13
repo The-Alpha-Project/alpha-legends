@@ -17,7 +17,7 @@ namespace WorldServer.Network
         public void HandleProxyConnection(RealmManager Session)
         {
             Log.Message();
-            Log.Message(LogType.NORMAL, "Begin redirection to WorldServer.");
+            Log.Message(LogType.NORMAL, "Begin redirection to WorldServer...");
 
             PacketWriter proxyWriter = new PacketWriter();
             proxyWriter.WriteString(Globals.SERVER_IP + ":" + Globals.WORLD_PORT);

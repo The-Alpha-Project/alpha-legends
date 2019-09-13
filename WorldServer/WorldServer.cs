@@ -12,11 +12,11 @@ namespace WorldServer
     {
         static void Main()
         {
-            Log.Message(LogType.INIT, "                 ALPHA WOW                 ");
+            Log.Message(LogType.INIT, "               Alpha Legends               ");
             Log.Message(LogType.INIT, "             REALM/PROXY/WORLD             ");
             Log.Message();
 
-            Log.Message(LogType.NORMAL, "Starting Alpha WoW Server...");
+            Log.Message(LogType.NORMAL, "Starting Alpha Legends Server...");
 
             Globals.Initialize();
             Log.Message();

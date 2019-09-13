@@ -26,5 +26,24 @@ begin not atomic
 
 		insert into applied_updates values ('120920191');
 	end if;
+
+	-- 13/09/2019
+	if (select count(*) from applied_updates where id='130920191') = 0 then
+		-- "Ticket" system
+		create table if not exists tickets
+		(
+			id int(11) not null primary key auto_increment,
+			is_bug int(1) not null default 0,
+			account_name varchar(250) not null default '',
+			account_id int(10) unsigned not null default 0,
+			character_name varchar(12) not null default '',
+			text_body text not null default '',
+			submit_time timestamp default current_timestamp on update current_timestamp,
+
+			foreign key (account_id) references accounts(id) on delete cascade on update cascade
+		);
+
+		insert into applied_updates values ('130920191');
+	end if;
 end $
 delimiter ;

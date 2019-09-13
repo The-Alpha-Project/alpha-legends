@@ -822,7 +822,7 @@ namespace WorldServer.Game.Objects
                 if (spell.IsFinished || spell.State != SpellState.SPELL_STATE_CASTING)
                     continue;
 
-                if (spell.Timer <= Globals.Time)
+                if (spell.Timer <= Globals.TimeTicks)
                     this.Cast(spell);
                 else
                     spell.Update();

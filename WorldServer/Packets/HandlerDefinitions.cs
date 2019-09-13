@@ -127,6 +127,7 @@ namespace WorldServer.Packets
             PacketManager.DefineOpcodeHandler(Opcodes.CMSG_PLAYED_TIME, MiscHandler.HandlePlayedTime);
             PacketManager.DefineOpcodeHandler(Opcodes.CMSG_INSPECT, MiscHandler.HandleInspectOpcode);
             PacketManager.DefineOpcodeHandler(Opcodes.CMSG_WHO, MiscHandler.HandleWhoOpcode);
+            PacketManager.DefineOpcodeHandler(Opcodes.CMSG_BUG, MiscHandler.HandleBugOpcode);
 
             //Quest Opcodes
             PacketManager.DefineOpcodeHandler(Opcodes.CMSG_QUESTGIVER_STATUS_QUERY, QuestHandler.HandleQuestGiverStatusQuery);

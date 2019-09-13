@@ -31,7 +31,7 @@ namespace WorldServer.Packets.Handlers
                 return;
             }
 
-            if(manager.Character.Spells[spellid].Cooldown > Globals.Time)
+            if(manager.Character.Spells[spellid].Cooldown > Globals.TimeTicks)
             {
                 manager.Character.SendCastResult(SpellFailedReason.SPELL_FAILED_NOT_READY, spellid);
                 return;

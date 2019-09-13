@@ -1382,7 +1382,7 @@ namespace WorldServer.Game.Objects
             if (this.IsDead || Health.Current == 0)
                 return;
 
-            if (Globals.Time > LastRegen + 20000000) // each 2 seconds
+            if (Globals.TimeTicks > LastRegen + 20000000) // each 2 seconds
             {
                 float health_regen = 0;
                 int level_index = (Level < 0 || Level > 60 ? 60 : Level) - 1;
@@ -1458,7 +1458,7 @@ namespace WorldServer.Game.Objects
                         this.Rage.Current -= 5;
                 }
 
-                LastRegen = Globals.Time;
+                LastRegen = Globals.TimeTicks;
                 this.Dirty = true;
             }
         }

@@ -69,6 +69,9 @@ namespace WorldServer.Game.Commands
             DefineCommand("morph", GameMasterCommands.Morph);
             DefineCommand("morphf", GameMasterCommands.MorphForward);
             DefineCommand("morphb", GameMasterCommands.MorphBackwards);
+            DefineCommand("litickets", GameMasterCommands.ListTickets);
+            DefineCommand("ticket", GameMasterCommands.ReadTicket);
+            DefineCommand("delticket", GameMasterCommands.DeleteTicket);
         }
     }
 }

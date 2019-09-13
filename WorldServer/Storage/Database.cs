@@ -32,6 +32,7 @@ namespace WorldServer.Storage
         public static DbSet<uint, ItemTemplate> ItemTemplates;
         public static GroupedDbSet<ulong, List<SocialList>> SocialList;
         public static DbSet<uint, Worldports> Worldports;
+        public static DbSet<uint, Ticket> Tickets;
 
         public static DbSet<uint, Account> Accounts;
         public static DbSet<ulong, Creature> Creatures;
@@ -65,6 +66,7 @@ namespace WorldServer.Storage
             CreatureTemplates = new DbSet<uint, CreatureTemplate>();
             ItemTemplates = new DbSet<uint, ItemTemplate>();
             Worldports = new DbSet<uint, Worldports>();
+            Tickets = new DbSet<uint, Ticket>(false, true);
 
             Accounts = new DbSet<uint, Account>(false, true);
             Creatures = new DbSet<ulong, Creature>(true);

@@ -105,10 +105,11 @@ namespace Common.Network.Packets
             return base.ReadBytes(count);
         }
 
-        public string ReadStringFromBytes(int count)
+        public string ReadStringFromBytes(int count, bool reverse = false)
         {
             byte[] stringArray = base.ReadBytes(count);
-            Array.Reverse(stringArray);
+            if (reverse)
+                Array.Reverse(stringArray);
 
             return Encoding.ASCII.GetString(stringArray);
         }

@@ -151,10 +151,10 @@ namespace WorldServer.Game.Objects
             this.Orientation = GetOrientation(this.Location.X, location.X, this.Location.Y, location.Y);
             PacketWriter pkt = new PacketWriter(Opcodes.MSG_MOVE_HEARTBEAT);
             pkt.WriteUInt64(this.Guid);
-            pkt.WriteUInt32((uint)Globals.Time);
+            pkt.WriteUInt32((uint) Globals.TimeTicks);
             pkt.WriteVector(this.Location);
             pkt.WriteFloat(this.Orientation);
-            pkt.WriteUInt32(0);
+            pkt.WriteUInt32(this.MovementFlags); // I'm not 100% sure about this one.
             GridManager.Instance.SendSurrounding(pkt, this);
         }
 
@@ -162,10 +162,10 @@ namespace WorldServer.Game.Objects
         {
             uint moveTime = 0;
             Vector step = new Vector() { X = this.Location.X - loc.X, Y = this.Location.Y - loc.Y, Z = this.Location.Z - loc.Z };
-            if (step.X == 0 && step.Y == 0)
+            if (step.X == 0f && step.Y == 0f)
                 return;
 
-            moveTime = (uint)Math.Round((this.Location.Distance(step) / this.Template.Speed) / (run ? 75 : 50));
+            moveTime = (uint) Math.Round((this.Location.Distance(step) / this.Template.Speed) / (run ? 75 : 50));
 
             Vector move = new Vector() { X = this.Location.X - step.X, Y = this.Location.Y - step.Y, Z = this.Location.Z - step.Z };
 
@@ -190,7 +190,7 @@ namespace WorldServer.Game.Objects
             pw.WriteFloat(this.Location.Z);
             pw.WriteFloat(this.Orientation);
             pw.WriteUInt8(0);
-            pw.WriteUInt32((uint)(run ? 0x100 : 0)); //Flags : 0x0 - Walk, 0x100 - Run
+            pw.WriteUInt32((uint) (run ? 0x100 : 0)); //Flags : 0x0 - Walk, 0x100 - Run
             pw.WriteUInt32(time);
             pw.WriteInt32(1);
             pw.WriteFloat(loc.X);
@@ -564,13 +564,13 @@ namespace WorldServer.Game.Objects
 
         private void DeathUpdate()
         {
-            if (CorpseRespawnTime > 0 && Globals.Time >= CorpseRespawnTime)
+            if (CorpseRespawnTime > 0 && Globals.TimeTicks >= CorpseRespawnTime)
             {
                 this.Respawn();
                 CorpseRespawnTime = 0;
             }
 
-            if (CorpseRemoveTime > 0 && Globals.Time >= CorpseRemoveTime)
+            if (CorpseRemoveTime > 0 && Globals.TimeTicks >= CorpseRemoveTime)
             {
                 GridManager.Instance.SendSurrounding(this.BuildDestroy(), this);
                 CorpseRemoveTime = 0;

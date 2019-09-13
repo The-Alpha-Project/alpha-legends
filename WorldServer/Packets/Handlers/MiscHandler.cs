@@ -45,7 +45,7 @@ namespace WorldServer.Packets.Handlers
             packet.WriteFloat(0.01666667f);
             mananger.Send(packet);
         }
-       
+
         public static void HandleForceSpeedChange(ref WorldManager manager, float speed, Boolean IsRun)
         {
             PacketWriter pw = new PacketWriter(IsRun ? Opcodes.SMSG_FORCE_SPEED_CHANGE : Opcodes.SMSG_FORCE_SWIM_SPEED_CHANGE);
@@ -61,7 +61,7 @@ namespace WorldServer.Packets.Handlers
         {
             uint triggerID = packet.ReadUInt32();
 
-            if(Database.AreaTriggers.ContainsKey(triggerID))
+            if (Database.AreaTriggers.ContainsKey(triggerID))
             {
                 AreaTrigger a = Database.AreaTriggers.TryGet(triggerID);
                 manager.Character.Teleport(a.Map, a.GetQuaternion());
@@ -112,11 +112,11 @@ namespace WorldServer.Packets.Handlers
             if (ustr_count > 4) return; //hard limit
             for (int i = 0; i < ustr_count; i++)
                 ustr[i] = packet.ReadString().ToLower();
-            
+
             uint displaycount = 0;
             HashSet<Player> players = new HashSet<Player>();
 
-            foreach(Player p in Database.Players.Values)
+            foreach (Player p in Database.Players.Values)
             {
                 if (p == manager.Character) //Hide self
                     continue;
@@ -135,7 +135,7 @@ namespace WorldServer.Packets.Handlers
                 if (zone_count > 0 && !zones.Contains(p.Zone)) //Zone check
                     continue;
 
-                if(ustr_count > 0) //User defined filters
+                if (ustr_count > 0) //User defined filters
                 {
                     bool skip = true;
                     foreach (string str in ustr)
@@ -149,7 +149,7 @@ namespace WorldServer.Packets.Handlers
 
                     if (skip) continue;
                 }
-                
+
                 displaycount++;
                 players.Add(p);
 
@@ -159,18 +159,39 @@ namespace WorldServer.Packets.Handlers
             PacketWriter pkt = new PacketWriter(Opcodes.SMSG_WHO);
             pkt.WriteUInt32((displaycount > 49 ? 49 : displaycount));
             pkt.WriteUInt32(displaycount);
-            foreach(Player p in players)
+            foreach (Player p in players)
             {
                 pkt.WriteString(p.Name);
                 pkt.WriteString(string.Empty);
                 pkt.WriteUInt32(p.Level);
                 pkt.WriteUInt32(p.Class);
                 pkt.WriteUInt32(p.Race);
-                pkt.WriteUInt32(p.Zone);                
+                pkt.WriteUInt32(p.Zone);
                 pkt.WriteUInt32((uint)p.GroupStatus);
             }
 
             manager.Send(pkt);
+        }
+
+        public static void HandleBugOpcode(ref PacketReader packet, ref WorldManager manager)
+        {
+            bool isBug = packet.ReadInt32() == 0;
+            int contentLength = packet.ReadInt32();
+            string body = packet.ReadString();
+
+            Ticket ticket = new Ticket
+            {
+                AccountId = manager.Character.AccountId,
+                AccountName = Database.Accounts.GetById(manager.Character.AccountId).Name,
+                CharacterName = manager.Character.Name,
+                IsBug = isBug,
+                TextBody = body.Substring(0, body.IndexOf("Username:", StringComparison.Ordinal)).Trim() // Blizzard was even sending the password in plain text, we don't want that info.
+            };
+            ticket.Save();
+            Database.Tickets.Reload();
+
+            ChatManager.Instance.SendSystemMessage(manager.Character, string.Format("Thanks for submitting your {0}, we'll handle it as soon as possible!",
+                isBug ? "bug" : "suggestion"));
         }
     }
 }

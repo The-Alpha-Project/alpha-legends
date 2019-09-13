@@ -24,7 +24,7 @@ namespace WorldServer.Packets
             }
             else
             {
-                Log.Message(LogType.ERROR, "UNPROGRAMMED OPCODE: {0} - {1} - {2}", opcode, (byte)opcode, reader.ReadStringFromBytes(reader.Size));
+                Log.Message(LogType.ERROR, "UNPROGRAMMED OPCODE: {0} - {1} - {2}", opcode, (byte)opcode, reader.ReadStringFromBytes(reader.Size, true));
                 return false;
             }
         }
