@@ -43,6 +43,13 @@ begin not atomic
 			foreign key (account_id) references accounts(id) on delete cascade on update cascade
 		);
 
+		-- Using the correct alpha Small Shield
+		set foreign_key_checks = 0;
+		update npc_vendor set item = 2133 where item = 17184;
+		update creature_loot_template set item = 2133 where item = 17184;
+		set foreign_key_checks = 1;
+		delete from item_template where entry = 17184;
+
 		insert into applied_updates values ('130920191');
 	end if;
 end $
