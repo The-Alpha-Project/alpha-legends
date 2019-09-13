@@ -27,7 +27,7 @@ begin not atomic
 		insert into applied_updates values ('120920191');
 	end if;
 
-	-- 13/09/2019
+	-- 13/09/2019 1
 	if (select count(*) from applied_updates where id='130920191') = 0 then
 		-- "Ticket" system
 		create table if not exists tickets
@@ -54,6 +54,15 @@ begin not atomic
 		delete from item_template where entry = 17184;
 
 		insert into applied_updates values ('130920191');
+	end if;
+
+	-- 13/09/2019 2
+	if (select count(*) from applied_updates where id='130920192') = 0 then
+		delete from spawns_gameobjects where spawn_id = 26727;
+		delete from spawns_gameobjects where spawn_id = 26728;
+		delete from spawns_gameobjects where spawn_id = 26740;
+
+		insert into applied_updates values ('130920192');
 	end if;
 end $
 delimiter ;

@@ -149,6 +149,37 @@ namespace WorldServer.Game.Objects
                         GridManager.Instance.SendSurrounding(this.BuildUpdate(), this);
                     }
                     break;
+                case (uint)GameObjectTypes.TYPE_CHAIR:
+                    uint slots = this.Template.RawData[0];
+                    uint height = this.Template.RawData[1];
+
+
+                    float lowestDistance = 90f;
+                    float x_lowest = this.Location.X;
+                    float y_lowest = this.Location.Y;
+
+                    if (slots > 0)
+                    {
+                        float orthogonalOrientation = (float) (this.Orientation + Math.PI * 0.5f);
+                        for (uint i = 0; i < slots; i++)
+                        {
+                            float relativeDistance = (this.Scale * i) - (this.Scale * (slots - 1) / 2f);
+                            float x_i = (float)(this.Location.X + relativeDistance * Math.Cos(orthogonalOrientation));
+                            float y_i = (float)(this.Location.Y + relativeDistance * Math.Sin(orthogonalOrientation));
+
+                            float playerSlotDistance = p.Location.Distance(new Vector(x_i, y_i, p.Location.Z));
+
+                            if (playerSlotDistance <= lowestDistance)
+                            {
+                                lowestDistance = playerSlotDistance;
+                                x_lowest = x_i;
+                                y_lowest = y_i;
+                            }
+                            p.Teleport(p.Map, new Quaternion(x_lowest, y_lowest, this.Location.Z, this.Orientation));
+                            p.SetStandState((byte) StandState.UNIT_SITTINGCHAIRLOW);
+                        }
+                    }
+                    break;
             }
         }
 

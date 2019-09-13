@@ -24,7 +24,7 @@ namespace WorldServer.Packets.Handlers
 
         public static void HandleGameObjectUseOpcode(ref PacketReader packet, ref WorldManager manager)
         {
-            ulong guid = packet.ReadUInt64();
+            ulong guid = packet.ReadUInt64() & ~(ulong)HIGH_GUID.HIGHGUID_GAMEOBJECT;
             if (!Database.GameObjects.ContainsKey(guid))
                 return;
 
