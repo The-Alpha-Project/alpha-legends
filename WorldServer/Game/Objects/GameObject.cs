@@ -61,7 +61,7 @@ namespace WorldServer.Game.Objects
         public GameObject(ref MySqlDataReader dr)
         {
             this.ObjectType |= ObjectTypes.TYPE_GAMEOBJECT;
-            this.Guid = Convert.ToUInt64(dr["spawn_id"])/* | (ulong)HIGH_GUID.HIGHGUID_GAMEOBJECT*/; // Removed because gobject guids were wrong, not sure if it's needed...
+            this.Guid = Convert.ToUInt64(dr["spawn_id"]) | (ulong)HIGH_GUID.HIGHGUID_GAMEOBJECT;
             this.Entry = Convert.ToUInt32(dr["spawn_entry"]);
             this.Map = Convert.ToUInt32(dr["spawn_map"]);
             this.Location = new Vector(Convert.ToSingle(dr["spawn_positionX"]),
@@ -150,6 +150,7 @@ namespace WorldServer.Game.Objects
                     }
                     break;
                 case (uint)GameObjectTypes.TYPE_CHAIR:
+                    // TODO: Use GameObjectStructs
                     uint slots = this.Template.RawData[0];
                     uint height = this.Template.RawData[1];
 
