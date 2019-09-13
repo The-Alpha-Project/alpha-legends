@@ -43,6 +43,9 @@ begin not atomic
 			foreign key (account_id) references accounts(id) on delete cascade on update cascade
 		);
 
+		-- Correct stats for Small Shield
+		update item_template set buyprice = 35, sellprice = 6, itemlevel = 3, armor = 29, maxdurability = 35 where entry = 2133;
+
 		-- Using the correct alpha Small Shield
 		set foreign_key_checks = 0;
 		update npc_vendor set item = 2133 where item = 17184;
