@@ -213,6 +213,9 @@ namespace WorldServer.Game.Objects
 
         public void Die(WorldObject killer)
         {
+            if (this.IsDead)
+                return;
+
             GenerateLoot();
 
             this.IsDead = true;
@@ -240,8 +243,7 @@ namespace WorldServer.Game.Objects
                     if (unit.Attackers.ContainsKey(this.Guid))
                         unit.Attackers.TryRemove(this.Guid, out dump);
                 }
-            }                
-
+            }
             this.Attackers.Clear();
 
             GridManager.Instance.SendSurrounding(this.BuildUpdate(), this);
