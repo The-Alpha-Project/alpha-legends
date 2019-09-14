@@ -170,11 +170,6 @@ namespace Common.Helpers.Extensions
             set { max = value; }
         }
 
-        public byte GetRandom()
-        {
-            return (byte)new Random().Next((int)min, (int)max);
-        }
-
         public byte GetRandom(int minincrease = 0, int maxincrease = 0)
         {
             return (byte)new Random().Next((int)min + minincrease, (int)max + maxincrease);
