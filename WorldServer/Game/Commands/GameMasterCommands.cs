@@ -148,9 +148,9 @@ namespace WorldServer.Game.Commands
 
         public static void Teleport(Player player, string[] args)
         {
-            int x = Read<int>(args, 0);
-            int y = Read<int>(args, 1);
-            int z = Read<int>(args, 2);
+            float x = Read<float>(args, 0);
+            float y = Read<float>(args, 1);
+            float z = Read<float>(args, 2);
             uint map = Read<uint>(args, 3);
             player.Teleport(map, new Quaternion(x, y, z, 0));
         }

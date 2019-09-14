@@ -62,6 +62,12 @@ begin not atomic
 		delete from spawns_gameobjects where spawn_id = 26728;
 		delete from spawns_gameobjects where spawn_id = 26740;
 
+		insert into worldports (x, y, z, map, name) values (3167.27, -1407.15, 0, 17, 'Kalidar');
+		insert into worldports (x, y, z, map, name) values (0, 0, 0, 29, 'Cage');
+		insert into worldports (x, y, z, map, name) values (100, 100, 200, 30, 'PvPZone01');
+		insert into worldports (x, y, z, map, name) values (277.77, -888.38, 400, 37, 'PvPZone02');
+		insert into worldports (x, y, z, map, name) values (0.76, -0.91, -2.32, 44, 'OldScarletMonastery');
+
 		insert into applied_updates values ('130920192');
 	end if;
 end $
