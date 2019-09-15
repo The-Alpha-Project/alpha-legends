@@ -78,7 +78,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
                 return (uint)QuestGiverStatuses.QUEST_GIVER_NONE;
 
             //Quest Finish
-            foreach (QuestTemplate qt in ibounds)
+            foreach (QuestTemplate qt in ibounds.Where(t => t != null))
             {
                 QuestGiverStatuses dialogStatusNew = QuestGiverStatuses.QUEST_GIVER_NONE;
                 status = p.GetQuestStatus(qt.QuestId);
@@ -97,7 +97,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
             }
 
             //Quest start
-            foreach (QuestTemplate qt in rbounds)
+            foreach (QuestTemplate qt in rbounds.Where(t => t != null))
             {
                 if (qt == null)
                     continue;

@@ -70,5 +70,12 @@ begin not atomic
 
 		insert into applied_updates values ('130920192');
 	end if;
+
+	-- 13/09/2019 2
+	if (select count(*) from applied_updates where id='140920191') = 0 then
+		update creatures set modelid = 3831 where entry = 5624;
+
+		insert into applied_updates values ('140920191');
+	end if;
 end $
 delimiter ;
