@@ -46,7 +46,7 @@ namespace WorldServer.Packets.Handlers
              */
             manager.Character.SendInitialSpells();
             manager.Character.SendMOTD();
-            manager.Character.PreLoad();
+            //manager.Character.PreLoad();
 
             manager.Send(manager.Character.QueryDetails(), true);
             manager.Send(manager.Character.BuildUpdate(UpdateTypes.UPDATE_FULL, true));
