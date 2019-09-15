@@ -71,11 +71,31 @@ begin not atomic
 		insert into applied_updates values ('130920192');
 	end if;
 
-	-- 13/09/2019 2
+	-- 14/09/2019 1
 	if (select count(*) from applied_updates where id='140920191') = 0 then
-		update creatures set modelid = 3831 where entry = 5624;
+		update creature_model_info set modelid = 3831 where modelid = 10699;
 
 		insert into applied_updates values ('140920191');
+	end if;
+
+	-- 15/09/2019 1
+	if (select count(*) from applied_updates where id='150920191') = 0 then
+		update creatures set modelid = 3166 where modelid = 1918;
+		update creatures set modelid = 1545 where entry = 2612;
+		update creatures set modelid = 1545 where entry = 2738;
+		update creatures set modelid = 197, minlevel = 8, maxlevel = 8 where entry = 197;
+		update creatures set minlevel = 5, maxlevel = 5 where entry = 823;
+		update creatures set modelid = 164 where entry in (1642, 823);
+
+		update spawns_creatures set spawn_positionx = -8933.54, spawn_positiony = -136.523, spawn_positionz = 83.4466, spawn_orientation = 1.97222 where spawn_id = 79970;
+		update spawns_creatures set spawn_positionx = -8924.164, spawn_positiony = -136.1524, spawn_positionz = 81.0561, spawn_orientation = 2.192002 where spawn_id = 79942;
+
+		update item_template set displayid = 292 where displayid = 15710;
+
+		update quests set details = "Kobolds have infested the woods to the north. If you kill 7 of the grimy Vermin for me, then you'll have my thanks, citizen.", objectives = "Kill 7 Kobold Vermin, then return to Marshal McBride.", 
+			ReqCreatureOrGOCount1 = 7, RewOrReqMoney = 20, RewItemId1 = 118 where entry = 7;
+
+		insert into applied_updates values ('150920191');
 	end if;
 end $
 delimiter ;
