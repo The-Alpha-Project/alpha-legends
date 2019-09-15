@@ -235,9 +235,11 @@ namespace WorldServer.Game.Objects
 
             GridManager.Instance.AddOrGet(this, true);
 
-            foreach (Item item in Database.Items.Where(x => x.Value.Player == this.Guid).Select(x => x.Value))
-                if (this.Inventory.GetBag(item.Bag) != null)
+            foreach (Item item in Database.Items.Where(x => x.Value.Player == this.Guid && !InventoryManager.IsBagPos(x.Value.Bag, x.Value.EquipSlot)).Select(x => x.Value)) {
+                if (this.Inventory.GetBag(item.Bag) != null) {
                     this.Inventory.GetBag(item.Bag).AddItem(item, item.CurrentSlot);
+                }
+            }
         }
 
         public void Login()

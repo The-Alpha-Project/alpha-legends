@@ -278,13 +278,18 @@ namespace WorldServer.Game.Managers
 
         public void Save()
         {
-            foreach (Container container in this.Containers.Values)
+            foreach (KeyValuePair<uint, Container> entry in this.Containers)
             {
+                uint inventorySlot = entry.Key;
+                Container container = entry.Value;
+
                 if (!container.IsBackpack)
                     container.Save();
 
-                foreach (Item item in container.Items.Values)
+                foreach (Item item in container.Items.Values) {
+                    item.Bag = inventorySlot;
                     item.Save();
+                }
             }
         }
 
