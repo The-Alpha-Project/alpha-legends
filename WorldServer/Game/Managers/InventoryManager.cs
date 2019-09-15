@@ -276,15 +276,18 @@ namespace WorldServer.Game.Managers
                 player.BaseAttackTime = 1400;
         }
 
-        public void Save() {
-            foreach (KeyValuePair<uint, Container> entry in this.Containers) {
+        public void Save() 
+        {
+            foreach (KeyValuePair<uint, Container> entry in this.Containers) 
+            {
                 uint inventorySlot = entry.Key;
                 Container container = entry.Value;
 
                 if (!container.IsBackpack)
                     container.Save();
 
-                foreach (Item item in container.Items.Values) {
+                foreach (Item item in container.Items.Values) 
+                {
                     item.Bag = inventorySlot;
                     item.Save();
                 }
