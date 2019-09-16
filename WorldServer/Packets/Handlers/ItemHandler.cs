@@ -38,9 +38,10 @@ namespace WorldServer.Packets.Handlers
                 manager.Character.CheckQuestItemRemove(item.Entry, count);
                 manager.Character.Inventory.GetBag(bagslot)?.RemoveItemInSlot(sourceslot);
 
-                PacketWriter writer = new PacketWriter(Opcodes.SMSG_DESTROY_OBJECT);
+                /*This doesn't seem to be needed 
+                PacketWriter writer = new PacketWriter(Opcodes.CMSG_DESTROYITEM);
                 writer.WriteUInt64(item.Guid); //Item GUID
-                manager.Send(writer);
+                manager.Send(writer);*/
                 manager.Character.Dirty = true;
                 Database.Items.UpdateChanges();
             }
