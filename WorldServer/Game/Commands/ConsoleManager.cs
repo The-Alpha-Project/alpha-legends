@@ -72,6 +72,7 @@ namespace WorldServer.Game.Commands
             DefineCommand("litickets", GameMasterCommands.ListTickets);
             DefineCommand("ticket", GameMasterCommands.ReadTicket);
             DefineCommand("delticket", GameMasterCommands.DeleteTicket);
+            DefineCommand("uinfo", GameMasterCommands.UnitInfo);
         }
     }
 }

@@ -234,5 +234,24 @@ namespace WorldServer.Game.Commands
                 ChatManager.Instance.SendSystemMessage(player, "Can't find that ticket.");
 
         }
+
+        public static void UnitInfo(Player player, string[] args)
+        {
+            Unit unit = Database.Creatures.TryGet(player.CurrentSelection);
+            if (unit == null)
+                unit = Database.Players.TryGet(player.CurrentSelection); // Trying to get player instead
+            if (unit != null)
+            {
+                if (unit.IsTypeOf(ObjectTypes.TYPE_PLAYER))
+                {
+                    ChatManager.Instance.SendSystemMessage(player, string.Format("Guid: {0}, Name: {1}, Account: {2}", 
+                        unit.Guid, ((Player)unit).Name, ((Player)unit).AccountId));
+                } else
+                {
+                    ChatManager.Instance.SendSystemMessage(player, string.Format("Guid: {0}, Entry: {1}, Display ID: {2} X: {3}, Y: {4}, Z: {5}, Orientation: {6} Map: {7}", 
+                        unit.Guid, unit is Creature ? ((Creature)unit).Entry : 0, unit.DisplayID, unit.Location.X, unit.Location.Y, unit.Location.Z, unit.Orientation, unit.Map));
+                }
+            }
+        }
     }
 }

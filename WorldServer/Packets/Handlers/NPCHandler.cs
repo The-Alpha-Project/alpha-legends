@@ -124,12 +124,6 @@ namespace WorldServer.Packets.Handlers
                 return;
             }
 
-            if (itm.LevelReq > c.Level) //Not high enough level
-            {
-                c.SendBuyError(BuyResults.BUY_ERR_RANK_REQUIRE, npc, item);
-                return;
-            }
-
             if (c.Money < cost)
             {
                 c.SendBuyError(BuyResults.BUY_ERR_NOT_ENOUGHT_MONEY, npc, item);
@@ -204,12 +198,6 @@ namespace WorldServer.Packets.Handlers
                 return;
             }
 
-            if (itm.LevelReq > c.Level) //Not high enough level
-            {
-                c.SendBuyError(BuyResults.BUY_ERR_RANK_REQUIRE, npc, item);
-                return;
-            }
-
             if (c.Money < cost)
             {
                 c.SendBuyError(BuyResults.BUY_ERR_NOT_ENOUGHT_MONEY, npc, item);
@@ -218,6 +206,8 @@ namespace WorldServer.Packets.Handlers
 
             if (c.AddItemInSlot(item, bagslot))
             {
+                npc.UpdateInventoryItem(item, count);
+                manager.Send(npc.ListInventory(manager.Character));
                 c.SwapItem(0, 0, (byte)bag, bagslot);
                 c.Money -= cost;
                 manager.Character.Dirty = true;

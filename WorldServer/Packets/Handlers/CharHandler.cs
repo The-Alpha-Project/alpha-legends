@@ -163,8 +163,7 @@ namespace WorldServer.Packets.Handlers
         public static void HandleSetSelection(ref PacketReader packet, ref WorldManager manager)
         {
             ulong Guid = packet.ReadUInt64();
-
-            if (Database.Creatures.ContainsKey(Guid))
+            if (manager != null && manager.Character != null)
                 manager.Character.CurrentSelection = Guid;
         }
 
