@@ -61,7 +61,7 @@ namespace WorldServer.Game.Objects
         public Item(ref MySqlDataReader dr)
         {
             this.IsSoulbound = false;
-            this.Guid = Convert.ToUInt64(dr["item"]) | (ulong)HIGH_GUID.HIGHGUID_ITEM;
+            this.Guid = Convert.ToUInt64(dr["guid"])/* | (ulong)HIGH_GUID.HIGHGUID_ITEM*/;
             this.Owner = Convert.ToUInt64(dr["owner"]);
             this.Bag = Convert.ToUInt32(dr["bag"]);
             this.CurrentSlot = Convert.ToUInt32(dr["slot"]);
@@ -184,13 +184,13 @@ namespace WorldServer.Game.Objects
         public void Save()
         {
             List<string> columns = new List<string>() {
-                "item", "owner", "bag", "slot", "item_template", "stackcount", "player",
+                "guid", "owner", "bag", "slot", "item_template", "stackcount", "player",
                 "SpellCharges1", "SpellCharges2", "SpellCharges3", "SpellCharges4", "SpellCharges5"
             };
 
             List<MySqlParameter> parameters = new List<MySqlParameter>()
             {
-                new MySqlParameter("@item", this.Guid & ~(ulong)HIGH_GUID.HIGHGUID_ITEM),
+                new MySqlParameter("@guid", this.Guid /*& ~(ulong)HIGH_GUID.HIGHGUID_ITEM*/),
                 new MySqlParameter("@owner", this.Owner),
                 new MySqlParameter("@bag", this.Bag),
                 new MySqlParameter("@slot", this.CurrentSlot),

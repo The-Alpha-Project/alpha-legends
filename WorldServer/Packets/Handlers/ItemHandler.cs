@@ -43,7 +43,7 @@ namespace WorldServer.Packets.Handlers
                 writer.WriteUInt64(item.Guid); //Item GUID
                 manager.Send(writer);*/
                 manager.Character.Dirty = true;
-                Database.Items.UpdateChanges();
+                //Database.Items.UpdateChanges();
             }
         }
 

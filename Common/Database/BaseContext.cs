@@ -274,7 +274,6 @@ namespace Common.Database
             return ExecuteCommand(query, null);
         }
 
-        
         private string GetTableName<T>()
         {
             string tableName = typeof(T).GetCustomAttribute<TableAttribute>()?.Name;

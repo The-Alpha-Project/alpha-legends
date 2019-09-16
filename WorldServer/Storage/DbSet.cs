@@ -136,7 +136,6 @@ namespace WorldServer.Storage
             return this.Data.ContainsKey(key);
         }
 
-
         public void UpdateChanges()
         {
             if (!m_trackchanges)
