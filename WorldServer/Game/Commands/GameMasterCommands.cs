@@ -253,5 +253,16 @@ namespace WorldServer.Game.Commands
                 }
             }
         }
+
+        public static void Mount(Player player, string[] args)
+        {
+            uint display_id = Read<uint>(args, 0);
+            player.Mount(display_id);
+        }
+
+        public static void Unmount(Player player, string[] args)
+        {
+            player.Unmount();
+        }
     }
 }

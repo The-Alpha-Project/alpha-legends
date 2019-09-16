@@ -95,6 +95,7 @@ namespace WorldServer.Game.Objects
 
         //Visual
         public VirtualItemInfo[] VirtualItems = new VirtualItemInfo[3];
+        public uint MountDisplayID = 0;
 
         //Trade
         public TradeData TradeInfo = null;
@@ -600,6 +601,26 @@ namespace WorldServer.Game.Objects
         {
             if (this.ActionButtons.ContainsKey(button))
                 this.ActionButtons.Remove(button);
+        }
+
+        public void Mount(uint displayId)
+        {
+            if (displayId > 0 && this.MountDisplayID == 0)
+            {
+                this.MountDisplayID = displayId;
+                this.UnitFlags |= 0x3000;
+                UpdateSurroundingPlayers();
+            }
+        }
+
+        public void Unmount()
+        {
+            if (this.MountDisplayID > 0)
+            {
+                this.MountDisplayID = 0;
+                this.UnitFlags &= ~(uint)0x3000;
+                UpdateSurroundingPlayers();
+            }
         }
         #endregion
 
@@ -1717,6 +1738,7 @@ namespace WorldServer.Game.Objects
             uc.UpdateValue<float>(UnitFields.UNIT_FIELD_BOUNDINGRADIUS, this.BoundingRadius);
             uc.UpdateValue<float>(UnitFields.UNIT_FIELD_COMBATREACH, 1.5f);
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_DISPLAYID, this.DisplayID);
+            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_MOUNTDISPLAYID, this.MountDisplayID);
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_RESISTANCEBUFFMODSPOSITIVE, Armor.PositiveAmount);
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_RESISTANCEBUFFMODSPOSITIVE, Holy.PositiveAmount, 1);
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_RESISTANCEBUFFMODSPOSITIVE, Fire.PositiveAmount, 2);
