@@ -73,8 +73,8 @@ namespace WorldServer.Game.Objects
                                         Convert.ToUInt32(dr["SpellCharges3"]),
                                         Convert.ToUInt32(dr["SpellCharges4"]),
                                         Convert.ToUInt32(dr["SpellCharges5"]) };
-            //if (this.Template == null)
-            //    this.Template = Database.ItemTemplates.TryGet(this.Entry);
+            if (this.Template == null)
+                this.Template = Database.ItemTemplates.TryGet(this.Entry);
         }
 
         public PacketWriter CreateItem()

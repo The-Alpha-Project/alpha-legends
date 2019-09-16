@@ -730,7 +730,8 @@ namespace WorldServer.Game.Objects
             if (!Database.ItemTemplates.ContainsKey(entry))
                 return false;
 
-            if (this.Inventory.GetEntryCount(entry) > Database.ItemTemplates.TryGet(entry).MaxCount)
+            uint maxCount = Database.ItemTemplates.TryGet(entry).MaxCount;
+            if (maxCount > 0 && this.Inventory.GetEntryCount(entry) >= maxCount)
                 return false;
 
             for (uint i = (uint)InventorySlots.SLOT_INBACKPACK; i > (uint)InventorySlots.SLOT_BAG1; i--)
