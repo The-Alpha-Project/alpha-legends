@@ -73,6 +73,8 @@ namespace WorldServer.Game.Objects
                                         Convert.ToUInt32(dr["SpellCharges3"]),
                                         Convert.ToUInt32(dr["SpellCharges4"]),
                                         Convert.ToUInt32(dr["SpellCharges5"]) };
+            //if (this.Template == null)
+            //    this.Template = Database.ItemTemplates.TryGet(this.Entry);
         }
 
         public PacketWriter CreateItem()
@@ -121,10 +123,10 @@ namespace WorldServer.Game.Objects
             for (int i = 0; i < 5; i++)
                 uc.UpdateValue<uint>(ItemFields.ITEM_FIELD_SPELL_CHARGES, this.SpellCharges[i], i);
 
-            if (this.IsContainer) //Is a container
+            if (this.IsContainer)
             {
                 var c = (Container)this;
-                if (c.IsBackpack) //Just incase
+                if (c.IsBackpack) //Just in case
                     return null;
 
                 uc.UpdateValue<uint>(ContainerFields.CONTAINER_FIELD_NUM_SLOTS, c.TotalSlots);

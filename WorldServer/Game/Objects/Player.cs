@@ -235,9 +235,20 @@ namespace WorldServer.Game.Objects
 
             GridManager.Instance.AddOrGet(this, true);
 
+            foreach (Item item in Database.Items.Where(x => x.Value.Player == this.Guid && x.Value.IsContainer).Select(x => x.Value))
+                if (item.IsContainer && (item.CurrentSlot >= 19 && item.CurrentSlot <= 22) || (item.CurrentSlot >= 63 && item.CurrentSlot <= 68))
+                {
+                    var c = new Container(item.Entry, false);
+                    this.Inventory.GetBag(item.Bag).AddItem(c, item.CurrentSlot);
+                    this.Inventory.AddBag(item.CurrentSlot, c);
+                }
             foreach (Item item in Database.Items.Where(x => x.Value.Player == this.Guid).Select(x => x.Value))
+            {
+                if (item.IsContainer && (item.CurrentSlot >= 19 && item.CurrentSlot <= 22 || item.CurrentSlot >= 63 && item.CurrentSlot <= 68))
+                    continue;
                 if (this.Inventory.GetBag(item.Bag) != null)
                     this.Inventory.GetBag(item.Bag).AddItem(item, item.CurrentSlot);
+            }
         }
 
         public void Login()
@@ -249,7 +260,6 @@ namespace WorldServer.Game.Objects
             this.StatSystem.UpdateAll();
             Health.ResetCurrent();
             Rage.Current = 0;
-            Energy.ResetCurrent();
             Energy.ResetCurrent();
             Focus.ResetCurrent();
             Mana.ResetCurrent();

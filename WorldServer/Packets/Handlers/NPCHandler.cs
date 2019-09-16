@@ -177,7 +177,15 @@ namespace WorldServer.Packets.Handlers
                 return;
             }
 
-            Container container = c.Inventory.GetBag(bag);
+            Container container;
+            if (bag == c.Guid)
+            {
+                bag = 255;
+                container = c.Inventory.Backpack;
+            }
+            else
+                container = c.Inventory.GetBag(bag);
+                
             if (container == null || container?.IsFull == true)
             {
                 c.SendBuyError(BuyResults.BUY_ERR_CANT_CARRY_MORE, npc, item);

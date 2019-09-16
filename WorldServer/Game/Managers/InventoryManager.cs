@@ -85,7 +85,10 @@ namespace WorldServer.Game.Managers
                 return false;
 
             item.Player = player.Guid;
-            Containers.Add(slot, item);
+            if (Containers.ContainsKey(slot))
+                Containers[slot] = item;
+            else
+                Containers.Add(slot, item);
             return true;
         }
 

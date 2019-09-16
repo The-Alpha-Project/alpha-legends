@@ -138,6 +138,14 @@ namespace WorldServer.Game.Objects
             //Triggers spell
             switch (this.Template.Type)
             {
+                case (uint)GameObjectTypes.TYPE_BUTTON:
+                    if (this.State != (byte)GameObjectStates.GO_STATE_READY)
+                        return;
+
+                    this.State = (byte)GameObjectStates.GO_STATE_ACTIVE;
+                    //TODO: Trigger scripts / events and cooldown restart
+                    GridManager.Instance.SendSurrounding(this.BuildUpdate(), this);
+                    break;
                 case (uint)GameObjectTypes.TYPE_CHEST:
                     if (this.State == (byte)GameObjectStates.GO_STATE_READY && LootRecipient == null)
                     {
@@ -153,7 +161,6 @@ namespace WorldServer.Game.Objects
                     // TODO: Use GameObjectStructs
                     uint slots = this.Template.RawData[0];
                     uint height = this.Template.RawData[1];
-
 
                     float lowestDistance = 90f;
                     float x_lowest = this.Location.X;

@@ -17,13 +17,13 @@ namespace WorldServer.Game.Objects
         public bool IsFull { get { return this.Slots.Count >= this.TotalSlots; } }
         public bool IsEmpty { get { return this.Slots.Count == 0; } }
 
-        public Container(uint entry, bool nonitem = false)
+        public Container(uint entry, bool isBackpack = false)
         {
             this.ObjectType |= ObjectTypes.TYPE_CONTAINER;
             this.Items = new Dictionary<ulong, Item>();
             this.Slots = new SortedDictionary<uint, ulong>();
 
-            if (!nonitem)
+            if (!isBackpack)
             {
                 this.Entry = entry;
                 this.Template = Database.ItemTemplates.TryGet(entry);
@@ -31,7 +31,7 @@ namespace WorldServer.Game.Objects
                 this.EquipSlot = PrefInvSlot();
             }
 
-            this.IsBackpack = nonitem;
+            this.IsBackpack = isBackpack;
         }
 
         public bool AddItem(Item item, uint slot)
