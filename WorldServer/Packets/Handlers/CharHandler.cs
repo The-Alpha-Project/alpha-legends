@@ -69,12 +69,9 @@ namespace WorldServer.Packets.Handlers
                 /*
                  * Client requires all InventoryTypes so we need to loop all of them
                  */
-                for (byte i = 0; i < (byte)InventoryTypes.WEAPONOFFHAND; i++) //Loop through inventory types
+                for (byte i = 0; i < 20; i++) //Loop through inventory types
                 {
-                    if (i == (byte)InventoryTypes.CLOAK || i == (byte)InventoryTypes.FINGER) //Ignore non visible - Cloaks weren't visible this patch!
-                        continue;
-
-                    var item = c.Inventory.Backpack.Items.Values.FirstOrDefault(x => x.Type == (InventoryTypes)i && x.IsEquipmentPos); // Take items that are equipped on DB (IsEquipmentPos)
+                    var item = c.Inventory.Backpack.GetItem(i);
                     writer.WriteUInt32(item != null ? item.Template.DisplayID : 0); // DisplayId
                     writer.WriteUInt8(item != null ? (byte)(item.Type) : (byte)0); // InventoryType
                 }
