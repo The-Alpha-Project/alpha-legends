@@ -66,10 +66,7 @@ namespace WorldServer.Packets.Handlers
                 writer.WriteUInt32(c.PetLevel);
                 writer.WriteUInt32(c.PetFamily);
 
-                /*
-                 * Client requires all InventoryTypes so we need to loop all of them
-                 */
-                for (byte i = 0; i < 20; i++) //Loop through inventory types
+                for (byte i = 0; i < 20; i++) //Loop through inventory slots
                 {
                     var item = c.Inventory.Backpack.GetItem(i);
                     writer.WriteUInt32(item != null ? item.Template.DisplayID : 0); // DisplayId
