@@ -113,5 +113,12 @@ begin not atomic
 
 		insert into applied_updates values ('160920191');
 	end if;
+
+	-- 17/09/2019 1
+	if (select count(*) from applied_updates where id='170920191') = 0 then
+		alter table character_inventory change item guid int(11);
+
+		insert into applied_updates values ('170920191');
+	end if;
 end $
 delimiter ;
