@@ -255,6 +255,11 @@ namespace WorldServer.Game.Objects
         public void Login()
         {
             this.LoggedIn = true;
+            if (this.IsGM)
+            {
+                Flag.SetFlag(ref this.PlayerFlags, (byte)Common.Constants.PlayerFlags.PLAYER_FLAGS_GM);
+                ToggleChatFlag(Common.Constants.ChatFlags.CHAT_TAG_GM);
+            }
 
             LoadSocial();
 
@@ -689,7 +694,6 @@ namespace WorldServer.Game.Objects
                 Health.ResetCurrent();
 
             Rage.Current = 0;
-            Energy.ResetCurrent();
             Energy.ResetCurrent();
             Focus.ResetCurrent();
             Mana.ResetCurrent();
@@ -1302,13 +1306,17 @@ namespace WorldServer.Game.Objects
             if (!DBC.Spell.ContainsKey(spellid))
                 return;
 
-            SpellTargets targets = new SpellTargets();
-            targets.Target = this;
+            SpellTargets targets = new SpellTargets
+            {
+                Target = this
+            };
 
-            SpellCast cast = new SpellCast(this);
-            cast.Targets = targets;
-            cast.Spell = DBC.Spell[spellid];
-            cast.Triggered = false;
+            SpellCast cast = new SpellCast(this)
+            {
+                Targets = targets,
+                Spell = DBC.Spell[spellid],
+                Triggered = false
+            };
             this.PrepareSpell(cast);
         }
         #endregion

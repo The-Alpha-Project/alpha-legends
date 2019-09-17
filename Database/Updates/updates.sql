@@ -142,6 +142,7 @@ begin not atomic
 		set foreign_key_checks = 1;
 
 		delete from item_template where entry in (18005, 21815, 21829, 21833);
+		delete from spawns_creatures where spawn_id = 32071;
 
 		insert into applied_updates values ('170920192');
 	end if;

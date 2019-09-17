@@ -329,7 +329,7 @@ namespace WorldServer.Game.Objects
             victim.Attackers.TryAdd(this.Guid, this);
             return true;
         }
-
+        
         public bool UpdateMeleeAttackingState()
         {
             byte swingerror = 0;
@@ -350,8 +350,7 @@ namespace WorldServer.Game.Objects
                     ((Player)this).LeaveCombat();
                 else
                 {
-                    Unit dump;
-                    this.Attackers.TryRemove(victim.Guid, out dump);
+                    this.Attackers.TryRemove(victim.Guid, out Unit dump);
                     this.IsAttacking = false;
                 }
 

@@ -160,42 +160,38 @@ namespace WorldServer.Game.Objects
 
         public void MoveTo(Vector loc, bool run, float boundingRadius = 0)
         {
-            uint moveTime = 0;
             Vector step = new Vector { X = this.Location.X - loc.X, Y = this.Location.Y - loc.Y, Z = this.Location.Z - loc.Z };
             if (step.X == 0f && step.Y == 0f)
                 return;
 
-            moveTime = (uint)Math.Round((this.Location.Distance(step) / this.Template.Speed) / (run ? 75 : 50));
+            uint moveTime = (uint)Math.Round((this.Location.Distance(step) / this.Template.Speed) / (run ? 75 : 50));
+            //uint moveTime = (uint)((Math.Sqrt((step.X * step.X) + (step.Y * step.Y))) * (1000 / this.Template.Speed));
 
-            Vector move = new Vector { X = this.Location.X - step.X, Y = this.Location.Y - step.Y, Z = this.Location.Z - step.Z };
+            //Vector move = new Vector { X = this.Location.X - step.X, Y = this.Location.Y - step.Y, Z = this.Location.Z - step.Z };
 
-            MoveLocation = move;
+            this.MoveLocation = loc;
 
-            SendMoveToPacket(move, moveTime, run);
+            SendMoveToPacket(loc, moveTime, run, this.Orientation);
         }
 
-        public void SendMoveToPacket(Vector loc, uint time, bool run)
+        public void SendMoveToPacket(Vector loc, uint time, bool run, float orientation = 0)
         {
-            SendMoveToPacket(loc, 0, time, run);
-        }
-
-        public void SendMoveToPacket(Vector loc, float orientation, uint time, bool run)
-        {
-            this.Location = loc;
-
             PacketWriter pw = new PacketWriter(Opcodes.SMSG_MONSTER_MOVE);
             pw.WriteUInt64(this.Guid);
             pw.WriteFloat(this.Location.X);
             pw.WriteFloat(this.Location.Y);
             pw.WriteFloat(this.Location.Z);
-            pw.WriteFloat(this.Orientation);
+            pw.WriteFloat(orientation);
             pw.WriteUInt8(0);
             pw.WriteUInt32((uint)(run ? 0x100 : 0)); //Flags : 0x0 - Walk, 0x100 - Run
             pw.WriteUInt32(time);
-            pw.WriteInt32(1);
+            pw.WriteUInt32(1);
             pw.WriteFloat(loc.X);
             pw.WriteFloat(loc.Y);
             pw.WriteFloat(loc.Z);
+
+            this.Location = loc;
+
             GridManager.Instance.SendSurrounding(pw, this);
         }
         #endregion
@@ -503,14 +499,13 @@ namespace WorldServer.Game.Objects
         private void AttackUpdate()
         {
             Unit closestTarget = null;
-            Unit dump;
             if (this.IsDead)
                 return;
 
             //Remove out of range attackers
             foreach (Unit victim in this.Attackers.Values.ToList())
                 if (victim.Location.DistanceSqrd(this.Location) > Math.Pow(Globals.UPDATE_DISTANCE, 2) || victim.IsDead)
-                    this.Attackers.TryRemove(victim.Guid, out dump); //Out of range
+                    this.Attackers.TryRemove(victim.Guid, out Unit dump); //Out of range
                 else if (closestTarget == null)
                     closestTarget = victim;
                 else if (victim.Location.DistanceSqrd(this.Location) < closestTarget.Location.DistanceSqrd(this.Location))
