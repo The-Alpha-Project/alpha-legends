@@ -8,6 +8,7 @@ using WorldServer.Packets.Handlers;
 using WorldServer.Storage;
 using Common.Constants;
 using WorldServer.Game.Objects.PlayerExtensions.Skill;
+using System.Threading.Tasks;
 using System;
 using Common.Helpers;
 
@@ -249,7 +250,7 @@ namespace WorldServer.Game.Commands
                 } else
                 {
                     ChatManager.Instance.SendSystemMessage(player, string.Format("Guid: {0}, Entry: {1}, Display ID: {2} X: {3}, Y: {4}, Z: {5}, Orientation: {6} Map: {7}", 
-                        unit.Guid, unit is Creature ? ((Creature)unit).Entry : 0, unit.DisplayID, unit.Location.X, unit.Location.Y, unit.Location.Z, unit.Orientation, unit.Map));
+                        unit.Guid & ~(ulong)HIGH_GUID.HIGHGUID_UNIT, unit is Creature ? ((Creature)unit).Entry : 0, unit.DisplayID, unit.Location.X, unit.Location.Y, unit.Location.Z, unit.Orientation, unit.Map));
                 }
             }
         }
@@ -263,6 +264,23 @@ namespace WorldServer.Game.Commands
         public static void Unmount(Player player, string[] args)
         {
             player.Unmount();
+        }
+
+        public static void GObjectInfo(Player player, string[] args)
+        {
+            foreach(WorldObject obj in GridManager.Instance.GetSurroundingObjects(player))
+            {
+                if (obj is GameObject)
+                {
+                    uint max_distance = Read<uint>(args, 0);
+                    float distance = player.Location.Distance(new Vector(obj.Location.X, obj.Location.Y, obj.Location.Z));
+                    if (distance <= max_distance)
+                    {
+                        ChatManager.Instance.SendSystemMessage(player, string.Format("Name: {0}, Guid: {1}, Entry: {2}, Display ID: {3} X: {4}, Y: {5}, Z: {6}, Orientation: {7} Map: {8}, Distance: {9}",
+                                ((GameObject)obj).Template.Name, obj.Guid & ~(ulong)HIGH_GUID.HIGHGUID_GAMEOBJECT, ((GameObject)obj).Entry, obj.DisplayID, obj.Location.X, obj.Location.Y, obj.Location.Z, obj.Orientation, obj.Map, distance));
+                    }
+                }
+            }
         }
     }
 }

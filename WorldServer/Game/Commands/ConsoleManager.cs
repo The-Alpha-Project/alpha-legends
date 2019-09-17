@@ -75,6 +75,7 @@ namespace WorldServer.Game.Commands
             DefineCommand("uinfo", GameMasterCommands.UnitInfo);
             DefineCommand("mount", GameMasterCommands.Mount);
             DefineCommand("unmount", GameMasterCommands.Unmount);
+            DefineCommand("goinfo", GameMasterCommands.GObjectInfo);
         }
     }
 }
