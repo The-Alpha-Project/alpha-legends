@@ -127,5 +127,22 @@ begin not atomic
 
 		insert into applied_updates values ('170920191');
 	end if;
+
+	-- 17/09/2019 2
+	if (select count(*) from applied_updates where id='170920192') = 0 then
+		update item_template set displayid = 308 where displayid = 21905;
+		update item_template set displayid = 6389 where displayid = 18060;
+		update item_template set displayid = 7175 where displayid = 14994;
+		update item_template set displayid = 1275 where displayid = 18114 or entry = 1708;
+
+		set foreign_key_checks = 0;
+		alter table npc_vendor drop foreign key vendor_item;
+		alter table npc_vendor add constraint vendor_item foreign key (item) references item_template(entry) on delete cascade on update cascade;
+		set foreign_key_checks = 1;
+
+		delete from item_template where entry in (18005, 21815, 21829, 21833);
+
+		insert into applied_updates values ('170920192');
+	end if;
 end $
 delimiter ;
