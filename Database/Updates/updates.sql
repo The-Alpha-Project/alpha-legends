@@ -133,7 +133,8 @@ begin not atomic
 		update item_template set displayid = 308 where displayid = 21905;
 		update item_template set displayid = 6389 where displayid = 18060;
 		update item_template set displayid = 7175 where displayid = 14994;
-		update item_template set displayid = 1275 where displayid = 18114 or entry = 1708;
+		update item_template set displayid = 7628 where entry = 1179;
+		update item_template set displayid = 11032 where displayid = 18114 or entry = 1708;
 
 		set foreign_key_checks = 0;
 		alter table npc_vendor drop foreign key vendor_item;
