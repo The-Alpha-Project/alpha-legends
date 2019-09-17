@@ -63,35 +63,35 @@ namespace WorldServer.Game.Structs
 
         public void Update()
         {
-            if (Flag.HasFlag(this.Spell.ChannelInterruptFlags, (uint)SpellChannelInterruptFlags.CHANNEL_FLAG_MOVEMENT) && this.m_location != Caster.Location)
+            if (Spell.ChannelInterruptFlags.HasFlag((uint)SpellChannelInterruptFlags.CHANNEL_FLAG_MOVEMENT) && this.m_location != Caster.Location)
             {
                 Cancel();
                 Caster.SendCastResult(SpellFailedReason.SPELL_FAILED_MOVING, Spell.Id);
                 return;
             }
 
-            if (Flag.HasFlag(Spell.InterruptFlags, (uint)SpellInterruptFlags.SPELL_INTERRUPT_FLAG_MOVEMENT) && (this.m_location != Caster.Location))
+            if (Spell.InterruptFlags.HasFlag((uint)SpellInterruptFlags.SPELL_INTERRUPT_FLAG_MOVEMENT) && (this.m_location != Caster.Location))
             {
                 Cancel();
                 Caster.SendCastResult(SpellFailedReason.SPELL_FAILED_MOVING, Spell.Id);
                 return;
             }
 
-            if (Flag.HasFlag(Spell.ChannelInterruptFlags, (uint)SpellChannelInterruptFlags.CHANNEL_FLAG_TURNING) && this.m_orientation != Caster.Orientation)
+            if (Spell.ChannelInterruptFlags.HasFlag((uint)SpellChannelInterruptFlags.CHANNEL_FLAG_TURNING) && this.m_orientation != Caster.Orientation)
             {
                 Cancel();
                 Caster.SendCastResult(SpellFailedReason.SPELL_FAILED_MOVING, Spell.Id);
                 return;
             }
 
-            if (Flag.HasFlag(Spell.ChannelInterruptFlags, (uint)SpellChannelInterruptFlags.CHANNEL_FLAG_DAMAGE) && Caster.Health.Current < this.m_health)
+            if (Spell.ChannelInterruptFlags.HasFlag((uint)SpellChannelInterruptFlags.CHANNEL_FLAG_DAMAGE) && Caster.Health.Current < this.m_health)
             {
                 Cancel();
                 Caster.SendCastResult(SpellFailedReason.SPELL_FAILED_INTERRUPTED_COMBAT, Spell.Id);
                 return;
             }
 
-            if (Flag.HasFlag(Spell.InterruptFlags, (uint)SpellInterruptFlags.SPELL_INTERRUPT_FLAG_ABORT_ON_DMG) && Caster.Health.Current < this.m_health)
+            if (Spell.InterruptFlags.HasFlag((uint)SpellInterruptFlags.SPELL_INTERRUPT_FLAG_ABORT_ON_DMG) && Caster.Health.Current < this.m_health)
             {
                 Cancel();
                 Caster.SendCastResult(SpellFailedReason.SPELL_FAILED_INTERRUPTED_COMBAT, Spell.Id);
@@ -137,7 +137,7 @@ namespace WorldServer.Game.Structs
                 {
                     case SpellImplicitTargets.TARGET_ALL_ENEMY_IN_AREA:
                     case SpellImplicitTargets.TARGET_ALL_ENEMY_IN_AREA_INSTANT:
-                        if (Flag.HasFlag(Targets.TargetMask, (uint)SpellTargetType.TARGET_TYPE_LOCATION))
+                        if (Targets.TargetMask.HasFlag((uint)SpellTargetType.TARGET_TYPE_LOCATION))
                             EnemyTargets = GetEnemyAtPoint(Caster, Targets.TargetLocation, Spell.EffectRadiusIndex[index]);
                         else
                         {
@@ -384,7 +384,7 @@ namespace WorldServer.Game.Structs
             //if (Player * modOwner = GetSpellModOwner())
             //    modOwner->ApplySpellMod(spellProto->Id, SPELLMOD_ALL_EFFECTS, value);
 
-            if (Flag.HasFlag(Spell.Attributes, (uint)SpellAttributes.SPELL_ATTR_LEVEL_DAMAGE_CALCULATION) && Spell.spellLevel > 0 &&
+            if (Spell.Attributes.HasFlag((uint)SpellAttributes.SPELL_ATTR_LEVEL_DAMAGE_CALCULATION) && Spell.spellLevel > 0 &&
                 !new[] { SpellEffects.SPELL_EFFECT_WEAPON_PERC_DMG, SpellEffects.SPELL_EFFECT_APPLY_AURA }.Contains((SpellEffects)Spell.Effect[index]))
                 value = (int)(value * 0.25f * Math.Exp(Caster.Level * (70 - Spell.spellLevel) / 1000.0f));
 
@@ -582,14 +582,14 @@ namespace WorldServer.Game.Structs
             if (DBC.SpellCastTimes.TryGetValue((int)Spell.CastingTimeIndex, out CastTime))
             {
                 this.Duration = CastTime.m_base / 1000;
-                this.Timer = Globals.GetFutureTime((float)this.Duration);
+                this.Timer = Globals.GetFutureTime(this.Duration);
             }
 
         }
 
         private uint SetPowerCost()
         {
-            if (Flag.HasFlag(Spell.Attributes, (uint)SpellAttributesEx.SPELL_ATTR_EX_DRAIN_ALL_POWER))
+            if (Spell.Attributes.HasFlag((uint)SpellAttributesEx.SPELL_ATTR_EX_DRAIN_ALL_POWER))
             {
                 // If power type - health drain all
                 if (Spell.powerType == (uint)PowerTypes.POWER_HEALTH)
@@ -625,7 +625,7 @@ namespace WorldServer.Game.Structs
                 }
             }
 
-            if (Flag.HasFlag(Spell.Attributes, (uint)SpellAttributes.SPELL_ATTR_LEVEL_DAMAGE_CALCULATION))
+            if (Spell.Attributes.HasFlag((uint)SpellAttributes.SPELL_ATTR_LEVEL_DAMAGE_CALCULATION))
                 powerCost = (int)(powerCost / (1.117f * Spell.spellLevel / Caster.Level - 0.1327f));
 
             return (uint)(powerCost < 0 ? 0 : powerCost);
@@ -634,7 +634,7 @@ namespace WorldServer.Game.Structs
         private SpellSchoolMask GetFirstSchoolInMask()
         {
             for (int i = 0; i < 8; ++i)
-                if (Flag.HasFlag((byte)this.SchoolMask, (byte)(1 << i)))
+                if (((byte)this.SchoolMask).HasFlag((byte)(1 << i)))
                     return (SpellSchoolMask)i;
 
             return SpellSchoolMask.SPELL_SCHOOL_MASK_NORMAL;
@@ -657,11 +657,11 @@ namespace WorldServer.Game.Structs
                 return;
             }
 
-            if (Flag.HasFlag(TargetMask, (uint)SpellTargetType.TARGET_TYPE_UNIT) ||
-                Flag.HasFlag(TargetMask, (uint)SpellTargetType.TARGET_TYPE_OBJECT) ||
-                Flag.HasFlag(TargetMask, (uint)SpellTargetType.TARGET_TYPE_ITEM) ||
-                Flag.HasFlag(TargetMask, (uint)SpellTargetType.TARGET_TYPE_ENEMY) ||
-                Flag.HasFlag(TargetMask, (uint)SpellTargetType.TARGET_TYPE_FRIENDLY))
+            if (TargetMask.HasFlag((uint)SpellTargetType.TARGET_TYPE_UNIT) ||
+                TargetMask.HasFlag((uint)SpellTargetType.TARGET_TYPE_OBJECT) ||
+                TargetMask.HasFlag((uint)SpellTargetType.TARGET_TYPE_ITEM) ||
+                TargetMask.HasFlag((uint)SpellTargetType.TARGET_TYPE_ENEMY) ||
+                TargetMask.HasFlag((uint)SpellTargetType.TARGET_TYPE_FRIENDLY))
             {
                 ulong guid = packet.ReadUInt64();
                 Target = Database.Creatures.TryGet<WorldObject>(guid) ??
@@ -670,7 +670,7 @@ namespace WorldServer.Game.Structs
                          Database.Items.TryGet<WorldObject>(guid);
             }
 
-            if (Flag.HasFlag(TargetMask, (uint)SpellTargetType.TARGET_TYPE_LOCATION))
+            if (TargetMask.HasFlag((uint)SpellTargetType.TARGET_TYPE_LOCATION))
             {
                 TargetLocation = packet.ReadVector();
             }
@@ -679,16 +679,16 @@ namespace WorldServer.Game.Structs
         public void WriteTargets(ref PacketWriter packet)
         {
             packet.WriteUInt16((ushort)TargetMask);
-            if (Flag.HasFlag(TargetMask, (uint)SpellTargetType.TARGET_TYPE_UNIT) ||
-                Flag.HasFlag(TargetMask, (uint)SpellTargetType.TARGET_TYPE_OBJECT) ||
-                Flag.HasFlag(TargetMask, (uint)SpellTargetType.TARGET_TYPE_ITEM) ||
-                Flag.HasFlag(TargetMask, (uint)SpellTargetType.TARGET_TYPE_ENEMY) ||
-                Flag.HasFlag(TargetMask, (uint)SpellTargetType.TARGET_TYPE_FRIENDLY))
+            if (TargetMask.HasFlag((uint)SpellTargetType.TARGET_TYPE_UNIT) ||
+                TargetMask.HasFlag((uint)SpellTargetType.TARGET_TYPE_OBJECT) ||
+                TargetMask.HasFlag((uint)SpellTargetType.TARGET_TYPE_ITEM) ||
+                TargetMask.HasFlag((uint)SpellTargetType.TARGET_TYPE_ENEMY) ||
+                TargetMask.HasFlag((uint)SpellTargetType.TARGET_TYPE_FRIENDLY))
             {
                 packet.WriteUInt64(Target.Guid);
             }
 
-            if (Flag.HasFlag(TargetMask, (uint)SpellTargetType.TARGET_TYPE_LOCATION))
+            if (TargetMask.HasFlag((uint)SpellTargetType.TARGET_TYPE_LOCATION))
             {
                 packet.WriteVector(TargetLocation);
             }

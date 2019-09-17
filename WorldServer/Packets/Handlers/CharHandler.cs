@@ -1,17 +1,16 @@
-﻿using Common.Network.Packets;
-using WorldServer.Network;
+﻿using System;
 using System.Linq;
 using Common.Constants;
-using WorldServer.Game.Objects;
-using WorldServer.Storage;
-using WorldServer.Game.Objects.UnitExtensions;
+using Common.Network.Packets;
 using WorldServer.Game.Managers;
-using System;
-using Common.Helpers;
+using WorldServer.Game.Objects;
+using WorldServer.Game.Objects.UnitExtensions;
+using WorldServer.Network;
+using WorldServer.Storage;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class CharHandler
+    public static class CharHandler
     {
         private static void SetMasks(Player p)
         {
@@ -83,18 +82,26 @@ namespace WorldServer.Packets.Handlers
             if (Database.Players.Count() > 0)
                 guid = Database.Players.Keys.Max() + 1;
 
-            Player cha = new Player(guid);
-            cha.Name = packet.ReadString();
-            cha.Name = char.ToUpper(cha.Name[0]) + cha.Name.Substring(1).ToLower(); //Format to UCFirst
+            Player cha = new Player(guid)
+            {
+                Name = packet.ReadString(),
+                Race = packet.ReadByte(),
+                Class = packet.ReadByte(),
+                Gender = packet.ReadByte(),
+                Skin = packet.ReadByte(),
+                Face = packet.ReadByte(),
+                HairStyle = packet.ReadByte(),
+                HairColour = packet.ReadByte(),
+                FacialHair = packet.ReadByte()
+            };
+            // Ugly but faster. In Alpha players were allowed to have, at least (looking at screnshots), 2 uppercase letters (seems like the first letter was mandatory).
+            cha.Name = char.ToUpper(cha.Name[0]) + cha.Name.Substring(1);
+            int upper_count = 0;
+            for (int i = 0; i < cha.Name.Length; i++)
+                if (char.IsUpper(cha.Name[i])) upper_count++;
+            if (upper_count > 2)
+                cha.Name = cha.Name[0] + cha.Name.Substring(1).ToLower(); //Format to UCFirst
 
-            cha.Race = packet.ReadByte();
-            cha.Class = packet.ReadByte();
-            cha.Gender = packet.ReadByte();
-            cha.Skin = packet.ReadByte();
-            cha.Face = packet.ReadByte();
-            cha.HairStyle = packet.ReadByte();
-            cha.HairColour = packet.ReadByte();
-            cha.FacialHair = packet.ReadByte();
             packet.ReadByte();
 
             SetMasks(cha);
@@ -139,7 +146,7 @@ namespace WorldServer.Packets.Handlers
         public static void HandleNameCache(ref PacketReader packet, ref WorldManager manager)
         {
             ulong guid = packet.ReadUInt64();
-            Player character = (manager.Character != null ? manager.Character : Database.Players.TryGet(guid));
+            Player character = manager.Character ?? Database.Players.TryGet(guid); // ?? is a coalesce expression, == manager.Character != null ? manager.Character : Database.Players.TryGet(guid)
             if (character == null)
                 return;
             

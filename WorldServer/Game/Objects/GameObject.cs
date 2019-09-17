@@ -82,7 +82,7 @@ namespace WorldServer.Game.Objects
             this.Template = Database.GameObjectTemplates.TryGet(this.Entry);
             this.Scale = this.Template.Size;
 
-            if (Rotation[2] == 0 && Rotation[3] == 0)
+            if (Rotation[2] == 0f && Rotation[3] == 0f)
             {
                 Rotation[2] = (float)Math.Sin(this.Orientation / 2);
                 Rotation[3] = (float)Math.Cos(this.Orientation / 2);
@@ -120,7 +120,7 @@ namespace WorldServer.Game.Objects
             uc.UpdateValue<uint>(GameObjectFields.GAMEOBJECT_DISPLAYID, Template.DisplayId);
             uc.UpdateValue<uint>(GameObjectFields.GAMEOBJECT_FLAGS, Template.Flags);
             uc.UpdateValue<uint>(GameObjectFields.GAMEOBJECT_FACTION, Template.Faction);
-            uc.UpdateValue<uint>(GameObjectFields.GAMEOBJECT_STATE, (uint)State);
+            uc.UpdateValue<uint>(GameObjectFields.GAMEOBJECT_STATE, State);
 
             for (int i = 0; i < 4; i++)
                 uc.UpdateValue<float>(GameObjectFields.GAMEOBJECT_ROTATION, Rotation[i], i);
@@ -231,14 +231,14 @@ namespace WorldServer.Game.Objects
                     continue;
 
                 Item item = Database.ItemTemplates.CreateItemOrContainer(li.Item);
-                item.CurrentSlot = (uint)item.EquipSlot;
+                item.CurrentSlot = item.EquipSlot;
                 item.Owner = this.Guid;
                 item.Contained = this.Guid;
                 item.Type = (InventoryTypes)item.Template.InvType;
                 item.DisplayID = item.Template.DisplayID;
                 Database.Items.TryAdd(item);
 
-                this.Loot.Add(new LootObject()
+                this.Loot.Add(new LootObject
                 {
                     Item = item,
                     Count = (uint)(new Random().Next(li.MinCount, li.MaxCount)),

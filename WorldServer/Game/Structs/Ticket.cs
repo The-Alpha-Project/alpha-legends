@@ -31,11 +31,11 @@ namespace WorldServer.Game.Structs
 
         public void Save()
         {
-            List<string> columns = new List<string>() {
+            List<string> columns = new List<string> {
                 "is_bug", "account_name", "account_id", "character_name", "text_body"
             };
 
-            List<MySqlParameter> parameters = new List<MySqlParameter>()
+            List<MySqlParameter> parameters = new List<MySqlParameter>
             {
                 new MySqlParameter("@is_bug", this.IsBug),
                 new MySqlParameter("@account_name", this.AccountName),

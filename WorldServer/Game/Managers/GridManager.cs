@@ -16,7 +16,7 @@ namespace WorldServer.Game.Managers
     public class GridManager : SingletonBase<GridManager>
     {
         private const float TOLERANCE = 0.00001f;
-        private static Opcodes[] UPDATE_OPCODES = new[] { Opcodes.SMSG_COMPRESSED_UPDATE_OBJECT, Opcodes.SMSG_UPDATE_OBJECT };
+        private static Opcodes[] UPDATE_OPCODES = { Opcodes.SMSG_COMPRESSED_UPDATE_OBJECT, Opcodes.SMSG_UPDATE_OBJECT };
 
         public const float GRID_SIZE = 300f;
         public ConcurrentDictionary<string, Grid> Grids = new ConcurrentDictionary<string, Grid>();

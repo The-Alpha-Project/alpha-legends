@@ -195,7 +195,7 @@ namespace WorldServer.Storage
 
         private ulong GetHash(object obj)
         {
-            string text = JsonConvert.SerializeObject(obj, new JsonSerializerSettings() { MaxDepth = 1 });
+            string text = JsonConvert.SerializeObject(obj, new JsonSerializerSettings { MaxDepth = 1 });
             byte[] bytes = Encoding.UTF8.GetBytes(text);
             ulong hash = 14695981039346656037;
             for (var i = 0; i < bytes.Length; i++)

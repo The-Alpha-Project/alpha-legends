@@ -10,7 +10,7 @@ using WorldServer.Storage;
 
 namespace WorldServer.Game
 {
-    public class Globals
+    public static class Globals
     {
         //System Timer
         private static Timer UpdateTimer;
@@ -45,18 +45,18 @@ namespace WorldServer.Game
         public static ulong PLAYER_GUID = (ulong)HIGH_GUID.HIGHGUID_PLAYER;
         public static ulong CLIENT_ID = (ulong)HIGH_GUID.HIGHGUID_PLAYER;
         public static ulong GO_GUID = (ulong)HIGH_GUID.HIGHGUID_GAMEOBJECT;
-        
+
         public static void Initialize()
-        {   
+        {
             DBC.Initialize();
             Database.Initialize();
             SpellEffect.InitSpellEffects();
-                      
-            UpdateTimer = new Timer() { Enabled = true, Interval = 50 };
-            UpdateTimer.Elapsed += new ElapsedEventHandler(Update);
 
-            SaveTimer = new Timer() { Enabled = true, Interval = 60000 };
-            SaveTimer.Elapsed += new ElapsedEventHandler(Save);
+            UpdateTimer = new Timer { Enabled = true, Interval = 50 };
+            UpdateTimer.Elapsed += Update;
+
+            SaveTimer = new Timer { Enabled = true, Interval = 60000 };
+            SaveTimer.Elapsed += Save;
         }
 
         #region Update Functions

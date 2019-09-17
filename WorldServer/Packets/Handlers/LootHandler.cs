@@ -8,7 +8,7 @@ using Common.Helpers;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class LootHandler
+    public static class LootHandler
     {
         public static void HandleLoot(ref PacketReader packet, ref WorldManager manager)
         {

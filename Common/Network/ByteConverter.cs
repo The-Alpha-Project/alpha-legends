@@ -70,7 +70,7 @@ namespace Common.Network
 
         public static uint ConvertToUInt32(byte val1, byte val2, byte val3, byte val4)
         {
-            byte[] result = new[] { val1, val2, val3, val4 };
+            byte[] result = { val1, val2, val3, val4 };
             return BitConverter.ToUInt32(result, 0);
         }
     }

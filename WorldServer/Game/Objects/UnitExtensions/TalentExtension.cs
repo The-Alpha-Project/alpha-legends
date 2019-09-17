@@ -68,7 +68,7 @@ namespace WorldServer.Game.Objects.UnitExtensions
                 {
                     if (nextTalent.Contains(ability.m_spell))
                         status = TrainerServices.TRAINER_SERVICE_AVAILABLE; //Definitely available as in superceed list
-                    else if (spell.iRank == 1)
+                    else if (spell.IRank == 1)
                         status = TrainerServices.TRAINER_SERVICE_AVAILABLE; //Definitely available as Rank 1
                     else
                         status = TrainerServices.TRAINER_SERVICE_UNAVAILABLE; //Probably not available as fallen through
@@ -103,8 +103,7 @@ namespace WorldServer.Game.Objects.UnitExtensions
             {
                 TrainerServices status = TrainerServices.TRAINER_SERVICE_AVAILABLE;
 
-                Spell spell = null;
-                if (!DBC.Spell.TryGetValue((uint)vendorspell.SpellId, out spell)) //Only use those with spells
+                if (!DBC.Spell.TryGetValue(vendorspell.SpellId, out Spell spell)) //Only use those with spells
                     continue;
 
                 if (p.Spells.ContainsKey(vendorspell.SpellId))
@@ -115,16 +114,18 @@ namespace WorldServer.Game.Objects.UnitExtensions
                 //Check existence
                 //Check spell chain
 
-                SpellListItem ti = new SpellListItem();
-                ti.SpellId = (uint)vendorspell.SpellId;
-                ti.Status = (byte)status;
-                ti.Cost = vendorspell.Cost;
-                ti.SkillPoints = (byte)vendorspell.SpellPointCost;
-                ti.RequiredLevel = (byte)vendorspell.RequiredLevel;
-                ti.RequiredSkillLine = vendorspell.RequiredSkill;
-                ti.RequiredSkillRank = vendorspell.RequiredSkillValue;
-                ti.RequiredSkillStep = 0;
-                ti.RequiredAbility = new uint[] { 0, 0, 0 };
+                SpellListItem ti = new SpellListItem
+                {
+                    SpellId = vendorspell.SpellId,
+                    Status = (byte)status,
+                    Cost = vendorspell.Cost,
+                    SkillPoints = (byte)vendorspell.SpellPointCost,
+                    RequiredLevel = (byte)vendorspell.RequiredLevel,
+                    RequiredSkillLine = vendorspell.RequiredSkill,
+                    RequiredSkillRank = vendorspell.RequiredSkillValue,
+                    RequiredSkillStep = 0,
+                    RequiredAbility = new uint[] { 0, 0, 0 }
+                };
                 spells.Add(ti);
             }
 
@@ -157,7 +158,7 @@ namespace WorldServer.Game.Objects.UnitExtensions
             public uint RequiredSkillLine { get; set; }
             public uint RequiredSkillRank { get; set; }
             public uint RequiredSkillStep { get; set; }
-            public uint[] RequiredAbility = new uint[] { 0, 0, 0 };
+            public uint[] RequiredAbility = { 0, 0, 0 };
 
             public void BuildPacket(ref PacketWriter pk)
             {

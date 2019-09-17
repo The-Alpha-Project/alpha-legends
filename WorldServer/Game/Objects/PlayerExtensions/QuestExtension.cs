@@ -328,7 +328,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
                 packet.WriteUInt32(Database.ItemTemplates.TryGet(quest.RewChoiceItemId[i])?.DisplayID ?? 0);
             }
 
-            packet.WriteUInt32((uint)quest.GetReqItemCount);
+            packet.WriteUInt32(quest.GetReqItemCount);
             for (int i = 0; i < 4; i++)
             {
                 packet.WriteUInt32(quest.ReqItemId[i]);
@@ -344,13 +344,10 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
 
         public static void SendQuestGiverRequestItems(this Player p, QuestTemplate quest, QuestStatuses status, ulong guid, bool CloseOnCancel)
         {
-            bool completeable = p.CanCompleteQuest(quest.QuestId);
-            if (!quest.IsAutoComplete && status != QuestStatuses.QUEST_STATUS_COMPLETE) //Check if it is complete
-                completeable = false;
+            bool completeable = p.CanCompleteQuest(quest.QuestId) && (quest.IsAutoComplete || status == QuestStatuses.QUEST_STATUS_COMPLETE);
 
             if (p.Quests.ContainsKey(quest.QuestId))
-                if ((p.Quests[quest.QuestId] != null) && (p.Quests[quest.QuestId].Rewarded == true))
-                    completeable = false;
+                completeable &= ((p.Quests[quest.QuestId] == null) || (p.Quests[quest.QuestId].Rewarded != true));
 
             PacketWriter packet = new PacketWriter(Opcodes.SMSG_QUESTGIVER_REQUEST_ITEMS);
             packet.WriteUInt64(guid);
@@ -362,7 +359,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
             packet.WriteUInt32(CloseOnCancel ? (uint)1 : 0);
             packet.WriteUInt32(quest.RewOrReqMoney < 0 ? (uint)-quest.RewOrReqMoney : 0);
 
-            packet.WriteUInt32((uint)quest.GetReqItemCount);
+            packet.WriteUInt32(quest.GetReqItemCount);
             for (int i = 0; i < 4; i++)
             {
                 packet.WriteUInt32(quest.ReqItemId[i]);
@@ -389,7 +386,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
             packet.WriteUInt32(ActivateClose ? (uint)1 : 0);
 
             //Reward choices
-            packet.WriteUInt32((uint)quest.GetRewChoiceItemCount);
+            packet.WriteUInt32(quest.GetRewChoiceItemCount);
             for (int i = 0; i < 4; i++)
             {
                 packet.WriteUInt32(quest.RewChoiceItemId[i]);
@@ -398,7 +395,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
             }
 
             //Reward items
-            packet.WriteUInt32((uint)quest.GetRewItemCount);
+            packet.WriteUInt32(quest.GetRewItemCount);
             for (int i = 0; i < 4; i++)
             {
 
@@ -419,7 +416,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
             packet.WriteUInt32((uint)quest.RewOrReqMoney);
 
             //Required items
-            packet.WriteUInt32((uint)quest.GetReqItemCount);
+            packet.WriteUInt32(quest.GetReqItemCount);
             for (int i = 0; i < 4; i++)
             {
                 packet.WriteUInt32(quest.ReqItemId[i]);
@@ -428,7 +425,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
             }
 
             //Required creature/gameobject kills
-            packet.WriteUInt32((uint)quest.GetReqCreatureOrGOCount);
+            packet.WriteUInt32(quest.GetReqCreatureOrGOCount);
             for (int i = 0; i < 4; i++)
             {
                 if (quest.ReqCreatureOrGOId[i] < 0)
@@ -567,8 +564,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
             {
                 if (!p.Skills.ContainsKey((ushort)qt.RequiredSkill)) //Missing skill
                     invalidReq = true;
-                else if (p.Skills[(ushort)qt.RequiredSkill].m_skillRank < qt.RequiredSkillValue) //Not high enough level
-                    invalidReq = true;
+                else invalidReq |= p.Skills[(ushort)qt.RequiredSkill].m_skillRank < qt.RequiredSkillValue;
             }
 
             if (invalidReq)
@@ -711,7 +707,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
 
                     if (reqitem == entry)
                     {
-                        uint curcount = (uint)(quest.ReqItems.ContainsKey(reqitem) ? quest.ReqItems[reqitem] : 0);
+                        uint curcount = quest.ReqItems.ContainsKey(reqitem) ? quest.ReqItems[reqitem] : 0;
                         uint reqcount = template.ReqItemCount[i];
                         if (curcount < reqcount)
                         {
@@ -751,7 +747,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
 
                     if (reqitem == entry)
                     {
-                        uint curcount = (uint)(quest.ReqItems.ContainsKey(reqitem) ? quest.ReqItems[reqitem] : 0);
+                        uint curcount = quest.ReqItems.ContainsKey(reqitem) ? quest.ReqItems[reqitem] : 0;
                         uint reqcount = template.ReqItemCount[i];
                         if (curcount < reqcount)
                         {
@@ -830,7 +826,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
                     uint reqkill = template.ReqItemId[i];
                     if (reqkill == creature.Entry)
                     {
-                        uint curcount = (uint)(quest.ReqCreatureGo.ContainsKey(reqkill) ? quest.ReqCreatureGo[reqkill] : 0);
+                        uint curcount = quest.ReqCreatureGo.ContainsKey(reqkill) ? quest.ReqCreatureGo[reqkill] : 0;
                         uint reqcount = template.ReqCreatureOrGOCount[i];
                         if (curcount < reqcount)
                         {

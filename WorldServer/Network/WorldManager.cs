@@ -67,11 +67,11 @@ namespace WorldServer.Network
             if (packet == null)
                 return;
 
-            byte[] buffer = packet.ReadDataToSend();
+            byte[] lbuffer = packet.ReadDataToSend();
 
             try
             {
-                Socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(FinishSend), Socket);
+                Socket.BeginSend(lbuffer, 0, lbuffer.Length, SocketFlags.None, new AsyncCallback(FinishSend), Socket);
 
                 if (!SuppressLog)
                 {

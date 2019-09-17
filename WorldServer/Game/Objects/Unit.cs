@@ -412,8 +412,6 @@ namespace WorldServer.Game.Objects
                     case 2:
                         player.SendAttackSwingFacingWrongWay();
                         break;
-                    default:
-                        break;
                 }
                 player.SwingError = swingerror;
             }
@@ -590,8 +588,6 @@ namespace WorldServer.Game.Objects
                     //damageInfo.blocked_amount = CalculatePct(damageInfo.damage, damageInfo.target.isBlockCritical() ? damageInfo.target.GetBlockPercent() * 2 : damageInfo.target.GetBlockPercent());
                     damageInfo.damage -= damageInfo.blocked_amount;
                     damageInfo.cleanDamage += damageInfo.blocked_amount;
-                    break;
-                default:
                     break;
             }
 

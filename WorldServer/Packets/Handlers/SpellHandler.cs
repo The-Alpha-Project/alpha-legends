@@ -13,7 +13,7 @@ using WorldServer.Network;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class SpellHandler
+    public static class SpellHandler
     {
         public static void HandleCastSpellOpcode(ref PacketReader packet, ref WorldManager manager)
         {

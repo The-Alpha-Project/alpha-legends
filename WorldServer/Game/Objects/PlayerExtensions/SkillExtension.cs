@@ -15,7 +15,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Skill
         {
             if (!p.Skills.ContainsKey(skillId) && DBC.SkillLine.ContainsKey(skillId))
             {
-                SkillLine cbi = DBC.SkillLine[(int)skillId];
+                SkillLine cbi = DBC.SkillLine[skillId];
                 ushort startValue = 1;
 
                 if (cbi.m_categoryID == (int)SkillTypes.MAX_SKILL)
@@ -53,7 +53,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Skill
         {
             //TODO secondary prof spell check
 
-            SkillLine cbi = DBC.SkillLine[(int)skill.m_skillLineID];
+            SkillLine cbi = DBC.SkillLine[skill.m_skillLineID];
             switch(cbi.m_skillType)
             {
                 case 0: //Weapon, Defense, Spell

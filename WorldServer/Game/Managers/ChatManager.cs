@@ -12,7 +12,7 @@ namespace WorldServer.Game.Managers
     public class ChatManager : SingletonBase<ChatManager>
     {
         public Dictionary<uint, ushort[]> LANG_SKILL_LOOKUP =
-        new Dictionary<uint, ushort[]>()
+        new Dictionary<uint, ushort[]>
         {
             { 1, new ushort[] { 109, 110 }}, //Orcish
             { 2, new ushort[] { 113, 114 }}, //Darnassian
@@ -20,7 +20,7 @@ namespace WorldServer.Game.Managers
             { 6, new ushort[] { 111, 112 }}, //Dwarvish
             { 7, new ushort[] { 98, 99 }}, //Common
             { 13, new ushort[] { 313, 314 }}, //Gnomish
-            { 14, new ushort[] { 315, 316 }}, //Troll
+            { 14, new ushort[] { 315, 316 }} //Troll
         };
 
         public uint GetLanguage(uint lang, Player player)

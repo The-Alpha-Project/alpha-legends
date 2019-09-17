@@ -81,7 +81,7 @@ namespace Common.Database.DBC.Structures
         public uint startRecoveryTime;
 
         private int m_rank = 0;
-        public int iRank
+        public int IRank
         {
             get
             {
@@ -90,11 +90,6 @@ namespace Common.Database.DBC.Structures
 
                 return m_rank;
             }
-        }
-
-        public Spell()
-        {
-
         }
 
         private void Load()

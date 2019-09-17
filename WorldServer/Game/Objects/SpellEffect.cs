@@ -12,7 +12,7 @@ using WorldServer.Game.Structs;
 
 namespace WorldServer.Game.Objects
 {
-    public class SpellEffect
+    public static class SpellEffect
     {
         public static Dictionary<SpellEffects, SpellEffectHandler> EffectHandlers = new Dictionary<SpellEffects, SpellEffectHandler>();
         public delegate SpellFailedReason SpellEffectHandler(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item);
@@ -202,7 +202,7 @@ namespace WorldServer.Game.Objects
             float radius = DBC.SpellRadius[(int)Spell.Spell.EffectRadiusIndex[Index]].m_radius;
             float newX = (float)(Spell.Caster.Location.X + Math.Cos(Spell.Caster.Orientation) * radius);
             float newY = (float)(Spell.Caster.Location.Y + Math.Sin(Spell.Caster.Orientation) * radius);
-            float newZ = (float)(Spell.Caster.Location.Z);
+            float newZ = Spell.Caster.Location.Z;
             if(Math.Abs(Spell.Caster.Location.Z - newZ) > radius)
             {
                 newX = Spell.Caster.Location.X;

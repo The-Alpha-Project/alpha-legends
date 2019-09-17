@@ -50,8 +50,7 @@ namespace WorldServer.Game.Commands
                 success = true;
             }
 
-            if (success) //Success
-                player.Dirty = true;
+            player.Dirty |= success;
         }
 
         public static void AddSkill(Player player, string[] args)
@@ -82,8 +81,7 @@ namespace WorldServer.Game.Commands
             else
                 success = player.SetSkill(skillid, curvalue);
 
-            if (success) //Success
-                player.Dirty = true;
+            player.Dirty |= success;
         }
 
         public static void Kill(Player player, string[] args)

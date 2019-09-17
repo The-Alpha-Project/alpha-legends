@@ -16,7 +16,7 @@ using WorldServer.Storage;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class MiscHandler
+    public static class MiscHandler
     {
         public static void HandleQueryTime(ref PacketReader packet, ref WorldManager manager)
         {
@@ -128,9 +128,9 @@ namespace WorldServer.Packets.Handlers
                     continue;
                 if (!string.IsNullOrWhiteSpace(player_name) && !p.Name.ToLower().Contains(player_name)) //Name check
                     continue;
-                if (!Flag.HasFlag(racemask, p.RaceMask)) //Race check
+                if (!racemask.HasFlag(p.RaceMask)) //Race check
                     continue;
-                if (!Flag.HasFlag(classmask, p.ClassMask)) //Class check
+                if (!classmask.HasFlag(p.ClassMask)) //Class check
                     continue;
                 if (zone_count > 0 && !zones.Contains(p.Zone)) //Zone check
                     continue;

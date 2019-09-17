@@ -9,7 +9,7 @@ using WorldServer.Storage;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class AuthHandler
+    public static class AuthHandler
     {
         public static void HandleAuthSession(ref PacketReader packet, ref WorldManager manager)
         {

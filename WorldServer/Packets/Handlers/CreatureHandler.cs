@@ -10,7 +10,7 @@ using WorldServer.Storage;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class CreatureHandler
+    public static class CreatureHandler
     {
         public static void HandleCreatureQuery(ref PacketReader packet, ref WorldManager manager)
         {

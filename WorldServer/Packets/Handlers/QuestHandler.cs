@@ -11,7 +11,7 @@ using WorldServer.Storage;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class QuestHandler
+    public static class QuestHandler
     {
         public static void HandleQuestGiverStatusQuery(ref PacketReader packet, ref WorldManager manager)
         {

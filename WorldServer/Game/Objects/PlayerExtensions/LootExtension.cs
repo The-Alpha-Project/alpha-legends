@@ -86,7 +86,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Loot
 
                 pw.WriteUInt8((byte)slot);
                 pw.WriteUInt32(li.Item.Template.Entry);
-                pw.WriteUInt32((uint)li.Count);
+                pw.WriteUInt32(li.Count);
                 pw.WriteUInt32(li.Item.Template.DisplayID);
                 pw.WriteUInt32(0);
                 pw.WriteUInt32(0);

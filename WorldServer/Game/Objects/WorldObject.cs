@@ -38,8 +38,6 @@ namespace WorldServer.Game.Objects
         public uint Map = 0;
         public TReadOnly<string> Grid = new TReadOnly<string>("");
 
-        public WorldObject() { }
-
         public bool IsTypeOf(ObjectTypes type)
         {
             return this.ObjectType.HasFlag(type);

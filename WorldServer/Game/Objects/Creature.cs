@@ -52,8 +52,8 @@ namespace WorldServer.Game.Objects
                                        Convert.ToSingle(dr["spawn_positionY"]),
                                        Convert.ToSingle(dr["spawn_positionZ"]));
             this.Orientation = Convert.ToSingle(dr["spawn_orientation"]);
-            this.Health = new TStat() { BaseAmount = Convert.ToUInt32(dr["spawn_curhealth"]) };
-            this.Mana = new TStat() { BaseAmount = Convert.ToUInt32(dr["spawn_curmana"]) };
+            this.Health = new TStat { BaseAmount = Convert.ToUInt32(dr["spawn_curhealth"]) };
+            this.Mana = new TStat { BaseAmount = Convert.ToUInt32(dr["spawn_curmana"]) };
             this.RespawnTime = Convert.ToInt32(dr["spawn_spawntime"]);
             this.RespawnDistance = Convert.ToInt32(dr["spawn_spawndist"]);
 
@@ -77,13 +77,13 @@ namespace WorldServer.Game.Objects
 
         public void Save()
         {
-            List<string> columns = new List<string>() {
+            List<string> columns = new List<string> {
                 "spawn_id", "spawn_entry", "spawn_map", "spawn_displayid", "spawn_positionX",
                 "spawn_positionY", "spawn_positionZ", "spawn_orientation", "spawn_curhealth",
                 "spawn_curmana", "spawn_spawntime", "spawn_spawndist"
             };
 
-            List<MySqlParameter> parameters = new List<MySqlParameter>()
+            List<MySqlParameter> parameters = new List<MySqlParameter>
             {
                 new MySqlParameter("@spawn_id", this.Guid & ~(ulong)HIGH_GUID.HIGHGUID_UNIT),
                 new MySqlParameter("@spawn_entry", this.Entry),
@@ -151,7 +151,7 @@ namespace WorldServer.Game.Objects
             this.Orientation = GetOrientation(this.Location.X, location.X, this.Location.Y, location.Y);
             PacketWriter pkt = new PacketWriter(Opcodes.MSG_MOVE_HEARTBEAT);
             pkt.WriteUInt64(this.Guid);
-            pkt.WriteUInt32((uint) Globals.TimeTicks);
+            pkt.WriteUInt32((uint)Globals.TimeTicks);
             pkt.WriteVector(this.Location);
             pkt.WriteFloat(this.Orientation);
             pkt.WriteUInt32(this.MovementFlags); // I'm not 100% sure about this one.
@@ -161,13 +161,13 @@ namespace WorldServer.Game.Objects
         public void MoveTo(Vector loc, bool run, float boundingRadius = 0)
         {
             uint moveTime = 0;
-            Vector step = new Vector() { X = this.Location.X - loc.X, Y = this.Location.Y - loc.Y, Z = this.Location.Z - loc.Z };
+            Vector step = new Vector { X = this.Location.X - loc.X, Y = this.Location.Y - loc.Y, Z = this.Location.Z - loc.Z };
             if (step.X == 0f && step.Y == 0f)
                 return;
 
-            moveTime = (uint) Math.Round((this.Location.Distance(step) / this.Template.Speed) / (run ? 75 : 50));
+            moveTime = (uint)Math.Round((this.Location.Distance(step) / this.Template.Speed) / (run ? 75 : 50));
 
-            Vector move = new Vector() { X = this.Location.X - step.X, Y = this.Location.Y - step.Y, Z = this.Location.Z - step.Z };
+            Vector move = new Vector { X = this.Location.X - step.X, Y = this.Location.Y - step.Y, Z = this.Location.Z - step.Z };
 
             MoveLocation = move;
 
@@ -190,7 +190,7 @@ namespace WorldServer.Game.Objects
             pw.WriteFloat(this.Location.Z);
             pw.WriteFloat(this.Orientation);
             pw.WriteUInt8(0);
-            pw.WriteUInt32((uint) (run ? 0x100 : 0)); //Flags : 0x0 - Walk, 0x100 - Run
+            pw.WriteUInt32((uint)(run ? 0x100 : 0)); //Flags : 0x0 - Walk, 0x100 - Run
             pw.WriteUInt32(time);
             pw.WriteInt32(1);
             pw.WriteFloat(loc.X);
@@ -320,13 +320,13 @@ namespace WorldServer.Game.Objects
                 this.Attackers.TryAdd(killer.Guid, killer);
 
             //No mob tagging so presumably any player that hit this creature gets the check?
-            foreach (Unit unit in this.Attackers.Values) 
+            foreach (Unit unit in this.Attackers.Values)
             {
                 if (unit.IsTypeOf(ObjectTypes.TYPE_PLAYER))
                 {
                     if (((Player)unit).Group != null)
                         players.UnionWith(((Player)unit).Group.GetGroupInRange(this, Globals.MAX_GROUP_XP_DISTANCE)); //Get inrange group
-                    else if(unit.Location.Distance(this.Location) <= Globals.MAX_GROUP_XP_DISTANCE) //Get inrange others
+                    else if (unit.Location.Distance(this.Location) <= Globals.MAX_GROUP_XP_DISTANCE) //Get inrange others
                         players.Add((Player)unit);
                 }
             }
@@ -339,7 +339,7 @@ namespace WorldServer.Game.Objects
         #region Item Functions
         public void GenerateLoot()
         {
-            this.Money = (uint)this.Template.Gold.GetRandom();
+            this.Money = this.Template.Gold.GetRandom();
             this.Loot.Clear();
             HashSet<LootItem> loot = new HashSet<LootItem>();
             Dictionary<int, List<LootItem>> lootgroups = Database.CreatureLoot.TryGet(this.Entry)?
@@ -379,7 +379,7 @@ namespace WorldServer.Game.Objects
                     continue;
 
                 Item item = Database.ItemTemplates.CreateItemOrContainer(li.Item);
-                item.CurrentSlot = (uint)item.EquipSlot;
+                item.CurrentSlot = item.EquipSlot;
                 item.Owner = this.Guid;
                 item.Contained = this.Guid;
                 item.Type = (InventoryTypes)item.Template.InvType;
@@ -387,7 +387,7 @@ namespace WorldServer.Game.Objects
                 item.StackCount = (uint)(new Random().Next(1, (int)item.Template.MaxStackCount));
                 Database.Items.TryAdd(item);
 
-                this.Loot.Add(new LootObject()
+                this.Loot.Add(new LootObject
                 {
                     Item = item,
                     Count = (uint)(new Random().Next(li.MinCount, li.MaxCount)),
@@ -516,7 +516,7 @@ namespace WorldServer.Game.Objects
                 else if (victim.Location.DistanceSqrd(this.Location) < closestTarget.Location.DistanceSqrd(this.Location))
                     closestTarget = victim;
 
-            if (this.Attackers.Count() == 0) //No one left to kill
+            if (!this.Attackers.Any()) //No one left to kill
             {
                 this.IsAttacking = false;
                 this.InCombat = false;

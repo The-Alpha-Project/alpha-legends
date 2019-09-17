@@ -13,7 +13,7 @@ using WorldServer.Storage;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class NPCHandler
+    public static class NPCHandler
     {
         public static void HandleListInventoryOpcode(ref PacketReader packet, ref WorldManager manager)
         {
@@ -28,7 +28,7 @@ namespace WorldServer.Packets.Handlers
 
             if (npc.IsEnemyTo(manager.Character))
                 return;
-            
+
             manager.Send(npc.ListInventory(manager.Character));
         }
 
@@ -109,7 +109,7 @@ namespace WorldServer.Packets.Handlers
             }
 
             ItemTemplate itm = Database.ItemTemplates.TryGet(item);
-            VendorItem vitm = npc.VendorLoot.Where(vi => vi.Item == item).First();
+            VendorItem vitm = npc.VendorLoot.First(vi => vi.Item == item);
             cost = itm.BuyPrice * count; //Enough info to calc cost
 
             if (c.IsDead || npc.IsDead || vitm.Entry == 0) //Dead or doesnt sell that item
@@ -161,8 +161,8 @@ namespace WorldServer.Packets.Handlers
             if (npc == null || npc?.IsEnemyTo(manager.Character) == true)
                 return;
 
-            ItemTemplate itm = Database.ItemTemplates.TryGet(item); 
-            VendorItem vitm = npc.Template.VendorItems.Where(vi => vi.Item == item).First();
+            ItemTemplate itm = Database.ItemTemplates.TryGet(item);
+            VendorItem vitm = npc.Template.VendorItems.First(vi => vi.Item == item);
             uint cost = itm.BuyPrice * count; //Enough info to calc cost
 
             if (itm == null) //Item doesnt exist
@@ -179,13 +179,13 @@ namespace WorldServer.Packets.Handlers
             }
             else
                 container = c.Inventory.GetBag(bag);
-                
+
             if (container == null || container?.IsFull == true)
             {
                 c.SendBuyError(BuyResults.BUY_ERR_CANT_CARRY_MORE, npc, item);
                 return;
             }
-            
+
             if (c.IsDead || npc.IsDead || vitm.Entry == 0) //Dead or doesnt sell that item
             {
                 c.SendBuyError(BuyResults.BUY_ERR_CANT_FIND_ITEM, npc, item);
@@ -259,11 +259,11 @@ namespace WorldServer.Packets.Handlers
                 foreach (SkillLineAbility ability in DBC.SkillLineAbility.Values)
                 {
                     //No spell!
-                    if (ability.m_spell != spellID) 
+                    if (ability.m_spell != spellID)
                         continue;
 
                     //Race Class exclude
-                    if (ability.m_excludeClass.HasFlag(player.ClassMask) || ability.m_excludeRace.HasFlag(player.RaceMask)) 
+                    if (ability.m_excludeClass.HasFlag(player.ClassMask) || ability.m_excludeRace.HasFlag(player.RaceMask))
                         continue;
 
                     if (player.TalentPoints >= 10 && player.Level >= spell.baseLevel)
@@ -341,8 +341,8 @@ namespace WorldServer.Packets.Handlers
 
             PacketWriter pkt = new PacketWriter(Opcodes.SMSG_BUY_BANK_SLOT_RESULT);
             uint nextslot = (uint)manager.Character.BankSlots + 1;
-            
-            if(!DBC.BankBagSlotPrices.ContainsKey(nextslot))
+
+            if (!DBC.BankBagSlotPrices.ContainsKey(nextslot))
             {
                 pkt.WriteUInt32((uint)BankSlotErrors.BANKSLOT_ERROR_FAILED_TOO_MANY);
                 manager.Send(pkt);
@@ -350,7 +350,7 @@ namespace WorldServer.Packets.Handlers
             }
 
             uint price = DBC.BankBagSlotPrices[nextslot].m_Cost;
-            if(price > manager.Character.Money)
+            if (price > manager.Character.Money)
             {
                 pkt.WriteUInt32((uint)BankSlotErrors.BANKSLOT_ERROR_INSUFFICIENT_FUNDS);
                 manager.Send(pkt);

@@ -12,7 +12,7 @@ using WorldServer.Storage;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class GameObjectHandler
+    public static class GameObjectHandler
     {
         public static void HandleGameObjectQueryOpcode(ref PacketReader packet, ref WorldManager manager)
         {

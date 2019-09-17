@@ -7,7 +7,7 @@ using WorldServer.Storage;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class GroupHandler
+    public static class GroupHandler
     {
         public static void HandleGroupInviteOpcode(ref PacketReader packet, ref WorldManager manager)
         {

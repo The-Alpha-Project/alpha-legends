@@ -63,7 +63,7 @@ namespace WorldServer.Game.Objects
                 return false;
 
             int slot = NextSlot();
-            return (slot < 0 ? false : AddItem(item, (uint)slot));
+            return slot >= 0 && AddItem(item, (uint)slot);
         }
 
         public Item GetItem(byte slot)

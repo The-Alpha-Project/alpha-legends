@@ -35,7 +35,7 @@ namespace WorldServer.Game.Objects.UnitExtensions
                 Creature unit = ((Creature)spell.Caster);
                 if (spell.Targets.Target != null)
                     unit.TurnTo(spell.Targets.Target.Location);
-                else if (Flag.HasFlag(spell.Targets.TargetMask, (uint)SpellTargetType.TARGET_TYPE_LOCATION))
+                else if (spell.Targets.TargetMask.HasFlag((uint)SpellTargetType.TARGET_TYPE_LOCATION))
                     unit.TurnTo(spell.Targets.TargetLocation);
             }
 
@@ -48,7 +48,7 @@ namespace WorldServer.Game.Objects.UnitExtensions
                 u.ChannelObject = spell.Targets.Target.Guid;
                 GridManager.Instance.SendSurrounding(u.BuildUpdate(), u);
 
-                if(u.IsTypeOf(ObjectTypes.TYPE_PLAYER))
+                if (u.IsTypeOf(ObjectTypes.TYPE_PLAYER))
                 {
                     PacketWriter channel = new PacketWriter(Opcodes.MSG_CHANNEL_START);
                     channel.WriteUInt32(spell.Spell.Id);
@@ -56,7 +56,7 @@ namespace WorldServer.Game.Objects.UnitExtensions
                     ((Player)u).Client.Send(channel);
                 }
             }
-            
+
         }
 
         public static void Cast(this Unit u, SpellCast spell)
@@ -68,12 +68,12 @@ namespace WorldServer.Game.Objects.UnitExtensions
             }
 
             SpellFailedReason reason = u.CanCast(spell, false);
-            if(reason != SpellFailedReason.SPELL_FAILED_NO_REASON) //Final check we can cast this
+            if (reason != SpellFailedReason.SPELL_FAILED_NO_REASON) //Final check we can cast this
             {
                 u.SendCastResult(reason, spell.Spell.Id);
                 return;
             }
-            
+
             int SpellTime = 0;
             if (spell.Spell.speed > 0)
             {
@@ -92,7 +92,7 @@ namespace WorldServer.Game.Objects.UnitExtensions
             TargetsInfected[1] = spell.GetTargets(1);
             TargetsInfected[2] = spell.GetTargets(2);
 
-            if (Flag.HasFlag(spell.Spell.Attributes, (uint)SpellAttributes.SPELL_ATTR_ON_NEXT_SWING_1) || Flag.HasFlag(spell.Spell.Attributes, (uint)SpellAttributes.SPELL_ATTR_ON_NEXT_SWING_2))
+            if (spell.Spell.Attributes.HasFlag((uint)SpellAttributes.SPELL_ATTR_ON_NEXT_SWING_1) || spell.Spell.Attributes.HasFlag((uint)SpellAttributes.SPELL_ATTR_ON_NEXT_SWING_2))
             {
                 //TODO combat spell
             }
@@ -114,31 +114,31 @@ namespace WorldServer.Game.Objects.UnitExtensions
                 switch ((PowerTypes)spell.Spell.powerType)
                 {
                     case PowerTypes.TYPE_MANA:
-                        if (Flag.HasFlag(spell.Spell.Attributes, (uint)SpellAttributesEx.SPELL_ATTR_EX_DRAIN_ALL_POWER))
+                        if (spell.Spell.Attributes.HasFlag((uint)SpellAttributesEx.SPELL_ATTR_EX_DRAIN_ALL_POWER))
                             p.Mana.Current = 0;
                         else
                             p.Mana.Current -= spell.GetManaCost(p.Mana.Current);
                         break;
                     case PowerTypes.TYPE_RAGE:
-                        if (Flag.HasFlag(spell.Spell.Attributes, (uint)SpellAttributesEx.SPELL_ATTR_EX_DRAIN_ALL_POWER))
+                        if (spell.Spell.Attributes.HasFlag((uint)SpellAttributesEx.SPELL_ATTR_EX_DRAIN_ALL_POWER))
                             p.Rage.Current = 0;
                         else
                             p.Rage.Current = (p.Rage.Current - spell.GetManaCost(p.Rage.Current)) / 10;
                         break;
                     case PowerTypes.POWER_HEALTH:
-                        if (Flag.HasFlag(spell.Spell.Attributes, (uint)SpellAttributesEx.SPELL_ATTR_EX_DRAIN_ALL_POWER))
+                        if (spell.Spell.Attributes.HasFlag((uint)SpellAttributesEx.SPELL_ATTR_EX_DRAIN_ALL_POWER))
                             p.Health.Current = 1;
                         else
                             p.Health.Current -= spell.GetManaCost(p.Health.Current);
                         break;
                     case PowerTypes.TYPE_FOCUS:
-                        if (Flag.HasFlag(spell.Spell.Attributes, (uint)SpellAttributesEx.SPELL_ATTR_EX_DRAIN_ALL_POWER))
+                        if (spell.Spell.Attributes.HasFlag((uint)SpellAttributesEx.SPELL_ATTR_EX_DRAIN_ALL_POWER))
                             p.Focus.Current = 0;
                         else
                             p.Focus.Current -= spell.GetManaCost(p.Focus.Current);
                         break;
                     case PowerTypes.TYPE_ENERGY:
-                        if (Flag.HasFlag(spell.Spell.Attributes, (uint)SpellAttributesEx.SPELL_ATTR_EX_DRAIN_ALL_POWER))
+                        if (spell.Spell.Attributes.HasFlag((uint)SpellAttributesEx.SPELL_ATTR_EX_DRAIN_ALL_POWER))
                             p.Energy.Current = 0;
                         else
                             p.Energy.Current -= spell.GetManaCost(p.Energy.Current);
@@ -157,13 +157,13 @@ namespace WorldServer.Game.Objects.UnitExtensions
                         break;
                 }
             }
-            
+
             u.SpellCast[spell.SpellType].State = SpellState.SPELL_STATE_FINISHED;
             Dictionary<WorldObject, SpellMissInfo> TrueTargets = TargetsInfected[0].Concat(TargetsInfected[1]).Concat(TargetsInfected[2])
                                                                  .Where(w => w.Value == SpellMissInfo.MISS_NONE).GroupBy(d => d.Key)
                                                                  .ToDictionary(d => d.Key, d => d.First().Value);
 
-            for(int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
             {
                 List<WorldObject> targets = TargetsInfected[i].Where(x => x.Value == SpellMissInfo.MISS_NONE).Select(x => x.Key).ToList();
                 reason = SpellEffect.InvokeHandler((SpellEffects)spell.Spell.Effect[i], spell, targets, i, null);
@@ -172,7 +172,7 @@ namespace WorldServer.Game.Objects.UnitExtensions
                     break;
             }
 
-            if(reason == SpellFailedReason.SPELL_FAILED_NO_REASON)
+            if (reason == SpellFailedReason.SPELL_FAILED_NO_REASON)
             {
                 spell.SendSpellGo();
                 spell.SendChannelUpdate(0);
@@ -210,7 +210,7 @@ namespace WorldServer.Game.Objects.UnitExtensions
             if (u.IsSilenced)
                 return SpellFailedReason.SPELL_FAILED_SILENCED;
 
-            if (Flag.HasFlag(u.UnitFlags, (uint)UnitFlags.UNIT_FLAG_FLYING))
+            if (u.UnitFlags.HasFlag((uint)UnitFlags.UNIT_FLAG_FLYING))
                 return SpellFailedReason.SPELL_FAILED_ERROR;
 
             if (spell.Spell.powerType < (uint)PowerTypes.POWER_HEALTH)

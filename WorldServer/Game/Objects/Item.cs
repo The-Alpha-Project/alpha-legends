@@ -183,12 +183,12 @@ namespace WorldServer.Game.Objects
 
         public void Save()
         {
-            List<string> columns = new List<string>() {
+            List<string> columns = new List<string> {
                 "guid", "owner", "bag", "slot", "item_template", "stackcount", "player",
                 "SpellCharges1", "SpellCharges2", "SpellCharges3", "SpellCharges4", "SpellCharges5"
             };
 
-            List<MySqlParameter> parameters = new List<MySqlParameter>()
+            List<MySqlParameter> parameters = new List<MySqlParameter>
             {
                 new MySqlParameter("@guid", this.Guid /*& ~(ulong)HIGH_GUID.HIGHGUID_ITEM*/),
                 new MySqlParameter("@owner", this.Owner),
@@ -210,7 +210,7 @@ namespace WorldServer.Game.Objects
 
         protected uint PrefInvSlot()
         {
-            int[] slotTypes = new int[(int)InventoryTypes.NUM_TYPES]{
+            int[] slotTypes = {
                 (int)InventorySlots.SLOT_INBACKPACK, // NONE EQUIP
 	            (int)InventorySlots.SLOT_HEAD,
                 (int)InventorySlots.SLOT_NECK,

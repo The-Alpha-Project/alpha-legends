@@ -10,7 +10,7 @@ using WorldServer.Game.Objects;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class ChatHandler
+    public static class ChatHandler
     {
         public static void HandleMessageChat(ref PacketReader packet, ref WorldManager manager)
         {

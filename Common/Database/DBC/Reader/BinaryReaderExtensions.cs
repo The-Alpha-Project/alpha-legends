@@ -9,7 +9,7 @@ namespace Common.Database.DBC.Reader
 {
     public static class BinaryReaderExtensions
     {
-        public static Dictionary<Type, Func<BinaryReader, object>> ReadValue = new Dictionary<Type, Func<BinaryReader, object>>()
+        public static Dictionary<Type, Func<BinaryReader, object>> ReadValue = new Dictionary<Type, Func<BinaryReader, object>>
         {
             {typeof(bool),   br => br.ReadBoolean()},
             {typeof(sbyte),  br => br.ReadSByte()},
@@ -21,7 +21,7 @@ namespace Common.Database.DBC.Reader
             {typeof(float),  br => br.ReadSingle()},
             {typeof(long),   br => br.ReadInt64()},
             {typeof(ulong),  br => br.ReadUInt64()},
-            {typeof(double), br => br.ReadDouble()},
+            {typeof(double), br => br.ReadDouble()}
         };
 
         public static T Read<T>(this BinaryReader br)

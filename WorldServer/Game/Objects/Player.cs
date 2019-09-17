@@ -415,8 +415,6 @@ namespace WorldServer.Game.Objects
                 case (byte)Races.RACE_TROLL:
                     BoundingRadius = 0.306f;
                     break;
-                default:
-                    break;
             }
         }
 
@@ -442,7 +440,7 @@ namespace WorldServer.Game.Objects
 
                 if (Database.Items.TryAdd(item) || Database.Items.ContainsKey(item.Guid))
                 {
-                    uint slot = (uint)item.EquipSlot;
+                    uint slot = item.EquipSlot;
                     if (slot == (uint)InventorySlots.SLOT_MAINHAND)
                         this.BaseAttackTime = item.Template.WeaponSpeed;
 
@@ -1451,7 +1449,7 @@ namespace WorldServer.Game.Objects
                         break;
                 }
                 if (Race == (byte)Races.RACE_TROLL)
-                    health_regen = (float)(health_regen * (this.InCombat ? 0.1f : 1.1f));
+                    health_regen = health_regen * (this.InCombat ? 0.1f : 1.1f);
                 if (this.IsSitting)
                     health_regen = health_regen * 1.33f;
 
@@ -1800,13 +1798,13 @@ namespace WorldServer.Game.Objects
         /// </summary>
         private void SaveBase()
         {
-            List<string> columns = new List<string>() {
+            List<string> columns = new List<string> {
                 "account", "guid", "name", "race", "class", "gender", "level","xp", "money", "skin", "face", "hairstyle",
                 "haircolour","facialhair","bankslots","position_x","position_y","position_z","orientation","map",
                 "totaltime", "leveltime", "talentpoints", "skillpoints"
             };
 
-            List<MySqlParameter> parameters = new List<MySqlParameter>()
+            List<MySqlParameter> parameters = new List<MySqlParameter>
             {
                 new MySqlParameter("@account", this.AccountId),
                 new MySqlParameter("@guid", this.Guid),
@@ -1831,7 +1829,7 @@ namespace WorldServer.Game.Objects
                 new MySqlParameter("@totaltime", this.TotalTime),
                 new MySqlParameter("@leveltime", this.LevelTime),
                 new MySqlParameter("@talentpoints", this.TalentPoints),
-                new MySqlParameter("@skillpoints", this.SkillPoints),
+                new MySqlParameter("@skillpoints", this.SkillPoints)
             };
 
             BaseContext.SaveEntity("characters", columns, parameters, Globals.CONNECTION_STRING);
@@ -1841,7 +1839,7 @@ namespace WorldServer.Game.Objects
         private void SaveSocial()
         {
             BaseContext.ExecuteCommand(Globals.CONNECTION_STRING, "DELETE FROM character_social WHERE guid = @guid",
-                                        new List<MySqlParameter>() { new MySqlParameter("@guid", this.Guid) });
+                                        new List<MySqlParameter> { new MySqlParameter("@guid", this.Guid) });
 
             StringBuilder sb = new StringBuilder();
             List<MySqlParameter> parameters = new List<MySqlParameter>();

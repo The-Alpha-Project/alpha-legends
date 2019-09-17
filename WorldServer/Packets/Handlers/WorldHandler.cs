@@ -8,7 +8,7 @@ using Common.Helpers;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class WorldHandler
+    public static class WorldHandler
     {
 
         public static void HandleNULL(ref PacketReader packet, ref WorldManager manager) { } //Prevents showing unhandled packets

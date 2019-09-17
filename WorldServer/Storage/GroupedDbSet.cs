@@ -97,11 +97,10 @@ namespace WorldServer.Storage
 
         public bool TryRemove(TKey key)
         {
-            List<object> dump;
             if (!this.Data.ContainsKey(key))
                 return false;
 
-            return this.Data.TryRemove(key, out dump);
+            return this.Data.TryRemove(key, out List<object> dump);
         }
 
         public bool TryRemove(T value)
@@ -150,7 +149,7 @@ namespace WorldServer.Storage
         {
             Type type = typeof(T);
 
-            if (typeof(T).Name.StartsWith("List"))
+            if (typeof(T).Name.StartsWith("List", StringComparison.Ordinal))
                 type = typeof(T).GetProperty("Item").PropertyType;
 
             return type;

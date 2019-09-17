@@ -2,7 +2,7 @@
 
 namespace Common.Logging
 {
-    public class Log
+    public static class Log
     {
         static public void Message()
         {
@@ -40,8 +40,6 @@ namespace Common.Logging
                     break;
                 case LogType.DEBUG:
                     Console.ForegroundColor = ConsoleColor.DarkRed;
-                    break;
-                default:
                     break;
             }
 

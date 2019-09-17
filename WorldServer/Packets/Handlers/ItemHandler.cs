@@ -12,7 +12,7 @@ using Common.Constants;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class ItemHandler
+    public static class ItemHandler
     {
 
         public static void HandleItemQuerySingle(ref PacketReader packet, ref WorldManager manager)

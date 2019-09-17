@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Common.Database.DBC.Reader
 {
-    public class DBReader
+    public static class DBReader
     {
         private static string AssemblyDirectory
         {

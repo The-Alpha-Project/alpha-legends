@@ -10,7 +10,7 @@ using WorldServer.Game.Objects.PlayerExtensions.Quests;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class MovementHandler
+    public static class MovementHandler
     {
         public static void HandleMovementStatus(ref PacketReader packet, ref WorldManager manager)
         {
@@ -21,7 +21,7 @@ namespace WorldServer.Packets.Handlers
             Vector prevLoc = manager.Character.Location;
             long pos = packet.BaseStream.Position; //Store position after header
 
-            manager.Character.TransportID = packet.ReadUInt64(); ;
+            manager.Character.TransportID = packet.ReadUInt64();
             manager.Character.Transport = packet.ReadVector();
             manager.Character.TransportOrientation = packet.ReadFloat();
             manager.Character.Location = packet.ReadVector();

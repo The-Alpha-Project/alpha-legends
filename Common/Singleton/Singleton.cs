@@ -23,7 +23,7 @@ namespace Common.Singleton
             if (constructorInfo == null)
             {
                 var paramCount = typeof(T).GetConstructors().Min(construct => construct.GetParameters().Count());
-                var constructorToUse = typeof(T).GetConstructors().Where(construct => construct.GetParameters().Count() == paramCount).First();
+                var constructorToUse = typeof(T).GetConstructors().First(construct => construct.GetParameters().Count() == paramCount);
 
                 var paramNullList = new object[paramCount];
 

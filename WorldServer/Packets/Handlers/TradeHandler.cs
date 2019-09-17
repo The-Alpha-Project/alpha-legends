@@ -15,7 +15,7 @@ using WorldServer.Storage;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class TradeHandler
+    public static class TradeHandler
     {
         public static void HandleInitiateTradeOpcode(ref PacketReader packet, ref WorldManager manager)
         {

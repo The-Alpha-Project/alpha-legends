@@ -3,7 +3,7 @@ using WorldServer.Network;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class NetHandler
+    public static class NetHandler
     {
         public static void HandlePing(ref PacketReader packet, ref WorldManager manager)
         {

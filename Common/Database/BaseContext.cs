@@ -16,8 +16,8 @@ namespace Common.Database
         private readonly string connectionstring;
         private readonly string BASE_QUERY = "SELECT * FROM ";
         private const string DELETE_QUERY = "DELETE FROM {0} WHERE {1} IN ({2})";
-        private readonly Type[] arrayTypes = new[] { typeof(ItemAttribute), typeof(SpellStat), typeof(DamageStat) };
-        private readonly Type[] customTypes = new[] { typeof(TStat), typeof(TRandom), typeof(TResistance) };
+        private readonly Type[] arrayTypes = { typeof(ItemAttribute), typeof(SpellStat), typeof(DamageStat) };
+        private readonly Type[] customTypes = { typeof(TStat), typeof(TRandom), typeof(TResistance) };
 
         public BaseContext(string connection, string query = "")
         {
@@ -164,7 +164,7 @@ namespace Common.Database
 
                         if (!dataset.ContainsKey(newkey))
                         {
-                            List<object> newList = new List<object>() { newobj };
+                            List<object> newList = new List<object> { newobj };
                             dataset.TryAdd(newkey, newList);
                         }
                         else
@@ -185,7 +185,7 @@ namespace Common.Database
             {
                 conn.Open();
                 MySqlCommand cmd = new MySqlCommand(query, conn);
-                if(parameters != null && parameters.Count > 0)
+                if (parameters != null && parameters.Count > 0)
                     cmd.Parameters.AddRange(parameters.ToArray());
                 try
                 {
@@ -240,8 +240,8 @@ namespace Common.Database
             List<string> values = columns.Select(x => "@" + x).ToList();
             List<string> dupevals = columns.Select(x => x + " = values(" + x + ")").ToList();
 
-            string query = string.Format(SAVE_QUERY, 
-                                         tablename, 
+            string query = string.Format(SAVE_QUERY,
+                                         tablename,
                                          string.Join(",", columns),
                                          string.Join(",", values),
                                          string.Join(",", dupevals));

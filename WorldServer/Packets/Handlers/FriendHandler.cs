@@ -9,7 +9,7 @@ using WorldServer.Game;
 
 namespace WorldServer.Packets.Handlers
 {
-    public class FriendHandler
+    public static class FriendHandler
     {
         public static void HandleFriendListOpcode(ref PacketReader packet, ref WorldManager manager)
         {

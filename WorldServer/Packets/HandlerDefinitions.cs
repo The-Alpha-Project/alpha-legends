@@ -2,7 +2,7 @@
 
 namespace WorldServer.Packets
 {
-    public class HandlerDefinitions
+    public static class HandlerDefinitions
     {
         public static void InitializePacketHandler()
         {

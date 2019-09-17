@@ -6,7 +6,7 @@ using WorldServer.Game.Objects;
 
 namespace WorldServer.Game.Commands
 {
-    public class ConsoleManager
+    public static class ConsoleManager
     {
         public static Dictionary<string, HandleCommand> CommandHandlers = new Dictionary<string, HandleCommand>();
         public delegate void HandleCommand(Player player, string[] args);

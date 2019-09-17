@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Common.Constants
 {
-    public class FormulaData
+    public static class FormulaData
     {
         public static float[] BaseManaRegen = {
             0.020979f,
