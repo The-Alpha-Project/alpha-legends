@@ -156,6 +156,13 @@ begin not atomic
 		alter table spawns_creatures add constraint spawns_creatures_modelid foreign key (spawn_displayid) references creatures(modelid) on delete cascade on update cascade;
 		set foreign_key_checks = 1;
 
+		-- Eitrigg original position
+		update spawns_creatures set spawn_positionx = -607.434, spawn_positiony = -4251.33, spawn_positionz = 39.0393, spawn_orientation = 3.28122 where spawn_id = 4771;
+		
+		-- The New Horde quest fixes
+		update quests set rewmoneymaxlevel = 40, rewrepfaction1 = 76, rewrepfaction2 = 530, rewrepvalue1 = 50, rewrepvalue2 = 50 where entry = 787;
+
+
 		insert into applied_updates values ('180920191');
 	end if;
 end $
