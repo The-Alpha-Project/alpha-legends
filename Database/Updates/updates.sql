@@ -146,5 +146,17 @@ begin not atomic
 
 		insert into applied_updates values ('170920192');
 	end if;
+
+	-- 18/09/2019 2
+	if (select count(*) from applied_updates where id='180920191') = 0 then
+		update creatures set modelid = 164 where modelid = 3258;
+		update spawns_creatures set spawn_displayid = 164 where spawn_displayid = 3258;
+
+		set foreign_key_checks = 0;
+		alter table spawns_creatures add constraint spawns_creatures_modelid foreign key (spawn_displayid) references creatures(modelid) on delete cascade on update cascade;
+		set foreign_key_checks = 1;
+
+		insert into applied_updates values ('180920191');
+	end if;
 end $
 delimiter ;
