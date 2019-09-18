@@ -73,5 +73,13 @@ namespace WorldServer.Packets.Handlers
                 MiscHandler.HandleForceSpeedChange(ref c.Client, 4.7222223f, false);
             }
         }
+
+        // TODO: NOT Working (press space on a mount while being mounted, the should do something). Maybe it was not implemented client side...
+        public static void HandleMountSpecialAnim(ref PacketReader packet, ref WorldManager manager)
+        {
+            PacketWriter animPacket = new PacketWriter(Opcodes.SMSG_MOUNTSPECIAL_ANIM);
+            animPacket.WriteUInt64(manager.Character.Guid);
+            GridManager.Instance.SendSurrounding(animPacket, manager.Character);
+        }
     }
 }
