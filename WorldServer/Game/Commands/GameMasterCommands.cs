@@ -179,7 +179,6 @@ namespace WorldServer.Game.Commands
 
         private static void ApplyMorphAction(Player player, uint morph, Boolean announce = false)
         {
-            Flag.RemoveFlag(ref player.PlayerFlags, (byte)Common.Constants.PlayerFlags.PLAYER_FLAGS_AFK);
             player.DisplayID = morph;
             player.Client.Send(player.BuildUpdate());
             if (announce)
