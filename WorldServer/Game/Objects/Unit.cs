@@ -445,8 +445,7 @@ namespace WorldServer.Game.Objects
                 }
             }
 
-            UnitStructs.CalcDamageInfo damageInfo;
-            CalculateMeleeDamage(victim, 0, out damageInfo, at);
+            CalculateMeleeDamage(victim, 0, out UnitStructs.CalcDamageInfo damageInfo, at);
             SendAttackStateUpdate(damageInfo);
 
             //Extra attack only at any non extra attack
@@ -463,23 +462,24 @@ namespace WorldServer.Game.Objects
 
         public void CalculateMeleeDamage(Unit victim, uint damage, out UnitStructs.CalcDamageInfo damageInfo, AttackTypes attackType)
         {
-            damageInfo = new UnitStructs.CalcDamageInfo();
+            damageInfo = new UnitStructs.CalcDamageInfo
+            {
+                attacker = this.Guid,
+                target = victim.Guid,
+                damageSchoolMask = 0,
+                attackType = attackType,
+                damage = 0,
+                cleanDamage = 0,
+                absorb = 0,
+                resist = 0,
+                blocked_amount = 0,
 
-            damageInfo.attacker = this.Guid;
-            damageInfo.target = victim.Guid;
-            damageInfo.damageSchoolMask = 0;
-            damageInfo.attackType = attackType;
-            damageInfo.damage = 0;
-            damageInfo.cleanDamage = 0;
-            damageInfo.absorb = 0;
-            damageInfo.resist = 0;
-            damageInfo.blocked_amount = 0;
-
-            damageInfo.TargetState = 0;
-            damageInfo.HitInfo = 0;
-            damageInfo.procAttacker = ProcFlags.NONE;
-            damageInfo.procVictim = ProcFlags.NONE;
-            damageInfo.procEx = ProcFlagsExLegacy.NONE;
+                TargetState = 0,
+                HitInfo = 0,
+                procAttacker = ProcFlags.NONE,
+                procVictim = ProcFlags.NONE,
+                procEx = ProcFlagsExLegacy.NONE
+            };
 
             if (victim == null)
             {
@@ -628,6 +628,20 @@ namespace WorldServer.Game.Objects
 
             if (damageInfo.cleanDamage < 0)
                 damageInfo.cleanDamage = 0;
+
+            // Rage calculation
+            if (damageInfo.damage > 0)
+            {
+                if (this.Class == (byte)Classes.CLASS_WARRIOR)
+                {
+                    this.Rage.Current = (this.Rage.Current / 10) + CalculateRageRegen(ref damageInfo, isCrit, victim, true);
+                }
+                if (victim is Player && ((Player)victim).Class == (byte)Classes.CLASS_WARRIOR)
+                {
+                    victim.Rage.Current = (victim.Rage.Current / 10) + CalculateRageRegen(ref damageInfo, isCrit, victim, false);
+                }
+            }
+
         }
 
         public uint CalculateDamage(AttackTypes attType, bool normalized, bool addTotalPct)
@@ -656,6 +670,25 @@ namespace WorldServer.Game.Objects
                 max_damage = 5.0f;
 
             return (uint)new Random().Next((int)min_damage, (int)max_damage);
+        }
+
+        public uint CalculateRageRegen(ref UnitStructs.CalcDamageInfo damageinfo, bool isCrit, Unit victim, bool asPlayer)
+        {
+            if (asPlayer)
+            {
+                bool isMain = damageinfo.attackType == AttackTypes.BASE_ATTACK;
+                float speed = ((Player)this).BaseAttackTime;
+                if (!isMain)
+                {
+                    Item offHand = ((Player)this).Inventory.Backpack.GetItem((byte)InventorySlots.SLOT_OFFHAND);
+                    if (offHand != null)
+                        speed = offHand.Template.WeaponSpeed;
+                }
+                return (uint)(((15 * damageinfo.damage) / (4 * FormulaData.RageConversionValue(this.Level))) + (((isMain ? 3.5 : 1.75) * (isCrit ? 2 : 1)) / 2));
+            } else
+            {
+                return (uint)(2.5 * (damageinfo.damage / FormulaData.RageConversionValue(victim.Level)));
+            }
         }
 
         public VictimStates RollMeleeOutcome(Unit victim)

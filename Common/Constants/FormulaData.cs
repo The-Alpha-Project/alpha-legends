@@ -65,5 +65,10 @@ namespace Common.Constants
             0.006667f,
             0.006600f
         };
+
+        public static float RageConversionValue(uint level)
+        {
+            return (float)(0.0091107836f * Math.Pow(level, 2) + 3.225598133f * level + 4.2652911f);
+        }
     }
 }

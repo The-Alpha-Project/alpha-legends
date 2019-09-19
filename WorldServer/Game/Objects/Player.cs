@@ -1490,10 +1490,11 @@ namespace WorldServer.Game.Objects
 
                 if (!this.InCombat || !this.IsAttacking)
                 {
-                    if (this.Rage.Current - 5 < 0)
+                    // Rage is stored as Rage * 10
+                    if (this.Rage.Current < 50)
                         this.Rage.Current = 0;
                     else
-                        this.Rage.Current -= 5;
+                        this.Rage.Current = (this.Rage.Current / 10) - 5;
                 }
 
                 LastRegen = Globals.TimeTicks;
