@@ -1488,7 +1488,7 @@ namespace WorldServer.Game.Objects
                 else if (this.Focus.Current < this.Focus.Maximum)
                     this.Focus.Current += 5;
 
-                if (!this.InCombat || !this.IsAttacking)
+                if (!this.InCombat && !this.IsAttacking)
                 {
                     // Rage is stored as Rage * 10
                     if (this.Rage.Current < 50)
