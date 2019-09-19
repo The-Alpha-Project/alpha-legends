@@ -147,7 +147,7 @@ begin not atomic
 		insert into applied_updates values ('170920192');
 	end if;
 
-	-- 18/09/2019 2
+	-- 18/09/2019 1
 	if (select count(*) from applied_updates where id='180920191') = 0 then
 		update creatures set modelid = 164 where modelid = 3258;
 		update spawns_creatures set spawn_displayid = 164 where spawn_displayid = 3258;
@@ -164,6 +164,20 @@ begin not atomic
 
 
 		insert into applied_updates values ('180920191');
+	end if;
+
+	-- 19/09/2019 1
+	if (select count(*) from applied_updates where id='190920191') = 0 then
+		-- Charis from Lion's Pride Inn
+		delete from spawns_gameobjects where spawn_id in (26804, 26801, 26803, 26246, 26259, 26249, 26250, 26251, 26252, 26792, 26243);
+		update creatures set modelid = 18 where entry = 66;
+
+		update item_template set displayid = 2970, name = "Dwarven Chain Belt" where entry = 2172;
+		-- Guessing this entry
+		replace into item_template (entry, class, subclass, name, displayid, quality, flags, buycount, buyprice, sellprice, inventorytype, itemlevel, requiredlevel, stackable, armor, maxdurability, bonding) values (2171, 4, 2, "Dwarven Leather Belt", 7545, 1, 0, 1, 30, 6, 6, 5, 0, 1, 19, 16, 1);
+		update quests set details = "Those flaming troggs have been popping up everywhere lately, just a few at first, wandering around the hills in the southeast, but now they've appeared in greater numbers.$b$bWe didn't think they were a threat--well, besides their ugly mugs!--but then, a few months ago they attacked and overran the camp to the west. We tried taking it back, but they've not been eager to part with it.$b$bWe're a bit shorthanded here, $g lad : lass;, so if you'd like to help us out, we'd be much obliged.", objectives = "Balir Frosthammer wants you to kill 5 Rockjaw Troggs and 5 Burly Rockjaw Troggs.", rewchoiceitemid1 = 2171, rewchoiceitemid2 = 2172, rewchoiceitemid3 = 0, reqcreatureorgocount1 = 5, reqcreatureorgocount2 = 5 where entry = 170;
+
+		insert into applied_updates values ('190920191');
 	end if;
 end $
 delimiter ;
