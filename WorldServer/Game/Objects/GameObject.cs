@@ -138,6 +138,7 @@ namespace WorldServer.Game.Objects
             //Triggers spell
             switch (this.Template.Type)
             {
+                case (uint)GameObjectTypes.TYPE_DOOR: // TODO: Check locks for doors...
                 case (uint)GameObjectTypes.TYPE_BUTTON:
                     if (this.State != (byte)GameObjectStates.GO_STATE_READY)
                         return;
