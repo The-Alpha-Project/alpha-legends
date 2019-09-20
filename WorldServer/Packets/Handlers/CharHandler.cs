@@ -38,6 +38,7 @@ namespace WorldServer.Packets.Handlers
 
             foreach (Player c in result)
             {
+                SetMasks(c);
                 c.PreLoad();
 
                 writer.WriteUInt64(c.Guid);
