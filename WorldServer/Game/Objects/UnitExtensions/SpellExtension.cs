@@ -201,7 +201,8 @@ namespace WorldServer.Game.Objects.UnitExtensions
                     pkt.WriteUInt8((byte)result);
                 }
 
-                ((Player)u).Client.Send(pkt);
+                GridManager.Instance.SendSurrounding(pkt, u);
+                //((Player)u).Client.Send(pkt);
             }
         }
 

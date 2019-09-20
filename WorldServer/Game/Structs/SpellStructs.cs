@@ -510,7 +510,8 @@ namespace WorldServer.Game.Structs
             pkt.WriteUInt64(Targets.Target.Guid);
             pkt.WriteUInt8(0); //Misses
             Targets.WriteTargets(ref pkt);
-            ((Player)Caster).Client.Send(pkt);
+            GridManager.Instance.SendSurrounding(pkt, Caster);
+            //((Player)Caster).Client.Send(pkt);
         }
 
         public void SendInterrupted(byte result)
