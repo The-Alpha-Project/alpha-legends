@@ -507,7 +507,7 @@ namespace WorldServer.Game.Structs
             pkt.WriteUInt32(Spell.Id);
             pkt.WriteUInt16(256);
             pkt.WriteUInt8(1); //Hits
-            pkt.WriteUInt64(Caster.Guid);
+            pkt.WriteUInt64(Targets.Target.Guid);
             pkt.WriteUInt8(0); //Misses
             Targets.WriteTargets(ref pkt);
             ((Player)Caster).Client.Send(pkt);
