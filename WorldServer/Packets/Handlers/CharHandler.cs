@@ -207,7 +207,7 @@ namespace WorldServer.Packets.Handlers
                 pw.WriteUInt64(c.Guid);
                 pw.WriteUInt64(enemy.Guid);
                 manager.Send(pw);
-                if (!enemy.IsInFrontOf(c))
+                if (enemy is Creature && !c.IsInFrontOf(enemy)) // TODO: I'm not 100% sure if this is working
                     enemy.Orientation = enemy.Location.Angle(c.Location);
             }
         }
