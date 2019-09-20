@@ -207,6 +207,8 @@ namespace WorldServer.Packets.Handlers
                 pw.WriteUInt64(c.Guid);
                 pw.WriteUInt64(enemy.Guid);
                 manager.Send(pw);
+                if (!enemy.IsInFrontOf(c))
+                    enemy.Orientation = enemy.Location.Angle(c.Location);
             }
         }
 

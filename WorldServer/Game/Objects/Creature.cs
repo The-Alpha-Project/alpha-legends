@@ -158,22 +158,17 @@ namespace WorldServer.Game.Objects
             GridManager.Instance.SendSurrounding(pkt, this);
         }
 
-        public void MoveTo(Vector loc, bool run, float boundingRadius = 0)
+        public void MoveTo(Vector loc, bool run, float distance = 0)
         {
-            Vector step = new Vector { X = this.Location.X - loc.X, Y = this.Location.Y - loc.Y, Z = this.Location.Z - loc.Z };
-            if (step.X == 0f && step.Y == 0f)
-                return;
-
-            uint moveTime = (uint)Math.Round((this.Location.Distance(step) / this.Template.Speed) / (run ? 75 : 50));
-            //uint moveTime = (uint)((Math.Sqrt((step.X * step.X) + (step.Y * step.Y))) * (1000 / this.Template.Speed));
-
-            //Vector move = new Vector { X = this.Location.X - step.X, Y = this.Location.Y - step.Y, Z = this.Location.Z - step.Z };
+            if (Math.Abs(distance) < float.Epsilon)
+                distance = this.Location.Distance(loc);
+            uint moveTime = (uint)((distance / this.Template.Speed * 1000) / RunningSpeed);
 
             this.MoveLocation = loc;
 
             SendMoveToPacket(loc, moveTime, run, this.Orientation);
         }
-
+         
         public void SendMoveToPacket(Vector loc, uint time, bool run, float orientation = 0)
         {
             PacketWriter pw = new PacketWriter(Opcodes.SMSG_MONSTER_MOVE);
@@ -183,16 +178,17 @@ namespace WorldServer.Game.Objects
             pw.WriteFloat(this.Location.Z);
             pw.WriteFloat(orientation);
             pw.WriteUInt8(0);
-            pw.WriteUInt32((uint)(run ? 0x100 : 0)); //Flags : 0x0 - Walk, 0x100 - Run
+            pw.WriteUInt32((uint)(run ? 0x100 : 0x000)); //Flags : 0x000 - Walk, 0x100 - Run
             pw.WriteUInt32(time);
             pw.WriteUInt32(1);
             pw.WriteFloat(loc.X);
             pw.WriteFloat(loc.Y);
             pw.WriteFloat(loc.Z);
 
-            this.Location = loc;
-
             GridManager.Instance.SendSurrounding(pw, this);
+
+            this.Location = loc;
+            this.Orientation = this.Location.Angle(loc);
         }
         #endregion
 
@@ -527,16 +523,10 @@ namespace WorldServer.Game.Objects
                 if (Database.Players.ContainsKey(this.CombatTarget)) //Victim exists
                 {
                     Player victim = Database.Players.TryGet(this.CombatTarget);
-                    if (!IsInFrontOf(victim))
-                        this.TurnTo(victim.Location);
 
-                    if (victim.Location.DistanceSqrd(this.Location) > (victim.BoundingRadius + this.BoundingRadius))
-                    {
-                        if (MoveLocation != victim.Location) //If not going to location already
-                            MoveTo(victim.Location, true, victim.BoundingRadius + this.BoundingRadius * 2); //Move to victim's location
-                        else
-                            return;
-                    }
+                    float distance = Location.Distance(victim.Location);
+                    if (distance > this.Template.CombatReach && MoveLocation != victim.Location) //If not going to location already
+                        MoveTo(victim.Location, true, distance); //Move to victim's location
                     else
                         this.UpdateMeleeAttackingState(); //Victim in range so attack
 
