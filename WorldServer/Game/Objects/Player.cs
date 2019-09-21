@@ -147,6 +147,7 @@ namespace WorldServer.Game.Objects
             this.Location.Z = Convert.ToSingle(dr["position_z"]);
             this.Orientation = Convert.ToSingle(dr["orientation"]);
             this.Map = Convert.ToUInt32(dr["map"]);
+            this.Zone = Convert.ToUInt32(dr["zone"]);
             this.TotalTime = Convert.ToUInt32(dr["totaltime"]);
             this.LevelTime = Convert.ToUInt32(dr["leveltime"]);
             this.SkillPoints = Convert.ToUInt32(dr["skillpoints"]);
@@ -386,8 +387,7 @@ namespace WorldServer.Game.Objects
 
         private void SetRaceVariables()
         {
-            ChrRaces race = null;
-            if (!DBC.ChrRaces.TryGetValue(this.Race, out race))
+            if (!DBC.ChrRaces.TryGetValue(this.Race, out ChrRaces race))
                 return;
 
             this.DisplayID = (uint)(this.Gender == (byte)Genders.GENDER_MALE ? race.m_MaleDisplayId : race.m_FemaleDisplayId);
@@ -1809,7 +1809,7 @@ namespace WorldServer.Game.Objects
         {
             List<string> columns = new List<string> {
                 "account", "guid", "name", "race", "class", "gender", "level","xp", "money", "skin", "face", "hairstyle",
-                "haircolour","facialhair","bankslots","position_x","position_y","position_z","orientation","map",
+                "haircolour","facialhair","bankslots","position_x","position_y","position_z","orientation","map", "zone",
                 "totaltime", "leveltime", "talentpoints", "skillpoints"
             };
 
@@ -1835,6 +1835,7 @@ namespace WorldServer.Game.Objects
                 new MySqlParameter("@position_z", this.Location.Z),
                 new MySqlParameter("@orientation", this.Orientation),
                 new MySqlParameter("@map", this.Map),
+                new MySqlParameter("@zone", this.Zone),
                 new MySqlParameter("@totaltime", this.TotalTime),
                 new MySqlParameter("@leveltime", this.LevelTime),
                 new MySqlParameter("@talentpoints", this.TalentPoints),
