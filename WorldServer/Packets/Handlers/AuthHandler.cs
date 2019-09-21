@@ -27,6 +27,8 @@ namespace WorldServer.Packets.Handlers
                 string pass = namepass[1];
 
                 Account account = Database.Accounts.GetByName(name);
+                /*
+                // Auto create account
                 if(account == null && Globals.AUTO_CREATE_ACCOUNT)
                 {
                     if(!string.IsNullOrWhiteSpace(pass) && !string.IsNullOrWhiteSpace(name))
@@ -43,7 +45,7 @@ namespace WorldServer.Packets.Handlers
                             account = null;
                     }
                 }
-
+                */
 
                 if (version != Globals.CLIENT_VERSION)
                     writer.WriteUInt8((byte)AuthCodes.AUTH_VERSION_MISMATCH);

@@ -11,6 +11,9 @@ namespace WorldServer.Game.Commands
         public static Dictionary<string, HandleCommand> CommandHandlers = new Dictionary<string, HandleCommand>();
         public delegate void HandleCommand(Player player, string[] args);
 
+        public static Dictionary<string, ConsoleHandleCommand> ConsoleCommandHandlers = new Dictionary<string, ConsoleHandleCommand>();
+        public delegate void ConsoleHandleCommand(string[] args);
+
         public static void InitCommands()
         {
             LoadCommandDefinitions();
@@ -18,8 +21,29 @@ namespace WorldServer.Game.Commands
             while (true)
             {
                 Thread.Sleep(5);
-                InvokeHandler(Console.ReadLine(), null);
+                InvokeConsoleHandler(Console.ReadLine());
             }
+        }
+
+        public static void DefineConsoleCommand(string command, ConsoleHandleCommand handler)
+        {
+            ConsoleCommandHandlers[command.ToLower()] = handler;
+        }
+
+        public static bool InvokeConsoleHandler(string command)
+        {
+            if (command != null)
+            {
+                string[] lines = command.Split(' ');
+                string[] args = new string[lines.Length - 1];
+                Array.Copy(lines, 1, args, 0, lines.Length - 1);
+                if (ConsoleCommandHandlers.ContainsKey(lines[0]))
+                {
+                    ConsoleCommandHandlers[lines[0]].Invoke(args);
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static void DefineCommand(string command, HandleCommand handler)
@@ -29,26 +53,19 @@ namespace WorldServer.Game.Commands
 
         public static bool InvokeHandler(string command, Player player)
         {
-            if (command != null && player.IsGM)
+            if (command != null && command.StartsWith(".", StringComparison.Ordinal) && player != null && player.IsGM)
             {
+                command = command.TrimStart('.'); //In game commands forced dot
                 string[] lines = command.Split(' ');
                 string[] args = new string[lines.Length - 1];
                 Array.Copy(lines, 1, args, 0, lines.Length - 1);
-                return InvokeHandler(lines[0].ToLower(), player, args);
+                if (CommandHandlers.ContainsKey(lines[0]))
+                {
+                    CommandHandlers[lines[0]].Invoke(player, args);
+                    return true;
+                }
             }
             return false;      
-        }
-
-        public static bool InvokeHandler(string command, Player player, params string[] args)
-        {
-            command = command.TrimStart('.'); //In game commands forced dot
-            if (CommandHandlers.ContainsKey(command))
-            {
-                CommandHandlers[command].Invoke(player, args);
-                return true;
-            }
-            else
-                return false;
         }
 
         public static void LoadCommandDefinitions()
@@ -76,6 +93,10 @@ namespace WorldServer.Game.Commands
             DefineCommand("mount", GameMasterCommands.Mount);
             DefineCommand("unmount", GameMasterCommands.Unmount);
             DefineCommand("goinfo", GameMasterCommands.GObjectInfo);
+
+            DefineConsoleCommand("shutdown", ConsoleCommands.Shutdown);
+            DefineConsoleCommand("gmset", ConsoleCommands.GMSet);
+            DefineConsoleCommand("createacc", ConsoleCommands.CreateAcc);
         }
     }
 }

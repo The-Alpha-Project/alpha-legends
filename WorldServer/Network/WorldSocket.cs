@@ -51,7 +51,7 @@ namespace WorldServer.Network
             }
         }
 
-        protected void Dispose()
+        public void Dispose()
         {
             listenWorldSocket = false;
             worldListener.Stop();

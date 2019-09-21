@@ -11,6 +11,7 @@ using WorldServer.Game.Objects.PlayerExtensions.Skill;
 using System.Threading.Tasks;
 using System;
 using Common.Helpers;
+using Common.Logging;
 
 namespace WorldServer.Game.Commands
 {
@@ -281,4 +282,70 @@ namespace WorldServer.Game.Commands
             }
         }
     }
+
+    public class ConsoleCommands : CommandParser
+    {
+        public static void Shutdown(string[] args)
+        {
+            // TODO: Make this really a safe shutdown
+            Log.Message(LogType.NORMAL, "Shutting down the server...");
+            Database.SaveChanges();
+            GC.Collect();
+            Environment.Exit(0);
+        }
+
+        public static void GMSet(string[] args)
+        {
+            string accountname = Read<string>(args, 0);
+            Account account = Database.Accounts.GetByName(accountname);
+            if (account != null)
+            {
+                account.GMLevel = 1;
+                Database.Accounts.UpdateChanges();
+                Log.Message(LogType.NORMAL, "Enabled GM mode for account {0}, reloading.", accountname);
+                Database.Accounts.Reload();
+            } else
+            {
+                Log.Message(LogType.ERROR, "Can't find that account.");
+            }
+        }
+
+        public static void CreateAcc(string[] args)
+        {
+            string name = Read<string>(args, 0);
+            string pass = Read<string>(args, 1);
+            uint gmlevel = Read<uint>(args, 2);
+            Account account = Database.Accounts.GetByName(name);
+            if (account == null)
+            {
+                if (!string.IsNullOrWhiteSpace(pass) && !string.IsNullOrWhiteSpace(name))
+                {
+                    account = new Account
+                    {
+                        Name = name,
+                        GMLevel = (byte)(gmlevel > 0 ? 1 : 0),
+                        IP = "0.0.0.0"
+                    };
+                    account.SetPassword(pass);
+
+                    if (Database.Accounts.TryAdd(account))
+                    {
+                        Database.Accounts.Save(account);
+                        Log.Message(LogType.NORMAL, "Account succesfully created, reloading.");
+                        Database.Accounts.Reload();
+                    }
+                    else
+                    {
+                        Log.Message(LogType.ERROR, "Error creating account.");
+                    }
+                }
+            }
+            else
+            {
+                Log.Message(LogType.ERROR, "Account already exists.");
+            }
+        }
+    }
+
+
 }

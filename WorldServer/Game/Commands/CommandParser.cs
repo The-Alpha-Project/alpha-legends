@@ -18,7 +18,7 @@ namespace WorldServer.Game.Commands
                 }
                 catch
                 {
-                    Log.Message(LogType.ERROR, "Wrong arguments for the current command!!!");
+                    Log.Message(LogType.ERROR, "Wrong arguments for the current command!");
                 }
             }
 
