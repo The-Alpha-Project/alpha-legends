@@ -70,5 +70,32 @@ namespace Common.Constants
         {
             return (float)(0.0091107836f * Math.Pow(level, 2) + 3.225598133f * level + 4.2652911f);
         }
+
+        public static float ZeroDifferenceValue(uint level)
+        {
+            if (level < 8)
+                return 5;
+            if (level < 10)
+                return 6;
+            if (level < 12)
+                return 7;
+            if (level < 16)
+                return 8;
+            if (level < 20)
+                return 9;
+            if (level < 30)
+                return 11;
+            if (level < 40)
+                return 12;
+            if (level < 45)
+                return 13;
+            if (level < 50)
+                return 15;
+            if (level < 55)
+                return 16;
+            if (level < 60)
+                return 17;
+            return 1;
+        }
     }
 }

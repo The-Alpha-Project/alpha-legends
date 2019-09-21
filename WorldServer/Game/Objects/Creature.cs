@@ -72,6 +72,7 @@ namespace WorldServer.Game.Objects
             this.NPCFlags = this.Template.NPCFlags;
             this.Faction = this.Template.FactionA;
             this.VendorLoot = this.Template.VendorItems;
+            this.Level = this.Template.Level.GetRandom((int)Template.Level.Minimum, (int)Template.Level.Maximum + 1);
             GridManager.Instance.AddOrGet(this, true);
         }
 
@@ -261,19 +262,35 @@ namespace WorldServer.Game.Objects
         }
         #endregion
 
-        #region Quest Functions
-        private uint CalculateXPReward(Player p) //Will change these when groups have been made etc
+        #region QuestAndXp Functions
+        private uint CalculateXPReward(Player p) //TODO: Group values
         {
-            byte lvl = p.Level;
-            int lowerlimit = (lvl > 29 ? 7 : 4 + (int)Math.Floor(lvl / 10d));  //Amount of levels below player before grey (lowerlimit - 1 == grey)
-            int multi = (isElite ? 2 : 1); //Elites produce double XP
+            byte plevel = p.Level;
 
-            if (this.Level > lvl) //Top yellow to red 
-                return (uint)((45 + (5 * lvl) * (1 + 0.05f * (this.Level - lvl))) * multi);
-            else if (this.Level <= lvl - lowerlimit && lvl > lowerlimit) //Grey
+            int graylevel = 0;
+            if (plevel > 5 && plevel < 50)
+                graylevel = (int)(p.Level - Math.Floor(plevel / 10f) - 5);
+            else if (plevel == 50)
+                graylevel = 40;
+            else if (plevel > 50 && plevel < 60)
+                graylevel = (int)(p.Level - Math.Floor(plevel / 5f) - 1);
+            else if (plevel == 60)
                 return 0;
-            else //Green to low yellow 
-                return (uint)((45 + (5 * lvl)) * multi);
+
+            if (Level == graylevel)
+                return 0;
+
+            uint basexp = (uint)((plevel * 5) + 45);
+            int multi = (isElite && Level - plevel <= 4 ? 2 : 1); //Elites produce double XP
+            if (plevel < Level)
+            {
+                if (Level - plevel > 4)
+                    plevel = (byte)(Level - 4); // Red mobs cap out at the same experience as orange.
+                basexp = (uint)(basexp * (1 + (0.05 * (Level - plevel))));
+            }
+            else if (plevel > Level)
+                basexp = (uint)(basexp * (1 - (plevel - Level) / FormulaData.ZeroDifferenceValue(plevel)));
+            return (uint)(basexp * multi);
         }
 
         public void RewardKillXP(Player player)

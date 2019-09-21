@@ -179,5 +179,12 @@ begin not atomic
 
 		insert into applied_updates values ('190920191');
 	end if;
+
+	-- 21/09/2019 1
+	if (select count(*) from applied_updates where id='210920191') = 0 then
+		update creatures set minlevel = maxlevel and maxlevel = minlevel where minlevel > maxlevel;
+
+		insert into applied_updates values ('210920191');
+	end if;
 end $
 delimiter ;

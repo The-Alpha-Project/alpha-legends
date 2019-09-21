@@ -61,7 +61,6 @@ namespace WorldServer.Packets.Handlers
                 }
 
             }
-            
 
             manager.Send(writer);
         }
