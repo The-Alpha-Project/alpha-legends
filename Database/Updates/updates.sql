@@ -153,7 +153,7 @@ begin not atomic
 		update spawns_creatures set spawn_displayid = 164 where spawn_displayid = 3258;
 
 		set foreign_key_checks = 0;
-		alter table spawns_creatures add constraint spawns_creatures_model	id foreign key (spawn_displayid) references creatures(modelid) on delete cascade on update cascade;
+		alter table spawns_creatures add constraint spawns_creatures_modelid foreign key (spawn_displayid) references creatures(modelid) on delete cascade on update cascade;
 		set foreign_key_checks = 1;
 
 		-- Eitrigg original position
