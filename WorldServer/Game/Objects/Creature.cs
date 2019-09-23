@@ -277,7 +277,7 @@ namespace WorldServer.Game.Objects
             else if (plevel == 60)
                 return 0;
 
-            if (Level == graylevel)
+            if (Level <= graylevel)
                 return 0;
 
             uint basexp = (uint)((plevel * 5) + 45);

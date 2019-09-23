@@ -38,8 +38,8 @@ namespace WorldServer.Packets.Handlers
 
             foreach (Player c in result)
             {
-                SetMasks(c);
                 c.PreLoad();
+                SetMasks(c);
 
                 writer.WriteUInt64(c.Guid);
                 writer.WriteString(c.Name);
