@@ -214,6 +214,7 @@ namespace WorldServer.Game.Objects
             this.IsDead = true;
             this.IsAttacking = false;
             this.InCombat = false;
+            this.CombatTarget = 0;
             this.Health.Current = 0;
 
             this.UnitFlags = (uint)Common.Constants.UnitFlags.UNIT_FLAG_DEAD;
@@ -229,12 +230,11 @@ namespace WorldServer.Game.Objects
 
                 foreach (Unit unit in InvolvedPlayers((Player)killer))
                 {
-                    Unit dump;
                     if (unit.IsTypeOf(ObjectTypes.TYPE_PLAYER))
                         ((Player)unit).CheckQuestCreatureKill(this.Guid);
 
                     if (unit.Attackers.ContainsKey(this.Guid))
-                        unit.Attackers.TryRemove(this.Guid, out dump);
+                        unit.Attackers.TryRemove(this.Guid, out Unit dump);
                 }
             }
             this.Attackers.Clear();
