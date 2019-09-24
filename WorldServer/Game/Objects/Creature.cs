@@ -542,7 +542,7 @@ namespace WorldServer.Game.Objects
                     Player victim = Database.Players.TryGet(this.CombatTarget);
 
                     float distance = Location.Distance(victim.Location);
-                    if (distance > this.Template.CombatReach && MoveLocation != victim.Location) //If not going to location already
+                    if (distance > this.Template.BoundingRadius && MoveLocation != victim.Location) //If not going to location already
                         MoveTo(victim.Location, true, distance); //Move to victim's location
                     else
                         this.UpdateMeleeAttackingState(); //Victim in range so attack

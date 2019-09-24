@@ -62,7 +62,7 @@ namespace WorldServer.Packets.Handlers
             Boolean error = false;
             byte bag = (byte)InventorySlots.SLOT_INBACKPACK;
 
-            if (dstslot == (byte)InventorySlots.SLOT_MAINHAND && manager.Character.Inventory.HasOffhandWeapon() &&
+            if (dstslot == (byte)InventorySlots.SLOT_MAINHAND && manager.Character.Inventory.HasOffhand() &&
                 manager.Character.GetItem(bag, srcslot).Type == InventoryTypes.TWOHANDEDWEAPON)
             {
                 if (manager.Character.Inventory.CanStoreItem(manager.Character.GetItem(bag, srcslot).Entry, 1))

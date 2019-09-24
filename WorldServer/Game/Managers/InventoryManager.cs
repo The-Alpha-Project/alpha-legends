@@ -257,6 +257,11 @@ namespace WorldServer.Game.Managers
 
         public bool HasOffhandWeapon()
         {
+            return Backpack.GetItem((byte)InventoryTypes.WEAPONOFFHAND) != null;
+        }
+
+        public bool HasOffhand()
+        {
             return Backpack.GetItem((byte)InventoryTypes.WEAPONOFFHAND) != null ||
                 Backpack.GetItem((byte)InventoryTypes.HOLDABLE) != null ||
                 Backpack.GetItem((byte)InventoryTypes.SHIELD) != null;

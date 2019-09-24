@@ -62,16 +62,20 @@ namespace WorldServer.Packets.Handlers
                 writer.WriteFloat(c.Location.Z);
 
                 writer.WriteUInt32(c.GuildGuid);
+
                 writer.WriteUInt32(c.PetDisplayInfo);
                 writer.WriteUInt32(c.PetLevel);
                 writer.WriteUInt32(c.PetFamily);
 
-                for (byte i = 0; i < 20; i++) //Loop through inventory slots
+                for (byte i = 0; i < 19; i++) //Loop through inventory slots
                 {
                     var item = c.Inventory.Backpack.GetItem(i);
                     writer.WriteUInt32(item != null ? item.Template.DisplayID : 0); // DisplayId
-                    writer.WriteUInt8(item != null ? (byte)(item.Type) : (byte)0); // InventoryType
+                    writer.WriteUInt8(item != null ? (byte)item.Type : (byte)0); // InventoryType
                 }
+                // Not sure about these last two.
+                writer.WriteUInt32(0);
+                writer.WriteUInt8(0);
             }
 
             manager.Send(writer);
@@ -208,8 +212,8 @@ namespace WorldServer.Packets.Handlers
                 pw.WriteUInt64(c.Guid);
                 pw.WriteUInt64(enemy.Guid);
                 manager.Send(pw);
-                if (enemy is Creature && !c.IsInFrontOf(enemy)) // TODO: I'm not 100% sure if this is working
-                    enemy.Orientation = enemy.Location.Angle(c.Location);
+                //if (enemy is Creature && !c.IsInFrontOf(enemy)) // TODO: I'm not 100% sure if this is working
+                //    enemy.Orientation = enemy.Location.Angle(c.Location);
             }
         }
 
