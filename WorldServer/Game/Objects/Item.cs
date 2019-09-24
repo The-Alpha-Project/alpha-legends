@@ -234,7 +234,7 @@ namespace WorldServer.Game.Objects
                 (int)InventorySlots.SLOT_CHEST, // robe
 	            (int)InventorySlots.SLOT_MAINHAND, // mainhand
 	            (int)InventorySlots.SLOT_OFFHAND, // offhand
-	            (int)InventorySlots.SLOT_MAINHAND, // held
+	            (int)InventorySlots.SLOT_OFFHAND, // held
 	            (int)InventorySlots.SLOT_INBACKPACK, // ammo
 	            (int)InventorySlots.SLOT_RANGED, // thrown
 	            (int)InventorySlots.SLOT_RANGED // rangedright

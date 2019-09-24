@@ -59,7 +59,6 @@ namespace WorldServer.Packets.Handlers
 
         public static Boolean HandleItemEquipAction(byte srcslot, byte dstslot, ref WorldManager manager)
         {
-            // TODO: Currently everything works based in the main backpack, we need to add support for more bags. Even additem works only for the main backpack.
             Boolean error = false;
             byte bag = (byte)InventorySlots.SLOT_INBACKPACK;
 
