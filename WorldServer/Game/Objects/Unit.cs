@@ -635,13 +635,13 @@ namespace WorldServer.Game.Objects
                 if (this.Class == (byte)Classes.CLASS_WARRIOR)
                 {
                     this.Rage.Current = (this.Rage.Current / 10) + CalculateRageRegen(ref damageInfo, isCrit, victim, true);
+                    if (this.Rage.Current > 1000) this.Rage.Current = 100;
                 }
                 if (victim is Player && ((Player)victim).Class == (byte)Classes.CLASS_WARRIOR)
                 {
                     victim.Rage.Current = (victim.Rage.Current / 10) + CalculateRageRegen(ref damageInfo, isCrit, victim, false);
+                    if (victim.Rage.Current > 1000) victim.Rage.Current = 100;
                 }
-                if (victim.Rage.Current > 1000)
-                    victim.Rage.Current = 100;
             }
 
         }
