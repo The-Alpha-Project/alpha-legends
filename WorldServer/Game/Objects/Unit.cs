@@ -640,6 +640,8 @@ namespace WorldServer.Game.Objects
                 {
                     victim.Rage.Current = (victim.Rage.Current / 10) + CalculateRageRegen(ref damageInfo, isCrit, victim, false);
                 }
+                if (victim.Rage.Current > 1000)
+                    victim.Rage.Current = 100;
             }
 
         }
