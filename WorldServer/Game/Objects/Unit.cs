@@ -674,6 +674,7 @@ namespace WorldServer.Game.Objects
 
         public uint CalculateRageRegen(ref UnitStructs.CalcDamageInfo damageinfo, bool isCrit, Unit victim, bool asPlayer)
         {
+            uint rageToRegen = 0;
             if (asPlayer)
             {
                 bool isMain = damageinfo.attackType == AttackTypes.BASE_ATTACK;
@@ -684,11 +685,12 @@ namespace WorldServer.Game.Objects
                     if (offHand != null)
                         speed = offHand.Template.WeaponSpeed;
                 }
-                return (uint)(((15 * damageinfo.damage) / (4 * FormulaData.RageConversionValue(this.Level))) + (((isMain ? 3.5 : 1.75) * (isCrit ? 2 : 1)) / 2));
+                rageToRegen = (uint)(((15 * damageinfo.damage) / (4 * FormulaData.RageConversionValue(this.Level))) + (((isMain ? 3.5 : 1.75) * (isCrit ? 2 : 1)) / 2));
             } else
             {
-                return (uint)(2.5 * (damageinfo.damage / FormulaData.RageConversionValue(victim.Level)));
+                rageToRegen = (uint)(2.5 * (damageinfo.damage / FormulaData.RageConversionValue(victim.Level)));
             }
+            return rageToRegen < 1 ? 1 : rageToRegen;
         }
 
         public VictimStates RollMeleeOutcome(Unit victim)
