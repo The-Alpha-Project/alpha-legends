@@ -27,7 +27,7 @@ namespace WorldServer.Game.Objects
         public bool IsContainer { get { return Type == InventoryTypes.BAG; } }
         public bool IsSoulbound { get; private set; } = false;
         public bool IsEquipmentPos { get { return CurrentSlot < (uint)InventorySlots.SLOT_BAG1; } }
-        public uint[] SpellCharges = new uint[5];
+        public int[] SpellCharges = new int[5];
         public uint EquipSlot = 0;
         public ulong Player = 0;
 
@@ -68,11 +68,11 @@ namespace WorldServer.Game.Objects
             this.Entry = Convert.ToUInt32(dr["item_template"]);
             this.StackCount = Convert.ToUInt32(dr["stackcount"]);
             this.Player = Convert.ToUInt64(dr["player"]);
-            this.SpellCharges = new[] { Convert.ToUInt32(dr["SpellCharges1"]),
-                                        Convert.ToUInt32(dr["SpellCharges2"]),
-                                        Convert.ToUInt32(dr["SpellCharges3"]),
-                                        Convert.ToUInt32(dr["SpellCharges4"]),
-                                        Convert.ToUInt32(dr["SpellCharges5"]) };
+            this.SpellCharges = new[] { Convert.ToInt32(dr["SpellCharges1"]),
+                                        Convert.ToInt32(dr["SpellCharges2"]),
+                                        Convert.ToInt32(dr["SpellCharges3"]),
+                                        Convert.ToInt32(dr["SpellCharges4"]),
+                                        Convert.ToInt32(dr["SpellCharges5"]) };
             if (this.Template == null)
                 this.Template = Database.ItemTemplates.TryGet(this.Entry);
         }
@@ -121,7 +121,7 @@ namespace WorldServer.Game.Objects
             uc.UpdateValue<uint>(ItemFields.ITEM_FIELD_FLAGS, this.Template.Flags);
 
             for (int i = 0; i < 5; i++)
-                uc.UpdateValue<uint>(ItemFields.ITEM_FIELD_SPELL_CHARGES, this.SpellCharges[i], i);
+                uc.UpdateValue<int>(ItemFields.ITEM_FIELD_SPELL_CHARGES, this.SpellCharges[i], i);
 
             if (this.IsContainer)
             {

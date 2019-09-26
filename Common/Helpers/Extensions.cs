@@ -83,42 +83,48 @@ namespace Common.Helpers.Extensions
 
     public class TResistance
     {
-        private uint negative;
-        private uint positive;
-        private uint baseval;
+        private int negative;
+        private int positive;
+        private int baseval;
 
         public TResistance() { }
 
-        public TResistance(uint baseamt)
+        public TResistance(int baseamt)
         {
             this.BaseAmount = baseamt;
         }
 
         public TResistance(uint baseamt, uint posamt)
         {
+            this.BaseAmount = (int)baseamt;
+            this.PositiveAmount = (int)posamt;
+        }
+
+        public TResistance(int baseamt, int posamt)
+        {
             this.BaseAmount = baseamt;
             this.PositiveAmount = posamt;
         }
 
-        public uint NegativeAmount
+        public int NegativeAmount
         {
             get { return negative; }
             set { negative = value; }
         }
 
-        public uint PositiveAmount
+        public int PositiveAmount
         {
             get { return positive; }
             set { positive = value; }
         }
 
-        public uint BaseAmount
+        public int BaseAmount
         {
             get { return baseval; }
             set { baseval = value; }
         }
 
-        public void SetAll(UInt32 val)
+        public void SetAll(Int32 val)
         {
             baseval = val;
             positive = val;

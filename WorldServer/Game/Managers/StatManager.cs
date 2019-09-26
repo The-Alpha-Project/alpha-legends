@@ -40,22 +40,22 @@ namespace WorldServer.Game.Managers
             character.BaseAttackTime = (character.Agility.Current * 140); //Default DPS calulation
 
             List<Item> equipped = character.Inventory.Backpack.Items.Values.Where(x => x.CurrentSlot < (byte)InventorySlots.SLOT_BAG1).ToList();
-            character.Holy.PositiveAmount += (uint)equipped.Where(x => x.Template.ResistHoly > 0).Sum(x => x.Template.ResistHoly);
-            character.Holy.NegativeAmount += (uint)equipped.Where(x => x.Template.ResistHoly < 0).Sum(x => x.Template.ResistHoly);
+            character.Holy.PositiveAmount += equipped.Where(x => x.Template.ResistHoly > 0).Sum(x => x.Template.ResistHoly);
+            character.Holy.NegativeAmount += equipped.Where(x => x.Template.ResistHoly < 0).Sum(x => x.Template.ResistHoly);
 
-            character.Nature.PositiveAmount += (uint)equipped.Where(x => x.Template.ResistNature > 0).Sum(x => x.Template.ResistNature);
-            character.Nature.NegativeAmount += (uint)equipped.Where(x => x.Template.ResistNature < 0).Sum(x => x.Template.ResistNature);
+            character.Nature.PositiveAmount += equipped.Where(x => x.Template.ResistNature > 0).Sum(x => x.Template.ResistNature);
+            character.Nature.NegativeAmount += equipped.Where(x => x.Template.ResistNature < 0).Sum(x => x.Template.ResistNature);
 
-            character.Fire.PositiveAmount += (uint)equipped.Where(x => x.Template.ResistFire > 0).Sum(x => x.Template.ResistFire);
-            character.Fire.NegativeAmount += (uint)equipped.Where(x => x.Template.ResistFire < 0).Sum(x => x.Template.ResistFire);
+            character.Fire.PositiveAmount += equipped.Where(x => x.Template.ResistFire > 0).Sum(x => x.Template.ResistFire);
+            character.Fire.NegativeAmount += equipped.Where(x => x.Template.ResistFire < 0).Sum(x => x.Template.ResistFire);
 
-            character.Frost.PositiveAmount += (uint)equipped.Where(x => x.Template.ResistFrost > 0).Sum(x => x.Template.ResistFrost);
-            character.Frost.NegativeAmount += (uint)equipped.Where(x => x.Template.ResistFrost < 0).Sum(x => x.Template.ResistFrost);
+            character.Frost.PositiveAmount += equipped.Where(x => x.Template.ResistFrost > 0).Sum(x => x.Template.ResistFrost);
+            character.Frost.NegativeAmount += equipped.Where(x => x.Template.ResistFrost < 0).Sum(x => x.Template.ResistFrost);
 
-            character.Shadow.PositiveAmount += (uint)equipped.Where(x => x.Template.ResistShadow > 0).Sum(x => x.Template.ResistShadow);
-            character.Shadow.NegativeAmount += (uint)equipped.Where(x => x.Template.ResistShadow < 0).Sum(x => x.Template.ResistShadow);
+            character.Shadow.PositiveAmount += equipped.Where(x => x.Template.ResistShadow > 0).Sum(x => x.Template.ResistShadow);
+            character.Shadow.NegativeAmount += equipped.Where(x => x.Template.ResistShadow < 0).Sum(x => x.Template.ResistShadow);
 
-            character.Armor.BaseAmount += (uint)equipped.Sum(x => x.Template.ResistPhysical);
+            character.Armor.BaseAmount += equipped.Sum(x => x.Template.ResistPhysical);
             character.Damage.Maximum += (uint)equipped.Sum(x => x.Template.DamageStats[0].Max);
             character.Damage.Current += (uint)equipped.Sum(x => x.Template.DamageStats[0].Min);
 

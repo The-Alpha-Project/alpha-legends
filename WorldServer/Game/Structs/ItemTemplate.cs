@@ -1,13 +1,6 @@
-﻿using Common.Constants;
-using Common.Database;
+﻿using Common.Database;
 using Common.Helpers.Extensions;
 using Common.Network.Packets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using WorldServer.Game;
-using WorldServer.Game.Objects;
 
 namespace WorldServer.Game.Structs
 {
@@ -23,35 +16,35 @@ namespace WorldServer.Game.Structs
         public uint Subtype { get; set; }
         [Column("name")]
         public string Name { get; set; }
-        [Column("displayid")]
+        [Column("display_id")]
         public uint DisplayID { get; set; }
         [Column("quality")]
         public uint OverallQuality { get; set; }
         [Column("flags")]
         public uint Flags { get; set; }
-        [Column("buyprice")]
+        [Column("buy_price")]
         public uint BuyPrice { get; set; }// Player buys
-        [Column("sellprice")]
+        [Column("sell_price")]
         public uint SellPrice { get; set; }// Player sells
-        [Column("inventorytype")]
+        [Column("inventory_type")]
         public uint InvType { get; set; }
-        [Column("allowableclass")]
+        [Column("allowable_class")]
         public int AllowableClass { get; set; }
-        [Column("allowablerace")]
+        [Column("allowable_race")]
         public int AllowableRace { get; set; }
-        [Column("itemlevel")]
+        [Column("item_level")]
         public uint Level { get; set; }
-        [Column("requiredlevel")]
+        [Column("required_level")]
         public uint LevelReq { get; set; }
-        [Column("requiredskill")]
+        [Column("required_skill")]
         public uint SkillReq { get; set; }
-        [Column("RequiredSkillRank")]
+        [Column("required_skill_rank")]
         public uint SkillRankReq { get; set; }
-        [Column("maxcount")]
+        [Column("max_count")]
         public uint MaxCount { get; set; }
         [Column("stackable")]
         public uint MaxStackCount { get; set; }
-        [Column("containerslots")]
+        [Column("container_slots")]
         public uint ContainerSlots { get; set; }
         [Column("armor")]
         public int ResistPhysical { get; set; } //Resitances are ints as some items can actually remove stats - Corrupted Ashbringer
@@ -72,25 +65,23 @@ namespace WorldServer.Game.Structs
         [Column("bonding")]
         public uint Bonding { get; set; }
         [Column("description")]
-        public string description { get; set; }
-        [Column("pagetext")]
+        public string Description { get; set; }
+        [Column("page_text")]
         public uint PageText { get; set; }
-        [Column("languageid")]
-        public uint LanguageID { get; set; }
-        [Column("pagematerial")]
+        [Column("page_language")]
+        public uint PageLanguage { get; set; }
+        [Column("page_material")]
         public uint PageMaterial { get; set; }
-        [Column("startquest")]
+        [Column("start_quest")]
         public uint StartQuest { get; set; }
-        [Column("lockid")]
+        [Column("lock_id")]
         public uint Lock { get; set; }
         [Column("material")]
         public int Material { get; set; }
         [Column("sheath")]
         public uint SheatheType { get; set; }
-        [Column("expendable")]
-        public bool Expendable { get; set; }
         [ColumnList("spellcharges_", 5)]
-        public uint[] SpellCharges { get; set; }
+        public int[] SpellCharges { get; set; }
 
         [ColumnList("", 5)]
         public SpellStat[] SpellStats { get; set; }
@@ -160,9 +151,9 @@ namespace WorldServer.Game.Structs
             }
 
             pw.WriteUInt32(this.Bonding);
-            pw.WriteString(this.description + ""); //Description needs to be something
+            pw.WriteString(this.Description + ""); //Description needs to be something
             pw.WriteUInt32(this.PageText);
-            pw.WriteUInt32(this.LanguageID);
+            pw.WriteUInt32(this.PageLanguage);
             pw.WriteUInt32(this.PageMaterial);
             pw.WriteUInt32(this.StartQuest);
             pw.WriteUInt32(this.Lock);

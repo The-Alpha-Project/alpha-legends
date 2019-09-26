@@ -69,8 +69,8 @@ namespace WorldServer.Game.Objects
             this.Mana.SetAll(this.Template.Mana.Maximum);
             this.BaseAttackTime = (uint)this.Template.AttackTime;
             this.DynamicFlags = this.Template.DynamicFlags;
-            this.NPCFlags = this.Template.NPCFlags;
-            this.Faction = this.Template.FactionA;
+            this.NPCFlags = (byte)this.Template.NPCFlags;
+            this.Faction = this.Template.Faction;
             this.VendorLoot = this.Template.VendorItems;
             this.Level = this.Template.Level.GetRandom((int)Template.Level.Minimum, (int)Template.Level.Maximum + 1);
             GridManager.Instance.AddOrGet(this, true);
@@ -123,19 +123,19 @@ namespace WorldServer.Game.Objects
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_HEALTH, this.Health.Current);
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_MAXHEALTH, this.Health.Maximum);
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_LEVEL, this.Template.Level.Maximum);
-            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_FACTIONTEMPLATE, this.Template.FactionA);
+            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_FACTIONTEMPLATE, this.Template.Faction);
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_FLAGS, this.Template.UnitFlags);
             uc.UpdateValue<float>(UnitFields.UNIT_FIELD_BASEATTACKTIME, this.Template.AttackTime); //Main hand
             uc.UpdateValue<float>(UnitFields.UNIT_FIELD_BASEATTACKTIME, 0f, 1); //Offhand
-            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Armor.BaseAmount);
-            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Holy.BaseAmount, 1);
-            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Fire.BaseAmount, 2);
-            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Nature.BaseAmount, 3);
-            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Frost.BaseAmount, 4);
-            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Shadow.BaseAmount, 5);
+            uc.UpdateValue<int>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Armor.BaseAmount);
+            uc.UpdateValue<int>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Holy.BaseAmount, 1);
+            uc.UpdateValue<int>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Fire.BaseAmount, 2);
+            uc.UpdateValue<int>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Nature.BaseAmount, 3);
+            uc.UpdateValue<int>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Frost.BaseAmount, 4);
+            uc.UpdateValue<int>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Shadow.BaseAmount, 5);
             uc.UpdateValue<float>(UnitFields.UNIT_FIELD_BOUNDINGRADIUS, this.Template.BoundingRadius);
             uc.UpdateValue<float>(UnitFields.UNIT_FIELD_COMBATREACH, this.Template.CombatReach);
-            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_DISPLAYID, this.Template.ModelID);
+            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_DISPLAYID, this.Template.ModelID1);
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_COINAGE, this.Money);
             uc.UpdateValue<float>(UnitFields.UNIT_MOD_CAST_SPEED, 1f);
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_DAMAGE, ByteConverter.ConvertToUInt32((ushort)this.Template.Damage.Current, (ushort)this.Template.Damage.Maximum));
@@ -189,7 +189,7 @@ namespace WorldServer.Game.Objects
             GridManager.Instance.SendSurrounding(pw, this);
 
             this.Location = loc;
-            this.Orientation = this.Location.Angle(loc);
+            //this.Orientation = this.Location.Angle(loc);
         }
         #endregion
 
@@ -252,7 +252,7 @@ namespace WorldServer.Game.Objects
             this.Health.SetAll(this.Health.Maximum);
             this.UnitFlags = this.Template.UnitFlags;
             this.DynamicFlags = this.Template.DynamicFlags;
-            this.NPCFlags = this.Template.NPCFlags;
+            this.NPCFlags = (byte)this.Template.NPCFlags;
             this.StandState = 0;
             this.IsSkinned = false;
             this.Loot.Clear();
@@ -542,7 +542,7 @@ namespace WorldServer.Game.Objects
                     Player victim = Database.Players.TryGet(this.CombatTarget);
 
                     float distance = Location.Distance(victim.Location);
-                    if (distance > this.Template.BoundingRadius && MoveLocation != victim.Location) //If not going to location already
+                    if (distance > this.Template.CombatReach && MoveLocation != victim.Location) //If not going to location already
                         MoveTo(victim.Location, true, distance); //Move to victim's location
                     else
                         this.UpdateMeleeAttackingState(); //Victim in range so attack

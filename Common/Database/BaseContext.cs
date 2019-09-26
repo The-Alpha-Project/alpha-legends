@@ -67,7 +67,7 @@ namespace Common.Database
 
                                     if (customTypes.Contains(property.Key.PropertyType))
                                     {
-                                        var newprop = CreateType(property.Key.PropertyType, new object[] { Convert.ToUInt32(dr[col]) });
+                                        var newprop = CreateType(property.Key.PropertyType, new object[] { Convert.ToInt32(dr[col]) });
                                         property.Key.SetValue(newobj, newprop);
                                     }
                                     else

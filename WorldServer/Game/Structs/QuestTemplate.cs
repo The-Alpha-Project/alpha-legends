@@ -24,7 +24,7 @@ namespace WorldServer.Game.Structs
         public uint QuestLevel { get; set; }
         [Column("type")]
         public uint Type { get; set; }
-        [Column("requiredclass")]
+        [Column("requiredclasses")]
         public uint RequiredClasses { get; set; }
         [Column("requiredraces")]
         public uint RequiredRaces { get; set; }
@@ -45,9 +45,9 @@ namespace WorldServer.Game.Structs
         [Column("LimitTime")]
         public uint LimitTime { get; set; }
         [Column("QuestFlags")]
-        public uint m_QuestFlags { get; set; }
+        public uint QuestFlags { get; set; }
         [Column("SpecialFlags")]
-        public uint m_SpecialFlags { get; set; }
+        public uint SpecialFlags { get; set; }
         [Column("PrevQuestId")]
         public int PrevQuestId { get; set; }
         [Column("NextQuestId")]
