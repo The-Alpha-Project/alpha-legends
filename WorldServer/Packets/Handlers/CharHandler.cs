@@ -182,7 +182,7 @@ namespace WorldServer.Packets.Handlers
         public static void HandleAttackSwing(ref PacketReader packet, ref WorldManager manager)
         {
             ulong guid = packet.ReadUInt64();
-            Creature enemy = Database.Creatures.TryGet(guid);
+            Unit enemy = Database.Creatures.TryGet<Unit>(guid) ?? Database.Players.TryGet<Unit>(guid);
             Player c = manager.Character;
 
             if (enemy == null)
@@ -212,8 +212,6 @@ namespace WorldServer.Packets.Handlers
                 pw.WriteUInt64(c.Guid);
                 pw.WriteUInt64(enemy.Guid);
                 manager.Send(pw);
-                //if (enemy is Creature && !c.IsInFrontOf(enemy)) // TODO: I'm not 100% sure if this is working
-                //    enemy.Orientation = enemy.Location.Angle(c.Location);
             }
         }
 

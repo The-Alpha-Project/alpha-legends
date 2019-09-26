@@ -1511,7 +1511,8 @@ namespace WorldServer.Game.Objects
                 return;
             }
 
-            if (Database.Creatures.TryGet(this.CombatTarget)?.IsDead == true)
+            if (Database.Creatures.TryGet(this.CombatTarget)?.IsDead == true ||
+                Database.Players.TryGet(this.CombatTarget)?.IsDead == true)
             {
                 LeaveCombat();
                 return;

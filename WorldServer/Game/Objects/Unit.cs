@@ -99,7 +99,7 @@ namespace WorldServer.Game.Objects
             PacketWriter pw = new PacketWriter((enable ? Opcodes.SMSG_FORCE_MOVE_ROOT : Opcodes.SMSG_FORCE_MOVE_UNROOT));
             pw.WriteUInt64(this.Guid);
             pw.WriteUInt32(0);
-            GridManager.Instance.SendSurrounding(pw, this);
+            ((Player)this).Client.Send(pw);
             this.IsRooted = enable;
         }
 
@@ -335,7 +335,7 @@ namespace WorldServer.Game.Objects
             byte swingerror = 0;
             float combatAngle = (float)Math.PI;
             Player player = (this.IsTypeOf(ObjectTypes.TYPE_PLAYER) ? ((Player)this) : null);
-            Unit victim = (Database.Creatures.TryGet<Unit>(CombatTarget) ?? Database.Players.TryGet<Unit>(CombatTarget));
+            Unit victim = Database.Creatures.TryGet<Unit>(CombatTarget) ?? Database.Players.TryGet<Unit>(CombatTarget);
 
             if (victim == null)
             {
@@ -361,7 +361,7 @@ namespace WorldServer.Game.Objects
                 return false;
 
             //Out of reach
-            if (this.Location.Distance(victim.Location) > (player != null ? 3f : ((Creature)this).Template.CombatReach * 3f))
+            if (this.Location.Distance(victim.Location) > (player != null ? 3f : (this is Creature ? ((Creature)this).Template.CombatReach : ((Player)this).BoundingRadius) * 3f))
             {
                 SetAttackTimer(AttackTypes.BASE_ATTACK, (int)this.BaseAttackTime);
                 if (player != null && player.Inventory.HasOffhandWeapon())
@@ -757,6 +757,8 @@ namespace WorldServer.Game.Objects
             //Damage Effects
             if (damageInfo.damage > 0)
             {
+                bool killPlayer = true;
+
                 if (!this.UnitFlags.HasFlag((uint)Common.Constants.UnitFlags.UNIT_FLAG_IN_COMBAT))
                     Flag.SetFlag(ref UnitFlags, (uint)Common.Constants.UnitFlags.UNIT_FLAG_IN_COMBAT);
 
@@ -775,43 +777,48 @@ namespace WorldServer.Game.Objects
                 //Update units
                 if (IsTypeOf(ObjectTypes.TYPE_PLAYER))
                 {
+                    killPlayer = false;
                     Player p = ((Player)this);
-                    Creature c = ((Creature)target);
 
-                    if (!c.IsAttacking) //Set attacking state
+                    if (!target.IsAttacking) //Set attacking state
                     {
-                        c.IsAttacking = true;
+                        target.IsAttacking = true;
                     }
 
-                    if (!c.InCombat)
+                    if (!target.InCombat)
                     {
-                        c.InCombat = true;
-                        c.CombatTarget = this.Guid;
+                        target.InCombat = true;
+                        target.CombatTarget = this.Guid;
                     }
 
-                    if (c.AttackTimers[AttackTypes.BASE_ATTACK] != (int)c.BaseAttackTime)
+                    if (target.AttackTimers[AttackTypes.BASE_ATTACK] != (int)target.BaseAttackTime)
                     {
-                        if (c.AttackTimers[AttackTypes.BASE_ATTACK] + 200 > c.BaseAttackTime)
-                            c.SetAttackTimer(AttackTypes.BASE_ATTACK, c.BaseAttackTime);
+                        if (target.AttackTimers[AttackTypes.BASE_ATTACK] + 200 > target.BaseAttackTime)
+                            target.SetAttackTimer(AttackTypes.BASE_ATTACK, target.BaseAttackTime);
                         else
-                            c.SetAttackTimer(AttackTypes.OFFHAND_ATTACK, c.AttackTimers[AttackTypes.BASE_ATTACK] + 200);
+                            target.SetAttackTimer(AttackTypes.OFFHAND_ATTACK, target.AttackTimers[AttackTypes.BASE_ATTACK] + 200);
                     }
 
-                    if (c.Health.Current <= 0)
+                    if (target.Health.Current <= 0)
                     {
-                        Unit dump;
-                        c.Die(p);
-
-                        if (p.Attackers.ContainsKey(c.Guid))
-                            p.Attackers.TryRemove(c.Guid, out dump);
-
-                        p.LeaveCombat();
+                        if (target is Creature)
+                        {
+                            ((Creature)target).Die(p);
+                            if (p.Attackers.ContainsKey(target.Guid))
+                                p.Attackers.TryRemove(target.Guid, out Unit dump);
+                        }
+                        else
+                        {
+                            if (target.Attackers.ContainsKey(p.Guid))
+                                target.Attackers.TryRemove(p.Guid, out Unit dump);
+                            killPlayer = true;
+                        }
                     }
                 }
-                else
+
+                if (killPlayer)
                 {
                     Player p = (Player)target;
-                    Creature c = (Creature)this;
 
                     if (p.Health.Current <= 0)
                     {
@@ -822,7 +829,7 @@ namespace WorldServer.Game.Objects
                         p.StandState = (byte)Common.Constants.StandState.UNIT_DEAD;
 
                         Flag.RemoveFlag(ref p.UnitFlags, (uint)Common.Constants.UnitFlags.UNIT_FLAG_IN_COMBAT); //Remove combat flags
-                        Flag.RemoveFlag(ref c.UnitFlags, (uint)Common.Constants.UnitFlags.UNIT_FLAG_IN_COMBAT);
+                        Flag.RemoveFlag(ref UnitFlags, (uint)Common.Constants.UnitFlags.UNIT_FLAG_IN_COMBAT);
 
                         p.LeaveCombat();
                     }
