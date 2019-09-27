@@ -72,7 +72,7 @@ namespace WorldServer.Game.Objects
             this.NPCFlags = (byte)this.Template.NPCFlags;
             this.Faction = this.Template.Faction;
             this.VendorLoot = this.Template.VendorItems;
-            this.Level = this.Template.Level.GetRandom((int)Template.Level.Minimum, (int)Template.Level.Maximum + 1);
+            this.Level = this.Template.Level.GetRandom();
             GridManager.Instance.AddOrGet(this, true);
         }
 
@@ -122,9 +122,9 @@ namespace WorldServer.Game.Objects
             uc.UpdateValue<ulong>(UnitFields.UNIT_FIELD_CHANNEL_OBJECT, this.ChannelSpell);
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_HEALTH, this.Health.Current);
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_MAXHEALTH, this.Health.Maximum);
-            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_LEVEL, this.Template.Level.Maximum);
+            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_LEVEL, this.Level);
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_FACTIONTEMPLATE, this.Template.Faction);
-            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_FLAGS, this.Template.UnitFlags);
+            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_FLAGS, this.UnitFlags);
             uc.UpdateValue<float>(UnitFields.UNIT_FIELD_BASEATTACKTIME, this.Template.AttackTime); //Main hand
             uc.UpdateValue<float>(UnitFields.UNIT_FIELD_BASEATTACKTIME, 0f, 1); //Offhand
             uc.UpdateValue<int>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Armor.BaseAmount);

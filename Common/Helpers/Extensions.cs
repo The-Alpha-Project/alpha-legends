@@ -178,7 +178,7 @@ namespace Common.Helpers.Extensions
 
         public byte GetRandom(int minincrease = 0, int maxincrease = 0)
         {
-            return (byte)new Random().Next((int)min + minincrease, (int)max + maxincrease);
+            return (byte)new Random().Next((int)min + minincrease, (int)max + maxincrease + 1);
         }
     }
 
