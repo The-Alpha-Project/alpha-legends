@@ -39,15 +39,20 @@ namespace WorldServer.Game.Objects
         private long CorpseRespawnTime;
         private long CorpseRemoveTime;
 
+        public float CombatReach;
+
         public Creature() { }
 
         public Creature(ref MySqlDataReader dr)
         {
             this.ObjectType |= ObjectTypes.TYPE_UNIT;
             this.Guid = Convert.ToUInt64(dr["spawn_id"]) | (ulong)HIGH_GUID.HIGHGUID_UNIT;
-            this.Entry = Convert.ToUInt32(dr["spawn_entry"]);
+            this.Entry = Convert.ToUInt32(dr["spawn_entry"]); 
+            this.Template = Database.CreatureTemplates.TryGet(this.Entry);
             this.Map = Convert.ToUInt32(dr["spawn_map"]);
-            this.DisplayID = Convert.ToUInt32(dr["spawn_displayid"]);
+            this.DisplayID = Template.ModelID.ToList().Shuffle().Find(num => num > 0 && num <= 4185);
+            if (DisplayID == 0) // This way we identify creatures with out of bounds displayids easily
+                this.DisplayID = 46;
             this.Location = new Vector(Convert.ToSingle(dr["spawn_positionX"]),
                                        Convert.ToSingle(dr["spawn_positionY"]),
                                        Convert.ToSingle(dr["spawn_positionZ"]));
@@ -63,7 +68,6 @@ namespace WorldServer.Game.Objects
         #region Database Functions
         public void OnDbLoad()
         {
-            this.Template = Database.CreatureTemplates.TryGet(this.Entry);
             SetRespawn();
             this.Health.SetAll(this.Template.Health.Maximum);
             this.Mana.SetAll(this.Template.Mana.Maximum);
@@ -73,6 +77,14 @@ namespace WorldServer.Game.Objects
             this.Faction = this.Template.Faction;
             this.VendorLoot = this.Template.VendorItems;
             this.Level = this.Template.Level.GetRandom();
+
+            CreatureModelInfo cmi = Database.CreatureModelInfo.TryGet(DisplayID);
+            if (cmi != null)
+            {
+                this.BoundingRadius = cmi.BoundingRadius;
+                this.CombatReach = cmi.CombatReach;
+            }
+
             GridManager.Instance.AddOrGet(this, true);
         }
 
@@ -89,7 +101,7 @@ namespace WorldServer.Game.Objects
                 new MySqlParameter("@spawn_id", this.Guid & ~(ulong)HIGH_GUID.HIGHGUID_UNIT),
                 new MySqlParameter("@spawn_entry", this.Entry),
                 new MySqlParameter("@spawn_map", this.Map),
-                new MySqlParameter("@spawn_displayid", this.DisplayID),
+                new MySqlParameter("@spawn_displayid", DisplayID),
                 new MySqlParameter("@spawn_positionX", Location.X),
                 new MySqlParameter("@spawn_positionY", Location.Y),
                 new MySqlParameter("@spawn_positionZ", Location.Z),
@@ -105,6 +117,27 @@ namespace WorldServer.Game.Objects
         #endregion
 
         #region Packet Functions
+        public override PacketWriter QueryDetails()
+        {
+            PacketWriter pw = new PacketWriter(Opcodes.SMSG_CREATURE_QUERY_RESPONSE);
+            pw.WriteUInt32(this.Entry);
+            pw.WriteString(this.Template.Name);
+
+            for (int i = 0; i < 3; i++)
+                pw.WriteString(this.Template.Name); //Other names - never implemented
+
+            pw.WriteString(this.Template.SubName);
+            pw.WriteUInt32(this.Template.CreatureTypeFlags); //Creature Type i.e tameable
+            pw.WriteUInt32(this.Template.CreatureType);
+            pw.WriteUInt32(this.Template.Family);
+            pw.WriteUInt32(this.Template.Rank);
+            pw.WriteUInt32(0);
+            pw.WriteUInt32(this.Template.PetSpellDataID);
+            pw.WriteUInt32(this.DisplayID);
+            pw.WriteUInt16(0); //??
+            return pw;
+        }
+
         public override PacketWriter BuildUpdate(UpdateTypes type = UpdateTypes.UPDATE_PARTIAL, bool self = false)
         {
             //Send update packet
@@ -127,15 +160,15 @@ namespace WorldServer.Game.Objects
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_FLAGS, this.UnitFlags);
             uc.UpdateValue<float>(UnitFields.UNIT_FIELD_BASEATTACKTIME, this.Template.AttackTime); //Main hand
             uc.UpdateValue<float>(UnitFields.UNIT_FIELD_BASEATTACKTIME, 0f, 1); //Offhand
-            uc.UpdateValue<int>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Armor.BaseAmount);
+            uc.UpdateValue<int>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Armor);
             uc.UpdateValue<int>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Holy.BaseAmount, 1);
             uc.UpdateValue<int>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Fire.BaseAmount, 2);
             uc.UpdateValue<int>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Nature.BaseAmount, 3);
             uc.UpdateValue<int>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Frost.BaseAmount, 4);
             uc.UpdateValue<int>(UnitFields.UNIT_FIELD_RESISTANCES, this.Template.Shadow.BaseAmount, 5);
-            uc.UpdateValue<float>(UnitFields.UNIT_FIELD_BOUNDINGRADIUS, this.Template.BoundingRadius);
-            uc.UpdateValue<float>(UnitFields.UNIT_FIELD_COMBATREACH, this.Template.CombatReach);
-            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_DISPLAYID, this.Template.ModelID1);
+            uc.UpdateValue<float>(UnitFields.UNIT_FIELD_BOUNDINGRADIUS, this.BoundingRadius);
+            uc.UpdateValue<float>(UnitFields.UNIT_FIELD_COMBATREACH, this.CombatReach);
+            uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_DISPLAYID, this.DisplayID);
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_COINAGE, this.Money);
             uc.UpdateValue<float>(UnitFields.UNIT_MOD_CAST_SPEED, 1f);
             uc.UpdateValue<uint>(UnitFields.UNIT_FIELD_DAMAGE, ByteConverter.ConvertToUInt32((ushort)this.Template.Damage.Current, (ushort)this.Template.Damage.Maximum));
@@ -189,7 +222,6 @@ namespace WorldServer.Game.Objects
             GridManager.Instance.SendSurrounding(pw, this);
 
             this.Location = loc;
-            //this.Orientation = this.Location.Angle(loc);
         }
         #endregion
 
@@ -341,6 +373,18 @@ namespace WorldServer.Game.Objects
             }
 
             return players;
+        }
+
+        public void Reset()
+        {
+            this.IsAttacking = false;
+            this.InCombat = false;
+            this.Health.SetAll(this.Health.Maximum);
+            this.CombatTarget = 0;
+            Flag.RemoveFlag(ref UnitFlags, (uint)Common.Constants.UnitFlags.UNIT_FLAG_IN_COMBAT);
+            GridManager.Instance.SendSurrounding(this.BuildUpdate(), this);
+            MoveTo(CombatStartLocation, true);
+
         }
 
         #endregion
@@ -504,11 +548,6 @@ namespace WorldServer.Game.Objects
                 DeathUpdate();
         }
 
-        public override PacketWriter QueryDetails()
-        {
-            return this.Template.QueryDetails();
-        }
-
         private void AttackUpdate()
         {
             Unit closestTarget = null;
@@ -526,11 +565,8 @@ namespace WorldServer.Game.Objects
 
             if (!this.Attackers.Any()) //No one left to kill
             {
-                this.IsAttacking = false;
-                this.InCombat = false;
-                this.Health.SetAll(this.Health.Maximum);
-                this.CombatTarget = 0;
-                MoveTo(CombatStartLocation, true);
+                Reset();
+
                 return;
             }
             else
@@ -542,7 +578,7 @@ namespace WorldServer.Game.Objects
                     Player victim = Database.Players.TryGet(this.CombatTarget);
 
                     float distance = Location.Distance(victim.Location);
-                    if (distance > this.Template.CombatReach && MoveLocation != victim.Location) //If not going to location already
+                    if (distance > this.CombatReach && MoveLocation != victim.Location) //If not going to location already
                         MoveTo(victim.Location, true, distance); //Move to victim's location
                     else
                         this.UpdateMeleeAttackingState(); //Victim in range so attack
@@ -555,11 +591,7 @@ namespace WorldServer.Game.Objects
                         return;
                     else //No one left to attack
                     {
-                        this.IsAttacking = false;
-                        this.InCombat = false;
-                        this.CombatTarget = 0;
-                        this.Health.SetAll(this.Health.Maximum);
-                        MoveTo(CombatStartLocation, true);
+                        Reset();
                         return;
                     }
                 }

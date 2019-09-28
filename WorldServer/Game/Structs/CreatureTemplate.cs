@@ -16,14 +16,8 @@ namespace WorldServer.Game.Structs
         [Key]
         [Column("entry")]
         public uint Entry { get; set; }
-        [Column("display_id1")]
-        public uint ModelID1 { get; set; }
-        [Column("display_id2")]
-        public uint ModelID2 { get; set; }
-        [Column("display_id3")]
-        public uint ModelID3 { get; set; }
-        [Column("display_id4")]
-        public uint ModelID4 { get; set; }
+        [ColumnList("display_id", 4)]
+        public uint[] ModelID { get; set; }
         [Column("name")]
         public string Name { get; set; }
         [Column("subname")]
@@ -34,6 +28,8 @@ namespace WorldServer.Game.Structs
         public float Speed { get; set; }
         [Column("scale")]
         public float Scale { get; set; }
+        [Column("armor")]
+        public int Armor { get; set; }
         [Column("base_attack_time")]
         public int AttackTime { get; set; }
         [Column("unit_flags")]
@@ -69,8 +65,6 @@ namespace WorldServer.Game.Structs
         [ColumnList(new[] { "dmg_min", "dmg_max" })]
         public TStat Damage { get; set; }
 
-        [ColumnList(new[] { "armor", "arcane_res" })] // TODO: There's no arcane res in 0.5.3
-        public TResistance Armor { get; set; }
         [Column("holy_res")]
         public TResistance Holy { get; set; }
         [Column("fire_res")]
@@ -92,41 +86,11 @@ namespace WorldServer.Game.Structs
         [Column("trainer_race")]
         public uint TrainerRace { get; set; }
 
-        public float BoundingRadius;
-        public float CombatReach;
         public List<VendorItem> VendorItems;
         public Dictionary<uint, VendorSpell> VendorSpells;
 
-        public PacketWriter QueryDetails()
-        {
-            PacketWriter pw = new PacketWriter(Opcodes.SMSG_CREATURE_QUERY_RESPONSE);
-            pw.WriteUInt32(this.Entry);
-            pw.WriteString(this.Name);
-
-            for (int i = 0; i < 3; i++)
-                pw.WriteString(this.Name); //Other names - never implemented
-
-            pw.WriteString(this.SubName);
-            pw.WriteUInt32(this.CreatureTypeFlags); //Creature Type i.e tameable
-            pw.WriteUInt32(this.CreatureType);
-            pw.WriteUInt32(this.Family);
-            pw.WriteUInt32(this.Rank);
-            pw.WriteUInt32(0);
-            pw.WriteUInt32(this.PetSpellDataID);
-            pw.WriteUInt32(this.ModelID1);
-            pw.WriteUInt16(0); //??
-            return pw;
-        }
-
         public void OnDbLoad()
         {
-            CreatureModelInfo cmi = Database.CreatureModelInfo.TryGet(this.ModelID1);
-            if (cmi != null)
-            {
-                this.BoundingRadius = cmi.BoundingRadius;
-                this.CombatReach = cmi.CombatReach;
-            }
-            
             this.VendorItems = Database.VendorItems.TryGet(this.Entry)?.ToList(); //Shallow copy
             this.VendorSpells = Database.VendorSpells.TryGet(this.Entry)?.ToDictionary(x => x.SpellId, y => y);
         }

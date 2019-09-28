@@ -361,7 +361,7 @@ namespace WorldServer.Game.Objects
                 return false;
 
             //Out of reach
-            if (this.Location.Distance(victim.Location) > (player != null ? 3f : (this is Creature ? ((Creature)this).Template.CombatReach : ((Player)this).BoundingRadius) * 3f))
+            if (this.Location.Distance(victim.Location) > (player != null ? 3f : (this is Creature ? ((Creature)this).CombatReach : ((Player)this).BoundingRadius) * 3f))
             {
                 SetAttackTimer(AttackTypes.BASE_ATTACK, (int)this.BaseAttackTime);
                 if (player != null && player.Inventory.HasOffhandWeapon())
@@ -829,7 +829,7 @@ namespace WorldServer.Game.Objects
                         p.StandState = (byte)Common.Constants.StandState.UNIT_DEAD;
 
                         Flag.RemoveFlag(ref p.UnitFlags, (uint)Common.Constants.UnitFlags.UNIT_FLAG_IN_COMBAT); //Remove combat flags
-                        Flag.RemoveFlag(ref UnitFlags, (uint)Common.Constants.UnitFlags.UNIT_FLAG_IN_COMBAT);
+                        //Flag.RemoveFlag(ref UnitFlags, (uint)Common.Constants.UnitFlags.UNIT_FLAG_IN_COMBAT);
 
                         p.LeaveCombat();
                     }

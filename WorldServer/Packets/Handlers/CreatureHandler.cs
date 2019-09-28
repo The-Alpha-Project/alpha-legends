@@ -21,7 +21,7 @@ namespace WorldServer.Packets.Handlers
             if (Database.Creatures.ContainsKey(Guid))
             {
                 Creature mob = Database.Creatures.TryGet(Guid);
-                manager.Send(mob.Template.QueryDetails());
+                manager.Send(mob.QueryDetails());
                 manager.Character.QueriedObjects.Add(mob.Entry);
             }
             else

@@ -249,7 +249,7 @@ namespace WorldServer.Game.Commands
                 } else
                 {
                     ChatManager.Instance.SendSystemMessage(player, string.Format("Guid: {0}, Entry: {1}, Display ID: {2} X: {3}, Y: {4}, Z: {5}, Orientation: {6} Map: {7}", 
-                        unit.Guid & ~(ulong)HIGH_GUID.HIGHGUID_UNIT, unit is Creature ? ((Creature)unit).Entry : 0, unit.DisplayID, unit.Location.X, unit.Location.Y, unit.Location.Z, unit.Orientation, unit.Map));
+                        unit.Guid & ~(ulong)HIGH_GUID.HIGHGUID_UNIT, unit is Creature ? ((Creature)unit).Entry : 0, ((Creature)unit).DisplayID, unit.Location.X, unit.Location.Y, unit.Location.Z, unit.Orientation, unit.Map));
                 }
             }
         }

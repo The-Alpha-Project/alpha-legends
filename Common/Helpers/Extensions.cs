@@ -247,5 +247,24 @@ namespace Common.Helpers.Extensions
         }
     }
 
+    #region extensionmethods
+    public static class ExtensionMethods
+    {
+        private static Random randomInstance = new Random();
 
+        public static List<T> Shuffle<T>(this List<T> list)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = randomInstance.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+            return list;
+        }
+    }
+    #endregion
 }
