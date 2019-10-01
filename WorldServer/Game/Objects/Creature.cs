@@ -250,7 +250,7 @@ namespace WorldServer.Game.Objects
             this.Health.Current = 0;
 
             this.UnitFlags = (uint)Common.Constants.UnitFlags.UNIT_FLAG_DEAD;
-            this.DynamicFlags = (uint)UnitDynamicTypes.UNIT_DYNAMIC_DEAD;
+            Flag.SetFlag(ref DynamicFlags, (uint)UnitDynamicTypes.UNIT_DYNAMIC_DEAD);
             this.StandState = (byte)Common.Constants.StandState.UNIT_DEAD;
 
             this.CorpseRespawnTime = Globals.GetFutureTime(this.RespawnTime);

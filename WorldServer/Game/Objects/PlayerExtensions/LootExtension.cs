@@ -69,6 +69,9 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Loot
 
                     lootType = LootTypes.LOOT_TYPE_SKINNING;
                 }
+
+                if (go.Loot.Count == 0)
+                    LootRelease(go, p);
             }
             else if (obj.IsTypeOf(ObjectTypes.TYPE_ITEM))
             {
@@ -122,10 +125,6 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Loot
                 obj = go;
                 objloot = go.Loot;
             }
-            else
-            {
-                LootRelease(p, p);
-            }
             
             List<LootObject> loot = new List<LootObject>();
             if (objloot.Count > 0 || objmoney > 0)
@@ -153,6 +152,7 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Loot
                     p.Dirty = true;
                 }
             }
+            LootRelease(p, p);
         }
 
         public static void LootMoney(this Player p)
@@ -192,16 +192,17 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Loot
                 mob.SendLootRelease(p);
                 GridManager.Instance.SendSurrounding(mob.BuildUpdate(), mob);
             }
-            
+
+            p.CurrentLootTarget = 0;
             Flag.RemoveFlag(ref p.UnitFlags, (uint)UnitFlags.UNIT_FLAG_LOOTING);
             GridManager.Instance.SendSurrounding(p.BuildUpdate(), p);
 
-            PacketWriter pkt = new PacketWriter(Opcodes.SMSG_LOOT_RELEASE_RESPONSE);
+            /*PacketWriter pkt = new PacketWriter(Opcodes.SMSG_LOOT_RELEASE_RESPONSE);
             pkt.WriteUInt64(p.CurrentLootTarget);
             pkt.WriteUInt8(1);
-            p.Client.Send(pkt);
+            p.Client.Send(pkt);*/
 
-            p.CurrentLootTarget = 0;
+            //p.CurrentLootTarget = 0;
         }
     }
 }
