@@ -78,6 +78,15 @@ begin not atomic
 
         insert into applied_updates values('280920191');
     end if;
+
+    -- 01/10/2019 1
+    if (select count(*) from applied_updates where id='011020191') = 0 then
+        update creatures set npc_flags = 0 where npc_flags = 65;
+        update quests set ReqCreatureOrGOCount1=5, ReqCreatureOrGOCount2=3, objectives='Shadow Priest Sarvis wants you to kill 5 Mindless Zombies and 3 Wretched Zombies.', rewchoiceitemid2=0, rewchoiceitemcount2=0 where entry = 364;
+
+
+        insert into applied_updates values('011020191');
+    end if;
 end $
 delimiter ;
 

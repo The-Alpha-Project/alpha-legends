@@ -20,6 +20,8 @@ namespace WorldServer.Game.Structs
         public int ZoneOrSort { get; set; }
         [Column("minlevel")]
         public uint MinLevel { get; set; }
+        [Column("maxlevel")]
+        public uint MaxLevel { get; set; }
         [Column("questlevel")]
         public uint QuestLevel { get; set; }
         [Column("type")]
@@ -166,7 +168,7 @@ namespace WorldServer.Game.Structs
             return 0;
         }
 
-        public void Load()
+        public void OnDbLoad()
         {
             for (int i = 0; i < RewChoiceItemId.Length; i++)
                 if (RewChoiceItemId[i] > 0)

@@ -668,8 +668,11 @@ namespace WorldServer.Game.Objects
                 max_damage = min;
             }
 
-            if (max_damage == 0.0f)
-                max_damage = 5.0f;
+            if (Math.Abs(min_damage) < float.Epsilon)
+                min_damage = 1f;
+
+            if (Math.Abs(max_damage) < float.Epsilon)
+                max_damage = 1f;
 
             return (uint)new Random().Next((int)min_damage, (int)max_damage);
         }
@@ -688,7 +691,8 @@ namespace WorldServer.Game.Objects
                         speed = offHand.Template.WeaponSpeed;
                 }
                 rageToRegen = (uint)(((15 * damageinfo.damage) / (4 * FormulaData.RageConversionValue(this.Level))) + (((isMain ? 3.5 : 1.75) * (isCrit ? 2 : 1)) / 2));
-            } else
+            }
+            else
             {
                 rageToRegen = (uint)(2.5 * (damageinfo.damage / FormulaData.RageConversionValue(victim.Level)));
             }
