@@ -10,17 +10,19 @@ using WorldServer.Storage;
 
 namespace WorldServer.Game.Objects
 {
-    [Table("characters_quests")]
+    [Table("character_queststatus")]
     public class Quest
     {
-        [Column("quest_id")]
+        [Column("guid")]
+        public ulong PlayerGuid;
+        [Column("quest")]
         public uint QuestId = 0;
-        [Column("quest_staus")]
+        [Column("status")]
         public QuestStatuses Status = QuestStatuses.QUEST_STATUS_NONE;
-        [Column("quest_rewarded")]
+        [Column("rewarded")]
         public bool Rewarded = false;
+        [Column("timer")]
         public uint Timer = 0;
-        public ulong Giver = 0;
 
         public Dictionary<uint, uint> ReqItems = new Dictionary<uint, uint>();
         public Dictionary<uint, uint> ReqCreatureGo = new Dictionary<uint, uint>();
@@ -34,7 +36,7 @@ namespace WorldServer.Game.Objects
         public Quest(uint questid, ulong guid)
         {
             this.QuestId = questid;
-            this.Giver = guid;
+            this.PlayerGuid = guid;
             Status = QuestStatuses.QUEST_STATUS_INCOMPLETE;
         }
 
