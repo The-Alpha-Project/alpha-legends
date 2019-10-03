@@ -32,7 +32,7 @@ namespace WorldServer.Game
         public const float MAX_GROUP_XP_DISTANCE = 75f;
         public const int MAX_FRIEND_LIST = 25;
         public const int MAX_IGNORE_LIST = 25;
-        public const bool AUTO_CREATE_ACCOUNT = true;
+        public const bool AUTO_CREATE_ACCOUNT = false;
         public static readonly string CONNECTION_STRING = ConfigurationManager.AppSettings["ConnectionString"];
 
         //Update Variables

@@ -119,11 +119,10 @@ namespace WorldServer.Storage
 
         public bool TryRemove(TKey key)
         {
-            T dump;
             if (!this.Data.ContainsKey(key))
                 return false;
 
-            return this.Data.TryRemove(key, out dump);
+            return this.Data.TryRemove(key, out T dump);
         }
 
         public bool TryRemove(T value)

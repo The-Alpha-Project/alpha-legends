@@ -34,22 +34,26 @@ namespace WorldServer.Game.Objects
         public Item()
         {
             this.IsSoulbound = false;
-            this.Guid = Globals.ITEM_GUID + 1;
-            while (Database.Items.ContainsKey(this.Guid))
-                this.Guid++;
-
-            Globals.ITEM_GUID = this.Guid;
+            if (this.Guid == 0)
+            {
+                this.Guid = Globals.ITEM_GUID + 1;
+                /*while (Database.Items.ContainsKey(this.Guid))
+                    this.Guid++;*/
+                Globals.ITEM_GUID = this.Guid;
+            }
             this.ObjectType |= ObjectTypes.TYPE_ITEM;
         }
 
         public Item(uint entry)
         {
             this.IsSoulbound = false;
-            this.Guid = Globals.ITEM_GUID + 1;
-            while (Database.Items.ContainsKey(this.Guid))
-                this.Guid++;
-
-            Globals.ITEM_GUID = this.Guid;
+            if (this.Guid == 0)
+            {
+                this.Guid = Globals.ITEM_GUID + 1;
+                /*while (Database.Items.ContainsKey(this.Guid))
+                    this.Guid++;*/
+                Globals.ITEM_GUID = this.Guid;
+            }
             this.ObjectType |= ObjectTypes.TYPE_ITEM;
             this.Template = Database.ItemTemplates.TryGet(entry);
             this.DisplayID = this.Template.DisplayID;
@@ -61,7 +65,7 @@ namespace WorldServer.Game.Objects
         public Item(ref MySqlDataReader dr)
         {
             this.IsSoulbound = false;
-            this.Guid = Convert.ToUInt64(dr["guid"])/* | (ulong)HIGH_GUID.HIGHGUID_ITEM*/;
+            this.Guid = Convert.ToUInt64(dr["guid"]) | (ulong)HIGH_GUID.HIGHGUID_ITEM;
             this.Owner = Convert.ToUInt64(dr["owner"]);
             this.Bag = Convert.ToUInt32(dr["bag"]);
             this.CurrentSlot = Convert.ToUInt32(dr["slot"]);
@@ -73,6 +77,8 @@ namespace WorldServer.Game.Objects
                                         Convert.ToInt32(dr["SpellCharges3"]),
                                         Convert.ToInt32(dr["SpellCharges4"]),
                                         Convert.ToInt32(dr["SpellCharges5"]) };
+            if (Globals.ITEM_GUID < this.Guid)
+                Globals.ITEM_GUID = this.Guid;
             if (this.Template == null)
                 this.Template = Database.ItemTemplates.TryGet(this.Entry);
         }
@@ -190,7 +196,7 @@ namespace WorldServer.Game.Objects
 
             List<MySqlParameter> parameters = new List<MySqlParameter>
             {
-                new MySqlParameter("@guid", this.Guid /*& ~(ulong)HIGH_GUID.HIGHGUID_ITEM*/),
+                new MySqlParameter("@guid", this.Guid & ~(ulong)HIGH_GUID.HIGHGUID_ITEM),
                 new MySqlParameter("@owner", this.Owner),
                 new MySqlParameter("@bag", this.Bag),
                 new MySqlParameter("@slot", this.CurrentSlot),

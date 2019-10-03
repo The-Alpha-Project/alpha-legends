@@ -318,9 +318,8 @@ namespace WorldServer.Game.Objects
                     GridManager.Instance.SendSurrounding(BuildDestroy(), this);
                     Parallel.ForEach(GridManager.Instance.GetSurroundingObjects(this, true).Cast<Player>(), p =>
                     {
-                        WorldObject dump;
                         if (p.ObjectsInRange.ContainsKey(this.Guid))
-                            p.ObjectsInRange.TryRemove(this.Guid, out dump);
+                            p.ObjectsInRange.TryRemove(this.Guid, out WorldObject dump);
                     });
                 }
             }
@@ -431,10 +430,8 @@ namespace WorldServer.Game.Objects
 
             for (int i = 0; i < startItems.m_InventoryType.Count(); i++)
             {
-                uint entry = 0;
-
                 if (startItems.m_InventoryType[i] < 1 ||
-                    !uint.TryParse(startItems.m_ItemID[i].ToString(), out entry) ||
+                    !uint.TryParse(startItems.m_ItemID[i].ToString(), out uint entry) ||
                     !Database.ItemTemplates.ContainsKey(entry))
                     continue;
 
