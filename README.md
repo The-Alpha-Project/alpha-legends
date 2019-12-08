@@ -15,7 +15,7 @@ Installation:
 -	Rename the app.config.dist file inside the WorldServer folder to app.config and edit it to point at your database server.
 
 [Client]
--	Execute the WoWClient.exe file with -uptodate argument. I also recommend executing it with -windowed argument and/or -console argument, for conveniences.
+-	Execute the WoWClient.exe file with -uptodate argument. I also recommend executing it with -windowed argument and/or -console argument, for conveniences. Under GNU/Linux, Wine works fine, and under Windows, Windows XP compatibility mode is recommended.
 -	The account information is stored in a file called wow.ses. To create an account, launch the server and write `createacc name password [gmlevel (0 or 1)]` in the terminal.
 
 [Problems]
