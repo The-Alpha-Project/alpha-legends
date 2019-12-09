@@ -14,18 +14,18 @@ namespace WorldServer.Game.Objects.UnitExtensions
 {
     public static class SpellExtension
     {
-        public static void PrepareSpell(this Unit u, SpellCast spell)
+        public static SpellCheckCastResult PrepareSpell(this Unit u, SpellCast spell)
         {
             spell.Initialize();
-            SpellFailedReason reason = u.CanCast(spell, true);
+            SpellCheckCastResult reason = u.CanCast(spell, true);
 
             if (u.SpellCast.ContainsKey(spell.SpellType) && !u.SpellCast[spell.SpellType].IsFinished)
-                reason = SpellFailedReason.SPELL_FAILED_SPELL_IN_PROGRESS;
+                reason = SpellCheckCastResult.SPELL_FAILED_SPELL_IN_PROGRESS;
 
-            if (reason != SpellFailedReason.SPELL_FAILED_NO_REASON)
+            if (reason != SpellCheckCastResult.SPELL_CAST_OK)
             {
                 u.SendCastResult(reason, spell.Spell.Id);
-                return;
+                return reason;
             }
 
             spell.SendSpellStart();
@@ -56,22 +56,22 @@ namespace WorldServer.Game.Objects.UnitExtensions
                     ((Player)u).Client.Send(channel);
                 }
             }
-
+            return SpellCheckCastResult.SPELL_CAST_OK;
         }
 
-        public static void Cast(this Unit u, SpellCast spell)
+        public static SpellCheckCastResult Cast(this Unit u, SpellCast spell)
         {
             if (u.SpellCast[spell.SpellType] != spell) //Check it is the right spell
             {
-                u.SendCastResult(SpellFailedReason.SPELL_FAILED_NOT_KNOWN, spell.Spell.Id);
-                return;
+                u.SendCastResult(SpellCheckCastResult.SPELL_FAILED_NOT_KNOWN, spell.Spell.Id);
+                return SpellCheckCastResult.SPELL_FAILED_NOT_KNOWN;
             }
 
-            SpellFailedReason reason = u.CanCast(spell, false);
-            if (reason != SpellFailedReason.SPELL_FAILED_NO_REASON) //Final check we can cast this
+            SpellCheckCastResult reason = u.CanCast(spell, false);
+            if (reason != SpellCheckCastResult.SPELL_CAST_OK) //Final check we can cast this
             {
                 u.SendCastResult(reason, spell.Spell.Id);
-                return;
+                return reason;
             }
 
             int SpellTime = 0;
@@ -168,32 +168,33 @@ namespace WorldServer.Game.Objects.UnitExtensions
                 List<WorldObject> targets = TargetsInfected[i].Where(x => x.Value == SpellMissInfo.MISS_NONE).Select(x => x.Key).ToList();
                 reason = SpellEffect.InvokeHandler((SpellEffects)spell.Spell.Effect[i], spell, targets, i, null);
 
-                if (reason != SpellFailedReason.SPELL_FAILED_NO_REASON)
+                if (reason != SpellCheckCastResult.SPELL_CAST_OK)
                     break;
             }
 
-            if (reason == SpellFailedReason.SPELL_FAILED_NO_REASON)
+            if (reason == SpellCheckCastResult.SPELL_CAST_OK)
             {
                 spell.SendSpellGo();
                 spell.SendChannelUpdate(0);
-                u.SendCastResult(SpellFailedReason.SPELL_FAILED_NO_REASON, spell.Spell.Id);
+                u.SendCastResult(SpellCheckCastResult.SPELL_CAST_OK, spell.Spell.Id);
             }
             else
                 u.SendCastResult(reason, spell.Spell.Id);
 
             spell.State = SpellState.SPELL_STATE_FINISHED;
             GridManager.Instance.SendSurrounding(u.BuildUpdate(), u);
+            return reason;
         }
 
 
-        public static void SendCastResult(this Unit u, SpellFailedReason result, uint spellid)
+        public static void SendCastResult(this Unit u, SpellCheckCastResult result, uint spellid)
         {
             if (u.IsTypeOf(ObjectTypes.TYPE_PLAYER))
             {
                 PacketWriter pkt = new PacketWriter(Opcodes.SMSG_CAST_RESULT);
                 pkt.WriteUInt32(spellid);
 
-                if (result == SpellFailedReason.SPELL_FAILED_NO_REASON)
+                if (result == SpellCheckCastResult.SPELL_CAST_OK)
                     pkt.WriteUInt8(0);
                 else
                 {
@@ -206,19 +207,23 @@ namespace WorldServer.Game.Objects.UnitExtensions
             }
         }
 
-        public static SpellFailedReason CanCast(this Unit u, SpellCast spell, bool firstcheck)
+        public static SpellCheckCastResult CanCast(this Unit u, SpellCast spell, bool firstcheck)
         {
             if (u.IsSilenced)
-                return SpellFailedReason.SPELL_FAILED_SILENCED;
+                return SpellCheckCastResult.SPELL_FAILED_SILENCED;
 
             if (u.UnitFlags.HasFlag((uint)UnitFlags.UNIT_FLAG_FLYING))
-                return SpellFailedReason.SPELL_FAILED_ERROR;
+                return SpellCheckCastResult.SPELL_FAILED_ERROR;
 
             if (spell.Spell.powerType < (uint)PowerTypes.POWER_HEALTH)
-                if (u.GetPowerValue((PowerTypes)spell.Spell.powerType, false) < spell.PowerCost)
-                    return SpellFailedReason.SPELL_FAILED_NO_POWER;
+            {
+                if ((u.GetPowerValue((PowerTypes)spell.Spell.powerType, false) < spell.PowerCost) &&
+                // creatures can cast spells that require a power they do not have
+                    !(u.IsCreature() && !u.HasPowerType((PowerTypes)spell.Spell.powerType))) 
+                    return SpellCheckCastResult.SPELL_FAILED_NO_POWER;
+            }
 
-            return SpellFailedReason.SPELL_FAILED_NO_REASON;
+            return SpellCheckCastResult.SPELL_CAST_OK;
         }
     }
 }

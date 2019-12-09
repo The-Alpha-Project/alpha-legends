@@ -318,8 +318,9 @@ namespace WorldServer.Game.Objects
                     GridManager.Instance.SendSurrounding(BuildDestroy(), this);
                     Parallel.ForEach(GridManager.Instance.GetSurroundingObjects(this, true).Cast<Player>(), p =>
                     {
+                        WorldObject dump;
                         if (p.ObjectsInRange.ContainsKey(this.Guid))
-                            p.ObjectsInRange.TryRemove(this.Guid, out WorldObject dump);
+                            p.ObjectsInRange.TryRemove(this.Guid, out dump);
                     });
                 }
             }
@@ -386,7 +387,8 @@ namespace WorldServer.Game.Objects
 
         private void SetRaceVariables()
         {
-            if (!DBC.ChrRaces.TryGetValue(this.Race, out ChrRaces race))
+            ChrRaces race;
+            if (!DBC.ChrRaces.TryGetValue(this.Race, out race))
                 return;
 
             this.DisplayID = (uint)(this.Gender == (byte)Genders.GENDER_MALE ? race.m_MaleDisplayId : race.m_FemaleDisplayId);
@@ -430,8 +432,9 @@ namespace WorldServer.Game.Objects
 
             for (int i = 0; i < startItems.m_InventoryType.Count(); i++)
             {
+                uint entry;
                 if (startItems.m_InventoryType[i] < 1 ||
-                    !uint.TryParse(startItems.m_ItemID[i].ToString(), out uint entry) ||
+                    !uint.TryParse(startItems.m_ItemID[i].ToString(), out entry) ||
                     !Database.ItemTemplates.ContainsKey(entry))
                     continue;
 
@@ -1296,25 +1299,6 @@ namespace WorldServer.Game.Objects
         private uint MobXPBaseModifier()
         {
             return (uint)(45 + (5 * this.Level));
-        }
-
-        public void ForceCastSpell(uint spellid)
-        {
-            if (!DBC.Spell.ContainsKey(spellid))
-                return;
-
-            SpellTargets targets = new SpellTargets
-            {
-                Target = this
-            };
-
-            SpellCast cast = new SpellCast(this)
-            {
-                Targets = targets,
-                Spell = DBC.Spell[spellid],
-                Triggered = false
-            };
-            this.PrepareSpell(cast);
         }
         #endregion
 

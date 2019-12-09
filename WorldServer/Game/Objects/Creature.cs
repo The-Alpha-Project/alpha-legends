@@ -13,6 +13,18 @@ using WorldServer.Game.Objects.PlayerExtensions.Quests;
 using MySql.Data.MySqlClient;
 using Common.Database;
 
+public enum CastFlags
+{
+    CF_INTERRUPT_PREVIOUS     = 0x01,                     //Interrupt any spell casting
+    CF_TRIGGERED              = 0x02,                     //Triggered (this makes spell cost zero mana and have no cast time)
+    CF_FORCE_CAST             = 0x04,                     //Forces cast even if creature is out of mana or out of range
+    CF_MAIN_RANGED_SPELL      = 0x08,                     //To be used by ranged mobs only. Creature will not chase target until cast fails.
+    CF_TARGET_UNREACHABLE     = 0x10,                     //Will only use the ability if creature cannot currently get to target
+    CF_AURA_NOT_PRESENT       = 0x20,                     //Only casts the spell if the target does not have an aura from the spell
+    CF_ONLY_IN_MELEE          = 0x40,                     //Only casts if the creature is in melee range of the target
+    CF_NOT_IN_MELEE           = 0x80,                     //Only casts if the creature is not in melee range of the target
+};
+
 namespace WorldServer.Game.Objects
 {
     [Table("spawns_creatures")]
@@ -39,6 +51,13 @@ namespace WorldServer.Game.Objects
         private long CorpseRespawnTime;
         private long CorpseRemoveTime;
 
+        public const long CREATURE_CASTING_DELAY = 1200;
+        private long castingDelay;
+        CreatureSpellsList spellsList;
+        public bool combatMovementEnabled;
+        public bool meleeAttackEnabled;
+        public long lastUpdateTime;
+
         public float CombatReach;
 
         public Creature() { }
@@ -61,6 +80,9 @@ namespace WorldServer.Game.Objects
             this.Mana = new TStat { BaseAmount = Convert.ToUInt32(dr["spawn_curmana"]) };
             this.RespawnTime = Convert.ToInt32(dr["spawn_spawntime"]);
             this.RespawnDistance = Convert.ToInt32(dr["spawn_spawndist"]);
+            this.castingDelay = 0;
+            this.combatMovementEnabled = true;
+            this.meleeAttackEnabled = true;
 
             this.OnDbLoad();
         }
@@ -77,6 +99,8 @@ namespace WorldServer.Game.Objects
             this.Faction = this.Template.Faction;
             this.VendorLoot = this.Template.VendorItems;
             this.Level = this.Template.Level.GetRandom();
+            CreatureSpellsListTemplate spellListTemplate = Database.GetSpellsListForCreatureId(this.Template.SpellListID);
+            this.spellsList = spellListTemplate != null ? new CreatureSpellsList(spellListTemplate) : null;
 
             CreatureModelInfo cmi = Database.CreatureModelInfo.TryGet(DisplayID);
             if (cmi != null)
@@ -265,8 +289,9 @@ namespace WorldServer.Game.Objects
                     if (unit.IsTypeOf(ObjectTypes.TYPE_PLAYER))
                         ((Player)unit).CheckQuestCreatureKill(this.Guid);
 
+                    Unit dump;
                     if (unit.Attackers.ContainsKey(this.Guid))
-                        unit.Attackers.TryRemove(this.Guid, out Unit dump);
+                        unit.Attackers.TryRemove(this.Guid, out dump);
                 }
             }
             this.Attackers.Clear();
@@ -545,19 +570,142 @@ namespace WorldServer.Game.Objects
                 AttackUpdate();
 
             if (this.IsDead)
+            {
                 DeathUpdate();
+                return;
+            }
+
+            if (this.InCombat && spellsList != null)
+                UpdateSpellsList(time);
+
+            lastUpdateTime = time;
+        }
+
+        public void UpdateSpellsList(long time)
+        {
+            time = time - lastUpdateTime;
+            time = time / TimeSpan.TicksPerMillisecond;
+            if (castingDelay <= time)
+            {
+                long uiDesync = (time - castingDelay);
+                DoSpellsListCasts(CREATURE_CASTING_DELAY + uiDesync);
+                castingDelay = uiDesync < CREATURE_CASTING_DELAY ? CREATURE_CASTING_DELAY - uiDesync : 0;
+            }
+            else
+                castingDelay -= time;
+        }
+
+        void DoSpellsListCasts(long diff)
+        {
+            Unit target = GetVictim();
+            if (target == null)
+                return;
+                
+
+            bool bDontCast = false;
+            foreach (CreatureSpellsEntry spell in spellsList.spells)
+            {
+                if (spell.cooldown <= diff)
+                {
+                    // Cooldown has expired.
+                    spell.cooldown = 0;
+
+                    // Prevent casting multiple spells in the same update. Only update timers.
+                    if ((spell.data.castFlags & ((byte)CastFlags.CF_TRIGGERED | (byte)CastFlags.CF_INTERRUPT_PREVIOUS)) == 0)
+                    {
+                        if (bDontCast || IsNonMeleeSpellCasted())
+                            continue;
+                    }
+
+                    //Unit pTarget = ToUnit(GetTargetByType(m_creature, m_creature, spell.castTarget, spell.targetParam1 ? spell.targetParam1 : sSpellRangeStore.LookupEntry(pSpellInfo->rangeIndex)->maxRange, spell.targetParam2));
+                    SpellCheckCastResult result = ForceCastSpell(spell.data.spellId, target);
+                    Console.WriteLine("Cast Result " + result.ToString());
+
+                    switch (result)
+                    {
+                        case SpellCheckCastResult.SPELL_CAST_OK:
+                        {
+                            bDontCast = (spell.data.castFlags & (byte)CastFlags.CF_TRIGGERED) == 0;
+                            spell.cooldown = (long)(new Random().Next((int)spell.data.delayRepeatMin, (int)spell.data.delayRepeatMax));
+
+                            if ((spell.data.castFlags & (byte)CastFlags.CF_MAIN_RANGED_SPELL) != 0)
+                            {
+                                //if (IsMoving())
+                                //    StopMoving();
+
+                                SetCombatMovement(false);
+                                SetMeleeAttack(false);
+                            }
+
+                            // If there is a script for this spell, run it.
+                            // if (spell.data.scriptId != 0)
+                            //     m_creature->GetMap()->ScriptsStart(sCreatureSpellScripts, spell.data.scriptId, this, pTarget);
+                            break;
+                        }
+                        //case SpellCheckCastResult.SPELL_FAILED_FLEEING:
+                        case SpellCheckCastResult.SPELL_FAILED_SPELL_IN_PROGRESS:
+                        {
+                            // Do nothing so it will try again on next update.
+                            break;
+                        }
+                        case SpellCheckCastResult.SPELL_FAILED_TRY_AGAIN:
+                        {
+                            // Chance roll failed, so we reset cooldown.
+                            spell.cooldown = (long)(new Random().Next((int)spell.data.delayRepeatMin, (int)spell.data.delayRepeatMax));
+                            if ((spell.data.castFlags & (byte)CastFlags.CF_MAIN_RANGED_SPELL) != 0)
+                            {
+                                SetCombatMovement(true);
+                                SetMeleeAttack(true);
+                            }
+                            break;
+                        }
+                        default:
+                        {
+                            // other error
+                            if ((spell.data.castFlags & (byte)CastFlags.CF_MAIN_RANGED_SPELL) != 0)
+                            {
+                                SetCombatMovement(true);
+                                SetMeleeAttack(true);
+                            }
+                            break;
+                        }
+                    }
+                }
+                else
+                    spell.cooldown -= diff;
+            }
+        }
+
+        public void SetCombatMovement(bool state)
+        {
+            combatMovementEnabled = state;
+        }
+
+        public void SetMeleeAttack(bool state)
+        {
+            meleeAttackEnabled = state;
+        }
+
+        public Unit GetVictim()
+        {
+            if (Database.Players.ContainsKey(this.CombatTarget)) //Victim exists
+            {
+                return Database.Players.TryGet(this.CombatTarget);
+            }
+            return null;
         }
 
         private void AttackUpdate()
         {
             Unit closestTarget = null;
+            Unit dump;
             if (this.IsDead)
                 return;
 
             //Remove out of range attackers
             foreach (Unit victim in this.Attackers.Values.ToList())
                 if (victim.Location.DistanceSqrd(this.Location) > Math.Pow(Globals.UPDATE_DISTANCE, 2) || victim.IsDead)
-                    this.Attackers.TryRemove(victim.Guid, out Unit dump); //Out of range
+                    this.Attackers.TryRemove(victim.Guid, out dump); //Out of range
                 else if (closestTarget == null)
                     closestTarget = victim;
                 else if (victim.Location.DistanceSqrd(this.Location) < closestTarget.Location.DistanceSqrd(this.Location))
@@ -579,9 +727,15 @@ namespace WorldServer.Game.Objects
 
                     float distance = Location.Distance(victim.Location);
                     if (distance > this.CombatReach && MoveLocation != victim.Location) //If not going to location already
-                        MoveTo(victim.Location, true, distance); //Move to victim's location
+                    {
+                        if (combatMovementEnabled)
+                            MoveTo(victim.Location, true, distance); // Move to victim's location
+                    }
                     else
-                        this.UpdateMeleeAttackingState(); //Victim in range so attack
+                    {
+                        if (meleeAttackEnabled)
+                            UpdateMeleeAttackingState(); // Victim in range so attack
+                    }
 
                     return;
                 }

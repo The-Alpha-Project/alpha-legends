@@ -15,7 +15,7 @@ namespace WorldServer.Game.Objects
     public static class SpellEffect
     {
         public static Dictionary<SpellEffects, SpellEffectHandler> EffectHandlers = new Dictionary<SpellEffects, SpellEffectHandler>();
-        public delegate SpellFailedReason SpellEffectHandler(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item);
+        public delegate SpellCheckCastResult SpellEffectHandler(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item);
 
         public static void InitSpellEffects()
         {
@@ -27,12 +27,12 @@ namespace WorldServer.Game.Objects
             EffectHandlers[command] = handler;
         }
 
-        public static SpellFailedReason InvokeHandler(SpellEffects command, SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
+        public static SpellCheckCastResult InvokeHandler(SpellEffects command, SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
         {
             if (EffectHandlers.ContainsKey(command))
-                return EffectHandlers[command] != null ? EffectHandlers[command].Invoke(Spell, Targets, Index, Item) : SpellFailedReason.SPELL_FAILED_NO_REASON;
+                return EffectHandlers[command] != null ? EffectHandlers[command].Invoke(Spell, Targets, Index, Item) : SpellCheckCastResult.SPELL_CAST_OK;
             else
-                return SpellFailedReason.SPELL_FAILED_ERROR;
+                return SpellCheckCastResult.SPELL_FAILED_ERROR;
         }
 
         public static void LoadCommandDefinitions()
@@ -114,26 +114,26 @@ namespace WorldServer.Game.Objects
             DefineEffect(SpellEffects.SPELL_EFFECT_ACTIVATE_OBJECT, null);
         }
 
-        public static SpellFailedReason SPELL_EFFECT_UNUSED(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
+        public static SpellCheckCastResult SPELL_EFFECT_UNUSED(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
         {
-            return SpellFailedReason.SPELL_FAILED_NO_REASON;
+            return SpellCheckCastResult.SPELL_CAST_OK;
         }
 
-        public static SpellFailedReason SPELL_EFFECT_NONE(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
+        public static SpellCheckCastResult SPELL_EFFECT_NONE(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
         {
-            return SpellFailedReason.SPELL_FAILED_NO_REASON;
+            return SpellCheckCastResult.SPELL_CAST_OK;
         }
 
-        public static SpellFailedReason SPELL_EFFECT_INSTAKILL(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
+        public static SpellCheckCastResult SPELL_EFFECT_INSTAKILL(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
         {
             foreach (WorldObject t in Targets)
                 if (t.IsTypeOf(ObjectTypes.TYPE_UNIT))
                     ((Creature)t).Die(Spell.Caster);
 
-            return SpellFailedReason.SPELL_FAILED_NO_REASON;
+            return SpellCheckCastResult.SPELL_CAST_OK;
         }
 
-        public static SpellFailedReason SPELL_EFFECT_SCHOOL_DAMAGE(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
+        public static SpellCheckCastResult SPELL_EFFECT_SCHOOL_DAMAGE(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
         {
             int damage = 0;
             int current = 0;
@@ -152,15 +152,15 @@ namespace WorldServer.Game.Objects
                 u.DealSpellDamage(Spell, damage, SpellDamageType.SPELL_TYPE_NONMELEE, Index);
             }
 
-            return SpellFailedReason.SPELL_FAILED_NO_REASON;
+            return SpellCheckCastResult.SPELL_CAST_OK;
         }
 
-        public static SpellFailedReason SPELL_EFFECT_DUMMY(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
+        public static SpellCheckCastResult SPELL_EFFECT_DUMMY(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
         {
-            return SpellFailedReason.SPELL_FAILED_NO_REASON;
+            return SpellCheckCastResult.SPELL_CAST_OK;
         }
 
-        public static SpellFailedReason SPELL_EFFECT_HEAL(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
+        public static SpellCheckCastResult SPELL_EFFECT_HEAL(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
         {
             int damage = 0;
             int current = 0;
@@ -176,10 +176,10 @@ namespace WorldServer.Game.Objects
                 ((Unit)obj).DealSpellDamage(Spell, damage, SpellDamageType.SPELL_TYPE_HEAL, Index);
             }
 
-            return SpellFailedReason.SPELL_FAILED_NO_REASON;
+            return SpellCheckCastResult.SPELL_CAST_OK;
         }
 
-        public static SpellFailedReason SPELL_EFFECT_QUEST_COMPLETE(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
+        public static SpellCheckCastResult SPELL_EFFECT_QUEST_COMPLETE(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
         {
             foreach (WorldObject obj in Targets)
             {
@@ -194,10 +194,10 @@ namespace WorldServer.Game.Objects
                 }
             }
 
-            return SpellFailedReason.SPELL_FAILED_NO_REASON;
+            return SpellCheckCastResult.SPELL_CAST_OK;
         }
 
-        public static SpellFailedReason SPELL_EFFECT_LEAP(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
+        public static SpellCheckCastResult SPELL_EFFECT_LEAP(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
         {
             float radius = DBC.SpellRadius[(int)Spell.Spell.EffectRadiusIndex[Index]].m_radius;
             float newX = (float)(Spell.Caster.Location.X + Math.Cos(Spell.Caster.Orientation) * radius);
@@ -215,10 +215,10 @@ namespace WorldServer.Game.Objects
             else
                 Spell.Caster.Location = new Vector(newX, newY, newZ);
 
-            return SpellFailedReason.SPELL_FAILED_NO_REASON;
+            return SpellCheckCastResult.SPELL_CAST_OK;
         }
 
-        public static SpellFailedReason SPELL_EFFECT_HEAL_MAX_HEALTH(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
+        public static SpellCheckCastResult SPELL_EFFECT_HEAL_MAX_HEALTH(SpellCast Spell, List<WorldObject> Targets, int Index, Item Item)
         {
             foreach(WorldObject obj in Targets)
             {
@@ -227,7 +227,7 @@ namespace WorldServer.Game.Objects
                 ((Unit)obj).Health.ResetCurrent();
             }
 
-            return SpellFailedReason.SPELL_FAILED_NO_REASON;
+            return SpellCheckCastResult.SPELL_CAST_OK;
         }
     }
 }

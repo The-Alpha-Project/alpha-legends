@@ -21,19 +21,19 @@ namespace WorldServer.Packets.Handlers
 
             if (!manager.Character.Spells.ContainsKey(spellid))
             {
-                manager.Character.SendCastResult(SpellFailedReason.SPELL_FAILED_NOT_KNOWN, spellid);
+                manager.Character.SendCastResult(SpellCheckCastResult.SPELL_FAILED_NOT_KNOWN, spellid);
                 return;
             }
                 
             if (!DBC.Spell.ContainsKey(spellid))
             {
-                manager.Character.SendCastResult(SpellFailedReason.SPELL_FAILED_NOT_KNOWN, spellid);
+                manager.Character.SendCastResult(SpellCheckCastResult.SPELL_FAILED_NOT_KNOWN, spellid);
                 return;
             }
 
             if(manager.Character.Spells[spellid].Cooldown > Globals.TimeTicks)
             {
-                manager.Character.SendCastResult(SpellFailedReason.SPELL_FAILED_NOT_READY, spellid);
+                manager.Character.SendCastResult(SpellCheckCastResult.SPELL_FAILED_NOT_READY, spellid);
                 return;
             }
 

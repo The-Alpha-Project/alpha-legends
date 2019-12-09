@@ -258,6 +258,23 @@ namespace WorldServer.Game.Objects
             return 0;
         }
 
+        public bool HasPowerType(PowerTypes type)
+        {
+            switch (type)
+            {
+                case PowerTypes.TYPE_ENERGY:
+                    return Energy.Maximum != 0;
+                case PowerTypes.TYPE_FOCUS:
+                    return Focus.Maximum != 0;
+                case PowerTypes.TYPE_MANA:
+                    return Mana.Maximum != 0;
+                case PowerTypes.TYPE_RAGE:
+                    return Rage.Maximum != 0;
+            }
+
+            return true;
+        }
+
         public void SetPowerValue(PowerTypes type, uint value, bool maximum)
         {
             switch (type)
@@ -350,7 +367,8 @@ namespace WorldServer.Game.Objects
                     ((Player)this).LeaveCombat();
                 else
                 {
-                    this.Attackers.TryRemove(victim.Guid, out Unit dump);
+                    Unit dump;
+                    this.Attackers.TryRemove(victim.Guid, out dump);
                     this.IsAttacking = false;
                 }
 
@@ -445,7 +463,8 @@ namespace WorldServer.Game.Objects
                 }
             }
 
-            CalculateMeleeDamage(victim, 0, out UnitStructs.CalcDamageInfo damageInfo, at);
+            UnitStructs.CalcDamageInfo damageInfo;
+            CalculateMeleeDamage(victim, 0, out damageInfo, at);
             SendAttackStateUpdate(damageInfo);
 
             //Extra attack only at any non extra attack
@@ -805,16 +824,17 @@ namespace WorldServer.Game.Objects
 
                     if (target.Health.Current <= 0)
                     {
+                        Unit dump;
                         if (target is Creature)
                         {
                             ((Creature)target).Die(p);
                             if (p.Attackers.ContainsKey(target.Guid))
-                                p.Attackers.TryRemove(target.Guid, out Unit dump);
+                                p.Attackers.TryRemove(target.Guid, out dump);
                         }
                         else
                         {
                             if (target.Attackers.ContainsKey(p.Guid))
-                                target.Attackers.TryRemove(p.Guid, out Unit dump);
+                                target.Attackers.TryRemove(p.Guid, out dump);
                             killPlayer = true;
                         }
                     }
@@ -870,6 +890,35 @@ namespace WorldServer.Game.Objects
                 else
                     spell.Update();
             }
+        }
+
+        public SpellCheckCastResult ForceCastSpell(uint spellid, Unit target)
+        {
+            if (!DBC.Spell.ContainsKey(spellid))
+                return SpellCheckCastResult.SPELL_FAILED_ERROR;
+
+            SpellTargets targets = new SpellTargets
+            {
+                Target = target
+            };
+
+            SpellCast cast = new SpellCast(this)
+            {
+                Targets = targets,
+                Spell = DBC.Spell[spellid],
+                Triggered = false
+            };
+            return this.PrepareSpell(cast);
+        }
+
+        public bool IsNonMeleeSpellCasted()
+        {
+            foreach (SpellCast spell in this.SpellCast.Values)
+            {
+                if (spell.SpellType != CurrentSpellType.CURRENT_MELEE_SPELL && spell.State == SpellState.SPELL_STATE_CASTING)
+                    return true;
+            }
+            return false;
         }
 
         #endregion
