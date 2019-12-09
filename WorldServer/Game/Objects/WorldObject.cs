@@ -175,6 +175,18 @@ namespace WorldServer.Game.Objects
                     ((Player)this).UpdateAttackTimer(AttackTypes.OFFHAND_ATTACK);
             }
         }
+        public bool IsUnit()
+        {
+            return IsTypeOf(ObjectTypes.TYPE_UNIT);
+        }
+        public bool IsPlayer()
+        {
+            return IsTypeOf(ObjectTypes.TYPE_PLAYER);
+        }
+        public bool IsCreature()
+        {
+            return IsTypeOf(ObjectTypes.TYPE_UNIT) && !IsTypeOf(ObjectTypes.TYPE_PLAYER);
+        }
         #endregion
     }
 }

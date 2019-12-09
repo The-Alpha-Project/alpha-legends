@@ -102,8 +102,9 @@ namespace WorldServer.Game.Objects.UnitExtensions
             foreach (var vendorspell in c.Template.VendorSpells.Values)
             {
                 TrainerServices status = TrainerServices.TRAINER_SERVICE_AVAILABLE;
+                Spell spell;
 
-                if (!DBC.Spell.TryGetValue(vendorspell.SpellId, out Spell spell)) //Only use those with spells
+                if (!DBC.Spell.TryGetValue(vendorspell.SpellId, out spell)) //Only use those with spells
                     continue;
 
                 if (p.Spells.ContainsKey(vendorspell.SpellId))
