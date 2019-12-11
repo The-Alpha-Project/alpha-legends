@@ -455,9 +455,6 @@ namespace WorldServer.Game.Objects
         {
             this.Spells.Clear();
 
-            //Base spells
-            this.Spells.Add(6603, new PlayerSpell(6603)); //Attack
-
             foreach (SkillLineAbility sla in DBC.SkillLineAbility.Values)
             {
                 Spell spell = DBC.Spell[(uint)sla.m_spell];
@@ -493,6 +490,14 @@ namespace WorldServer.Game.Objects
 
             foreach (ushort skill in skillinfo)
                 this.AddSkill(skill);
+           
+            //Base Spells
+            var spellinfo = Database.CreateSpellInfo.Values
+                .Where(x => x.Race == this.Race && x.Class == this.Class)
+                .Select(x => x.SpellID);
+
+            foreach (ushort spell in spellinfo)
+                this.Spells.Add(spell, new PlayerSpell(spell));
         }
 
         public void SendInitialSpells()
