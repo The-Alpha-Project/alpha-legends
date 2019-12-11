@@ -478,9 +478,6 @@ namespace WorldServer.Game.Objects
                     continue;
 
                 this.AddSkill((ushort)sl.m_ID);
-
-                if (spell.baseLevel != 0 && !this.Spells.ContainsKey(spell.Id))
-                    this.Spells.Add(spell.Id, new PlayerSpell(spell));
             }
 
             //Base Language and Attack etc
