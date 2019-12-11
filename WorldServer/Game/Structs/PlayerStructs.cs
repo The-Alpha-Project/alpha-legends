@@ -65,6 +65,26 @@ namespace WorldServer.Game.Structs
         public uint SkillMax { get; set; }
     }
 
+    [Table("playercreateinfo_spell")]
+    public class CreateSpellInfo
+    {
+        [Key]
+        [Column("id")]
+        public uint Id { get; set; }
+
+        [Column("race")]
+        public byte Race { get; set; }
+
+        [Column("class")]
+        public byte Class { get; set; }
+
+        [Column("Spell")]
+        public ushort SpellID { get; set; }
+
+        [Column("Note")]
+        public string Note { get; set; }
+    }
+    
     [Table("playercreateinfo_action")]
     public class CreateActionButton
     {
