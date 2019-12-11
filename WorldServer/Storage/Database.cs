@@ -18,6 +18,7 @@ namespace WorldServer.Storage
         public static DbSet<uint, CreateActionButton> CreateActionButtons;
         public static DbSet<uint, CreatePlayerInfo> CreatePlayerInfo;
         public static DbSet<uint, CreateSkillInfo> CreateSkillInfo;
+        public static DbSet<uint, CreateSpellInfo> CreateSpellInfo;
         public static DbSet<uint, LevelStatsInfo> LevelStatsInfo;
         public static GroupedDbSet<uint, List<LootItem>> PickPocketLoot;
         public static GroupedDbSet<uint, List<LootItem>> SkinningLoot;
@@ -54,6 +55,7 @@ namespace WorldServer.Storage
             CreateActionButtons = new DbSet<uint, CreateActionButton>();
             CreatePlayerInfo = new DbSet<uint, CreatePlayerInfo>();
             CreateSkillInfo = new DbSet<uint, CreateSkillInfo>();
+            CreateSpellInfo = new DbSet<uint, CreateSpellInfo>();
             LevelStatsInfo = new DbSet<uint, LevelStatsInfo>();
             PickPocketLoot = new GroupedDbSet<uint, List<LootItem>>(QueryLootTemplate + "pickpocketing_loot_template", "PickPocket Loot");
             SkinningLoot = new GroupedDbSet<uint, List<LootItem>>(QueryLootTemplate + "skinning_loot_template", "Skinning Loot");
