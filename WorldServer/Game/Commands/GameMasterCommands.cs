@@ -148,19 +148,29 @@ namespace WorldServer.Game.Commands
 
         public static void Teleport(Player player, string[] args)
         {
-            float x = Read<float>(args, 0);
-            float y = Read<float>(args, 1);
-            float z = Read<float>(args, 2);
-            uint map = Read<uint>(args, 3);
-            player.Teleport(map, new Quaternion(x, y, z, 0));
+            if(args.Length >= 4)
+            {
+                float x = Read<float>(args, 0);
+                float y = Read<float>(args, 1);
+                float z = Read<float>(args, 2);
+                uint map = Read<uint>(args, 3);
+                player.Teleport(map, new Quaternion(x, y, z, 0));
+            } 
+            else
+            {
+                ChatManager.Instance.SendSystemMessage(player, "Usage: .tel X Y Z MapID");
+            }
         }
 
         public static void Port(Player player, string[] args)
         {
-            string name = Read<string>(args, 0);
-            foreach (Worldports port in Database.Worldports.Values)
-                if (port.Name.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
-                    player.Teleport(port.Map, new Quaternion(port.X, port.Y, port.Z, 0));
+            if(args.Length > 0)
+            {
+                string name = Read<string>(args, 0);
+                foreach (Worldports port in Database.Worldports.Values)
+                    if (port.Name.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+                        player.Teleport(port.Map, new Quaternion(port.X, port.Y, port.Z, 0));
+            }
         }
 
         private static void ApplySpeedAction(Player player, float speed, Boolean IsRun)
