@@ -1,53 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{63268176-7FF9-4B3E-AAAD-CC7C329F924A}</ProjectGuid>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Common</RootNamespace>
-    <AssemblyName>Common</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
     <OutputPath>..\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
     <OutputPath>..\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="MySql.Data, Version=7.0.2.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySql.Data.7.0.2-DMR\lib\net45\MySql.Data.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
     <Reference Include="System.configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\AuthCodes.cs" />
@@ -98,17 +62,60 @@
     <Compile Include="Constants\FormulaData.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config" />
+    <PackageReference Include="BouncyCastle" Version="1.8.3.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.6.1" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="MySql.Data" Version="7.0.2-DMR" />
+    <PackageReference Include="SharpZipLib" Version="1.2.0" />
+    <PackageReference Include="SSH.NET" Version="2016.1.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <Compile Remove="Constants/AuthCodes.cs" />
+    <Compile Remove="Constants/Enums.cs" />
+    <Compile Remove="Constants/FormulaData.cs" />
+    <Compile Remove="Constants/Opcodes.cs" />
+    <Compile Remove="Constants/Structs.cs" />
+    <Compile Remove="Constants/UpdateFields.cs" />
+    <Compile Remove="Cryptography/Srp6.cs" />
+    <Compile Remove="Database/BaseContext.cs" />
+    <Compile Remove="Database/DBC/CustomTypes/Unused.cs" />
+    <Compile Remove="Database/DBC/DBC.cs" />
+    <Compile Remove="Database/DBC/Reader/BinaryReaderExtensions.cs" />
+    <Compile Remove="Database/DBC/Reader/DBHeader.cs" />
+    <Compile Remove="Database/DBC/Reader/DBReader.cs" />
+    <Compile Remove="Database/DBC/Reader/DBReaderExtensions.cs" />
+    <Compile Remove="Database/DBC/Structures/AreaTable.cs" />
+    <Compile Remove="Database/DBC/Structures/BankBagSlotPrices.cs" />
+    <Compile Remove="Database/DBC/Structures/CharBaseInfo.cs" />
+    <Compile Remove="Database/DBC/Structures/CharStartOutfit.cs" />
+    <Compile Remove="Database/DBC/Structures/ChrProficiency.cs" />
+    <Compile Remove="Database/DBC/Structures/ChrRaces.cs" />
+    <Compile Remove="Database/DBC/Structures/EmotesText.cs" />
+    <Compile Remove="Database/DBC/Structures/FactionTemplate.cs" />
+    <Compile Remove="Database/DBC/Structures/Lock.cs" />
+    <Compile Remove="Database/DBC/Structures/LockType.cs" />
+    <Compile Remove="Database/DBC/Structures/SkillLine.cs" />
+    <Compile Remove="Database/DBC/Structures/SkillLineAbility.cs" />
+    <Compile Remove="Database/DBC/Structures/Spell.cs" />
+    <Compile Remove="Database/DBC/Structures/SpellCastTimes.cs" />
+    <Compile Remove="Database/DBC/Structures/SpellDuration.cs" />
+    <Compile Remove="Database/DBC/Structures/SpellRadius.cs" />
+    <Compile Remove="Database/DBC/Structures/SpellRange.cs" />
+    <Compile Remove="Database/DBC/Structures/WorldSafeLocs.cs" />
+    <Compile Remove="Database/TableAttributes.cs" />
+    <Compile Remove="Helpers/Extensions.cs" />
+    <Compile Remove="Helpers/Flag.cs" />
+    <Compile Remove="Helpers/Quaternion.cs" />
+    <Compile Remove="Helpers/Vector.cs" />
+    <Compile Remove="Logging/Log.cs" />
+    <Compile Remove="Logging/LogTypes.cs" />
+    <Compile Remove="Network/ByteConverter.cs" />
+    <Compile Remove="Network/Packets/PacketReader.cs" />
+    <Compile Remove="Network/Packets/PacketWriter.cs" />
+    <Compile Remove="Network/Packets/UpdateClass.cs" />
+    <Compile Remove="Properties/AssemblyInfo.cs" />
+    <Compile Remove="Singleton/Singleton.cs" />
+    <Compile Remove="Singleton/SingletonBase.cs" />
+  </ItemGroup>
 </Project>
