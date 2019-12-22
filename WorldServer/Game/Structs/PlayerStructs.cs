@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#pragma warning disable CS0169
 namespace WorldServer.Game.Structs
 {
     [Table("playercreateinfo")]

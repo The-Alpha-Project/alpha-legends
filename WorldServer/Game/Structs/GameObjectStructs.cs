@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#pragma warning disable CS0169
 namespace WorldServer.Game.Structs
 {
     // 0 GAMEOBJECT_TYPE_DOOR
