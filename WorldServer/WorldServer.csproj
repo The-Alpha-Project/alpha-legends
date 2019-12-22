@@ -13,159 +13,19 @@
     <OutputPath>..\bin\Release\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System.Configuration" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Game\Commands\CommandParser.cs" />
-    <Compile Include="Game\Commands\ConsoleManager.cs" />
-    <Compile Include="Game\Commands\GameMasterCommands.cs" />
-    <Compile Include="Game\Globals.cs" />
-    <Compile Include="Game\Managers\ChatManager.cs" />
-    <Compile Include="Game\Objects\Account.cs" />
-    <Compile Include="Game\Objects\Container.cs" />
-    <Compile Include="Game\Objects\GameObject.cs" />
-    <Compile Include="Game\Objects\Group.cs" />
-    <Compile Include="Game\Managers\InventoryManager.cs" />
-    <Compile Include="Game\Objects\Player.cs" />
-    <Compile Include="Game\Objects\Creature.cs" />
-    <Compile Include="Game\Objects\Item.cs" />
-    <Compile Include="Game\Objects\PlayerExtensions\FriendExtension.cs" />
-    <Compile Include="Game\Objects\PlayerExtensions\LootExtension.cs" />
-    <Compile Include="Game\Objects\PlayerExtensions\QuestExtension.cs" />
-    <Compile Include="Game\Objects\PlayerExtensions\SkillExtension.cs" />
-    <Compile Include="Game\Objects\PlayerExtensions\TradeExtension.cs" />
-    <Compile Include="Game\Objects\SpellEffect.cs" />
-    <Compile Include="Game\Objects\UnitExtensions\FactionExtension.cs" />
-    <Compile Include="Game\Objects\UnitExtensions\SpellExtension.cs" />
-    <Compile Include="Game\Objects\UnitExtensions\TalentExtension.cs" />
-    <Compile Include="Game\Objects\Quest.cs" />
-    <Compile Include="Game\Objects\Unit.cs" />
-    <Compile Include="Game\Structs\AreaTrigger.cs" />
-    <Compile Include="Game\Structs\CreatureStructs.cs" />
-    <Compile Include="Game\Structs\CreatureTemplate.cs" />
-    <Compile Include="Game\Structs\GameObjectStructs.cs" />
-    <Compile Include="Game\Structs\GameObjectTemplate.cs" />
-    <Compile Include="Game\Structs\ItemStructs.cs" />
-    <Compile Include="Game\Structs\ItemTemplate.cs" />
-    <Compile Include="Game\Structs\QuestTemplate.cs" />
-    <Compile Include="Game\Managers\GridManager.cs" />
-    <Compile Include="Game\Managers\StatManager.cs" />
-    <Compile Include="Game\Objects\WorldObject.cs" />
-    <Compile Include="Game\Structs\PlayerStructs.cs" />
-    <Compile Include="Game\Structs\SpellStructs.cs" />
-    <Compile Include="Game\Structs\UnitStructs.cs" />
-    <Compile Include="Network\RealmManager.cs" />
-    <Compile Include="Network\RealmSocket.cs" />
-    <Compile Include="Network\WorldManager.cs" />
-    <Compile Include="Packets\HandlerDefinitions.cs" />
-    <Compile Include="Packets\Handlers\AuthHandler.cs" />
-    <Compile Include="Packets\Handlers\CharHandler.cs" />
-    <Compile Include="Packets\Handlers\ChatHandler.cs" />
-    <Compile Include="Packets\Handlers\CreatureHandler.cs" />
-    <Compile Include="Packets\Handlers\FriendHandler.cs" />
-    <Compile Include="Packets\Handlers\GameObjectHandler.cs" />
-    <Compile Include="Packets\Handlers\GroupHandler.cs" />
-    <Compile Include="Packets\Handlers\ItemHandler.cs" />
-    <Compile Include="Packets\Handlers\LootHandler.cs" />
-    <Compile Include="Packets\Handlers\MiscHandler.cs" />
-    <Compile Include="Packets\Handlers\MovementHandler.cs" />
-    <Compile Include="Packets\Handlers\NetHandler.cs" />
-    <Compile Include="Packets\Handlers\NPCHandler.cs" />
-    <Compile Include="Packets\Handlers\QuestHandler.cs" />
-    <Compile Include="Packets\Handlers\SpellHandler.cs" />
-    <Compile Include="Packets\Handlers\TradeHandler.cs" />
-    <Compile Include="Packets\Handlers\WorldHandler.cs" />
-    <Compile Include="Packets\PacketManager.cs" />
-    <Compile Include="Storage\DatabaseExtension.cs" />
-    <Compile Include="Storage\DbSet.cs" />
-    <Compile Include="Storage\GroupedDbSet.cs" />
-    <Compile Include="Storage\Database.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Game\Structs\Worldports.cs" />
-    <Compile Include="Game\Structs\Ticket.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Network\WorldSocket.cs" />
+    <Compile Remove="Game\Objects\PlayerExtensions\TalentExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="MySql.Data" Version="7.0.2-DMR" />
+    <PackageReference Include="MySql.Data" Version="8.0.18" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="SharpZipLib" Version="1.2.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0-preview4.19164.7" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Game/Commands/CommandParser.cs" />
-    <Compile Remove="Game/Commands/ConsoleManager.cs" />
-    <Compile Remove="Game/Commands/GameMasterCommands.cs" />
-    <Compile Remove="Game/Globals.cs" />
-    <Compile Remove="Game/Managers/ChatManager.cs" />
-    <Compile Remove="Game/Managers/GridManager.cs" />
-    <Compile Remove="Game/Managers/InventoryManager.cs" />
-    <Compile Remove="Game/Managers/StatManager.cs" />
-    <Compile Remove="Game/Objects/Account.cs" />
-    <Compile Remove="Game/Objects/Container.cs" />
-    <Compile Remove="Game/Objects/Creature.cs" />
-    <Compile Remove="Game/Objects/GameObject.cs" />
-    <Compile Remove="Game/Objects/Group.cs" />
-    <Compile Remove="Game/Objects/Item.cs" />
-    <Compile Remove="Game/Objects/Player.cs" />
-    <Compile Remove="Game/Objects/PlayerExtensions/FriendExtension.cs" />
-    <Compile Remove="Game/Objects/PlayerExtensions/LootExtension.cs" />
-    <Compile Remove="Game/Objects/PlayerExtensions/QuestExtension.cs" />
-    <Compile Remove="Game/Objects/PlayerExtensions/SkillExtension.cs" />
-    <Compile Remove="Game/Objects/PlayerExtensions/TalentExtension.cs" />
-    <Compile Remove="Game/Objects/PlayerExtensions/TradeExtension.cs" />
-    <Compile Remove="Game/Objects/Quest.cs" />
-    <Compile Remove="Game/Objects/SpellEffect.cs" />
-    <Compile Remove="Game/Objects/Unit.cs" />
-    <Compile Remove="Game/Objects/UnitExtensions/FactionExtension.cs" />
-    <Compile Remove="Game/Objects/UnitExtensions/SpellExtension.cs" />
-    <Compile Remove="Game/Objects/UnitExtensions/TalentExtension.cs" />
-    <Compile Remove="Game/Objects/WorldObject.cs" />
-    <Compile Remove="Game/Structs/AreaTrigger.cs" />
-    <Compile Remove="Game/Structs/CreatureStructs.cs" />
-    <Compile Remove="Game/Structs/CreatureTemplate.cs" />
-    <Compile Remove="Game/Structs/GameObjectStructs.cs" />
-    <Compile Remove="Game/Structs/GameObjectTemplate.cs" />
-    <Compile Remove="Game/Structs/ItemStructs.cs" />
-    <Compile Remove="Game/Structs/ItemTemplate.cs" />
-    <Compile Remove="Game/Structs/PlayerStructs.cs" />
-    <Compile Remove="Game/Structs/QuestTemplate.cs" />
-    <Compile Remove="Game/Structs/SpellStructs.cs" />
-    <Compile Remove="Game/Structs/Ticket.cs" />
-    <Compile Remove="Game/Structs/UnitStructs.cs" />
-    <Compile Remove="Game/Structs/Worldports.cs" />
-    <Compile Remove="Network/RealmManager.cs" />
-    <Compile Remove="Network/RealmSocket.cs" />
-    <Compile Remove="Network/WorldManager.cs" />
-    <Compile Remove="Network/WorldSocket.cs" />
-    <Compile Remove="Packets/HandlerDefinitions.cs" />
-    <Compile Remove="Packets/Handlers/AuthHandler.cs" />
-    <Compile Remove="Packets/Handlers/CharHandler.cs" />
-    <Compile Remove="Packets/Handlers/ChatHandler.cs" />
-    <Compile Remove="Packets/Handlers/CreatureHandler.cs" />
-    <Compile Remove="Packets/Handlers/FriendHandler.cs" />
-    <Compile Remove="Packets/Handlers/GameObjectHandler.cs" />
-    <Compile Remove="Packets/Handlers/GroupHandler.cs" />
-    <Compile Remove="Packets/Handlers/ItemHandler.cs" />
-    <Compile Remove="Packets/Handlers/LootHandler.cs" />
-    <Compile Remove="Packets/Handlers/MiscHandler.cs" />
-    <Compile Remove="Packets/Handlers/MovementHandler.cs" />
-    <Compile Remove="Packets/Handlers/NetHandler.cs" />
-    <Compile Remove="Packets/Handlers/NPCHandler.cs" />
-    <Compile Remove="Packets/Handlers/QuestHandler.cs" />
-    <Compile Remove="Packets/Handlers/SpellHandler.cs" />
-    <Compile Remove="Packets/Handlers/TradeHandler.cs" />
-    <Compile Remove="Packets/Handlers/WorldHandler.cs" />
-    <Compile Remove="Packets/PacketManager.cs" />
-    <Compile Remove="Properties/AssemblyInfo.cs" />
-    <Compile Remove="Storage/Database.cs" />
-    <Compile Remove="Storage/DatabaseExtension.cs" />
-    <Compile Remove="Storage/DbSet.cs" />
-    <Compile Remove="Storage/GroupedDbSet.cs" />
   </ItemGroup>
 </Project>
