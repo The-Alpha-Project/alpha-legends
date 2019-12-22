@@ -1,5 +1,6 @@
 ﻿using Common.Constants;
 
+#pragma warning disable CS0169
 namespace WorldServer.Game.Structs
 {
     public class UnitStructs
