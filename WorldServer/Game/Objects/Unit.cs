@@ -169,6 +169,74 @@ namespace WorldServer.Game.Objects
 
         #region Combat Functions
 
+        public Unit GetVictim()
+        {
+            if (Database.Players.ContainsKey(this.CombatTarget))
+            {
+                return Database.Players.TryGet(this.CombatTarget);
+            }
+            if (Database.Creatures.ContainsKey(this.CombatTarget))
+            {
+                return Database.Creatures.TryGet(this.CombatTarget);
+            }
+            return null;
+        }
+
+        public Unit FindFriendlyUnitInRange(float range)
+        {
+            HashSet<Grid> grids = GridManager.Instance.GetSurrounding(this);
+            foreach (Grid grid in grids)
+            {
+                Unit friendly = grid.GetFriendlyUnitInRange(this, range);
+                if (friendly != null)
+                    return friendly;
+            }
+
+            return this;
+        }
+
+        public Unit FindInjuredFriendlyUnitInRange(float range, float health_pct, Unit except)
+        {
+            HashSet<Grid> grids = GridManager.Instance.GetSurrounding(this);
+            foreach (Grid grid in grids)
+            {
+                Unit friendly = grid.GetInjuredFriendlyUnitInRange(this, range, health_pct, except);
+                if (friendly != null)
+                    return friendly;
+            }
+
+            if ((this != except) && (100 - GetHealthPercent() > health_pct))
+                return this;
+
+            return null;
+        }
+
+        public Player FindNearestFriendlyPlayer(float range)
+        {
+            HashSet<Grid> grids = GridManager.Instance.GetSurrounding(this);
+            foreach (Grid grid in grids)
+            {
+                Player player = grid.GetNearestFriendlyPlayer(this, range);
+                if (player != null)
+                    return player;
+            }
+
+            return ToPlayer();
+        }
+
+        public Player FindNearestHostilePlayer(float range)
+        {
+            HashSet<Grid> grids = GridManager.Instance.GetSurrounding(this);
+            foreach (Grid grid in grids)
+            {
+                Player player = grid.GetNearestFriendlyPlayer(this, range);
+                if (player != null)
+                    return player;
+            }
+
+            return null;
+        }
+
         public void DealSpellDamage(SpellCast spell, int damage, SpellDamageType type, int index)
         {
             bool isHeal = false;
@@ -309,6 +377,21 @@ namespace WorldServer.Game.Objects
         public void SetPowerValue(uint value, bool maximum)
         {
             SetPowerValue((PowerTypes)this.PowerType, value, maximum);
+        }
+
+        public uint GetHealth()
+        {
+            return Health.Current;
+        }
+
+        public uint GetMaxHealth()
+        {
+            return Health.Maximum;
+        }
+
+        public float GetHealthPercent()
+        {
+            return (GetHealth() * 100.0f) / GetMaxHealth();
         }
 
         public bool Attack(Unit victim, bool melee)
