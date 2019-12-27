@@ -12,6 +12,7 @@ using WorldServer.Game.Managers;
 using WorldServer.Game.Objects.PlayerExtensions.Quests;
 using MySql.Data.MySqlClient;
 using Common.Database;
+using Common.Database.DBC;
 
 public enum CastFlags
 {
@@ -597,11 +598,6 @@ namespace WorldServer.Game.Objects
 
         void DoSpellsListCasts(long diff)
         {
-            Unit target = GetVictim();
-            if (target == null)
-                return;
-                
-
             bool bDontCast = false;
             foreach (CreatureSpellsEntry spell in spellsList.spells)
             {
@@ -617,9 +613,12 @@ namespace WorldServer.Game.Objects
                             continue;
                     }
 
-                    //Unit pTarget = ToUnit(GetTargetByType(m_creature, m_creature, spell.castTarget, spell.targetParam1 ? spell.targetParam1 : sSpellRangeStore.LookupEntry(pSpellInfo->rangeIndex)->maxRange, spell.targetParam2));
+                    if (!DBC.Spell.ContainsKey(spell.data.spellId))
+                        continue;
+
+                    Unit target = ScriptMgr.GetTargetByType(this, this, spell.data.castTarget, spell.data.targetParam1 != 0 ? spell.data.targetParam1 : (uint)DBC.Spell[spell.data.spellId].GetMaxCastRange(), spell.data.targetParam2)?.ToUnit();
                     SpellCheckCastResult result = ForceCastSpell(spell.data.spellId, target);
-                    Console.WriteLine("Cast Result " + result.ToString());
+                    Console.WriteLine("[Creature " + this.Entry.ToString() + "][Spell " + spell.data.spellId.ToString() + "] Cast Result is " + result.ToString());
 
                     switch (result)
                     {
@@ -685,16 +684,7 @@ namespace WorldServer.Game.Objects
         {
             meleeAttackEnabled = state;
         }
-
-        public Unit GetVictim()
-        {
-            if (Database.Players.ContainsKey(this.CombatTarget)) //Victim exists
-            {
-                return Database.Players.TryGet(this.CombatTarget);
-            }
-            return null;
-        }
-
+        
         private void AttackUpdate()
         {
             Unit closestTarget = null;

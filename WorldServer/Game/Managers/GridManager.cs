@@ -321,5 +321,144 @@ namespace WorldServer.Game.Managers
                     p.Client.Send(packet);
             });
         }
+
+        public Unit GetFriendlyUnitInRange(Unit source, float range)
+        {
+            foreach (KeyValuePair<ulong, Creature> creature in this.Creatures)
+            {
+                if (creature.Value.Location.Distance(source.Location) <= range)
+                {
+                    if (creature.Value.Faction == source.Faction)
+                    {
+                        if (!creature.Value.IsDead)
+                            return creature.Value;
+                    }
+                }
+            }
+
+            foreach (KeyValuePair<ulong, Player> player in this.Players)
+            {
+                if (player.Value.Location.Distance(source.Location) <= range)
+                {
+                    if (player.Value.Faction == source.Faction)
+                    {
+                        if (!player.Value.IsDead)
+                            return player.Value;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public Unit GetInjuredFriendlyUnitInRange(Unit source, float range, float health_pct, Unit except)
+        {
+            foreach (KeyValuePair<ulong, Creature> creature in this.Creatures)
+            {
+                if (creature.Value == except)
+                    continue;
+
+                if (creature.Value.Location.Distance(source.Location) <= range)
+                {
+                    if (creature.Value.Faction == source.Faction)
+                    {
+                        if (!creature.Value.IsDead)
+                        {
+                            if (100 - creature.Value.GetHealthPercent() > health_pct)
+                                return creature.Value;
+                        }
+                    }
+                }
+            }
+
+            foreach (KeyValuePair<ulong, Player> player in this.Players)
+            {
+                if (player.Value == except)
+                    continue;
+
+                if (player.Value.Location.Distance(source.Location) <= range)
+                {
+                    if (player.Value.Faction == source.Faction)
+                    {
+                        if (!player.Value.IsDead)
+                        {
+                            if (100 - player.Value.GetHealthPercent() > health_pct)
+                                return player.Value;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public Player GetNearestPlayer(WorldObject source, float range)
+        {
+            Player closestPlayer = null;
+            float closestDistance = float.MaxValue;
+
+            foreach (KeyValuePair<ulong, Player> player in this.Players)
+            {
+                float distance = player.Value.Location.Distance(source.Location);
+                if ((distance <= range) && (distance <= closestDistance))
+                {
+                    if (!player.Value.IsDead)
+                    {
+                        closestPlayer = player.Value;
+                        closestDistance = distance;
+                    }
+                }
+            }
+
+            return closestPlayer;
+        }
+
+        public Player GetNearestFriendlyPlayer(Unit source, float range)
+        {
+            Player closestPlayer = null;
+            float closestDistance = float.MaxValue;
+
+            foreach (KeyValuePair<ulong, Player> player in this.Players)
+            {
+                float distance = player.Value.Location.Distance(source.Location);
+                if ((distance <= range) && (distance <= closestDistance))
+                {
+                    if (player.Value.Faction == source.Faction) // Proper faction relations NYI
+                    {
+                        if (!player.Value.IsDead)
+                        {
+                            closestPlayer = player.Value;
+                            closestDistance = distance;
+                        }
+                    }
+                }
+            }
+
+            return closestPlayer;
+        }
+
+        public Player GetNearestHostilePlayer(Unit source, float range)
+        {
+            Player closestPlayer = null;
+            float closestDistance = float.MaxValue;
+
+            foreach (KeyValuePair<ulong, Player> player in this.Players)
+            {
+                float distance = player.Value.Location.Distance(source.Location);
+                if ((distance <= range) && (distance <= closestDistance))
+                {
+                    if (player.Value.Faction != source.Faction)  // Proper faction relations NYI
+                    {
+                        if (!player.Value.IsDead)
+                        {
+                            closestPlayer = player.Value;
+                            closestDistance = distance;
+                        }
+                    }
+                }
+            }
+
+            return closestPlayer;
+        }
     }
 }

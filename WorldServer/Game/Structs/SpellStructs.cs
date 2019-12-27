@@ -579,7 +579,6 @@ namespace WorldServer.Game.Structs
                 this.Duration = CastTime.m_base / 1000;
                 this.Timer = Globals.GetFutureTime(this.Duration);
             }
-
         }
 
         private uint SetPowerCost()
