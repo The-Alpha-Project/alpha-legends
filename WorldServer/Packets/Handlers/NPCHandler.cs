@@ -306,7 +306,7 @@ namespace WorldServer.Packets.Handlers
                 List<MySqlParameter> parameters = new List<MySqlParameter>
                 {
                      new MySqlParameter("@guid", player.Guid),
-                     new MySqlParameter("@Talent", spellID),
+                     new MySqlParameter("@talent", spellID),
                 };
 
                 BaseContext.SaveEntity("knowntalents", columns, parameters, Globals.CONNECTION_STRING);
