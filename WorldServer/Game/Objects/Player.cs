@@ -495,6 +495,21 @@ namespace WorldServer.Game.Objects
 
             foreach (ushort spell in spellinfo)
                 this.Spells.Add(spell, new PlayerSpell(spell));
+
+            //Known Spells/Talents
+            var knownspells = Database.Knownspells.Values
+              .Where(x => x.Player == Guid)
+              .Select(x => x.SpellID);
+
+            foreach (ushort spell in knownspells)
+                this.Spells.Add(spell, new PlayerSpell(spell));
+
+            var knowntalent = Database.Knowntalents.Values
+              .Where(x => x.Player == Guid)
+              .Select(x => x.TalentID);
+
+            foreach (ushort spell in knowntalent)
+                this.Spells.Add(spell, new PlayerSpell(spell));
         }
 
         public void SendInitialSpells()

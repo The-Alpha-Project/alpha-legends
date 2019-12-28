@@ -10,6 +10,10 @@ using WorldServer.Game.Objects.UnitExtensions;
 using WorldServer.Game.Structs;
 using WorldServer.Network;
 using WorldServer.Storage;
+using System;
+using System.Collections.Generic;
+using MySql.Data.MySqlClient;
+using Common.Database;
 
 namespace WorldServer.Packets.Handlers
 {
@@ -250,9 +254,17 @@ namespace WorldServer.Packets.Handlers
             ulong guid = packet.ReadUInt64();
             uint spellID = packet.ReadUInt32();
 
+            //temp added here
+            PacketWriter pkt = new PacketWriter(Opcodes.SMSG_LEARNED_SPELL);
+            pkt.WriteUInt32((ushort)spellID);
+            pkt.WriteUInt16(0); //slot ?!?
+            manager.Send(pkt);
+
             Spell spell = null;
             if (!DBC.Spell.TryGetValue(spellID, out spell)) //Only use those with spells
                 return;
+
+            //TODO: Check if spell/talent exist in db (as already learner) (SendTalentList)
 
             if (guid == player.Guid) //Talent purchase
             {
@@ -277,13 +289,28 @@ namespace WorldServer.Packets.Handlers
                         manager.Character.Dirty = true;
                         player.SendPlaySpellVisual(guid, 0xB3);
 
-                        player.Spells.Add(spellID, new PlayerSpell(spell));
+                        Console.WriteLine("Learn Talent Guid: " + player.Guid);
+                        Console.WriteLine("Learn Talent ID: " + spellID);
                     }
 
                     break;
                 }
 
                 player.SendTalentList();
+
+                // TODO: 2 spells with same id crash server
+                List<string> columns = new List<string>{
+                    "guid", "Talent"
+                };
+
+                List<MySqlParameter> parameters = new List<MySqlParameter>
+                {
+                     new MySqlParameter("@guid", player.Guid),
+                     new MySqlParameter("@Talent", spellID),
+                };
+
+                BaseContext.SaveEntity("Knowntalents", columns, parameters, Globals.CONNECTION_STRING);
+
             }
             else if (Database.Creatures.ContainsKey(guid)) //NPC Spell purchase
             {
@@ -304,9 +331,22 @@ namespace WorldServer.Packets.Handlers
                 manager.Character.Dirty = true;
                 player.SendPlaySpellVisual(guid, 0xB3);
 
-                player.Spells.Add(spellID, new PlayerSpell(spell));
-
                 creature.SendSpellList(player);
+
+                Console.WriteLine("Learn Player Guid: " + player.Guid);
+                Console.WriteLine("Learn Spell ID: " + spellID);
+                // TODO: 2 spells with same id crash server
+                List<string> columns = new List<string>{
+                    "guid", "Spell"
+                };
+
+                List<MySqlParameter> parameters = new List<MySqlParameter>
+                {
+                     new MySqlParameter("@guid", player.Guid),
+                     new MySqlParameter("@Spell", spellID),
+                };
+
+                BaseContext.SaveEntity("Knownspells", columns, parameters, Globals.CONNECTION_STRING);
             }
         }
 
