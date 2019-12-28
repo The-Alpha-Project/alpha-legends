@@ -528,6 +528,17 @@ namespace WorldServer.Game.Objects
             this.Client.Send(pkt);
         }
 
+        //Basic Factions
+        public void SendInitalizeFactions()
+        {
+            PacketWriter pkt = new PacketWriter(Opcodes.SMSG_INITIALIZE_FACTIONS);
+            pkt.WriteUInt32(0x00000040);
+            //var rep = reps[(FactionReputationIndex);
+            pkt.WriteUInt16((byte)1); //flags
+            pkt.WriteUInt16(0);
+            this.Client.Send(pkt);
+        }
+
         #endregion
 
         #region Visualisation Functions

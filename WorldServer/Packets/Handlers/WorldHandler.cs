@@ -45,6 +45,7 @@ namespace WorldServer.Packets.Handlers
              * SMSG_ACTION_BUTTONS
              */
             manager.Character.SendInitialSpells();
+            manager.Character.SendInitalizeFactions();
             manager.Character.SendMOTD();
             manager.Character.PreLoad();
 
