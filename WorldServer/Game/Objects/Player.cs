@@ -497,14 +497,14 @@ namespace WorldServer.Game.Objects
                 this.Spells.Add(spell, new PlayerSpell(spell));
 
             //Known Spells/Talents
-            var knownspells = Database.Knownspells.Values
+            var knownspells = Database.KnownSpells.Values
               .Where(x => x.Player == Guid)
               .Select(x => x.SpellID);
 
             foreach (ushort spell in knownspells)
                 this.Spells.Add(spell, new PlayerSpell(spell));
 
-            var knowntalent = Database.Knowntalents.Values
+            var knowntalent = Database.KnownTalents.Values
               .Where(x => x.Player == Guid)
               .Select(x => x.TalentID);
 

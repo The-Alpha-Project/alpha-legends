@@ -13,8 +13,8 @@ namespace WorldServer.Storage
     {
         public static DbSet<uint, AreaTrigger> AreaTriggers;
         public static DbSet<uint, ClassLevelStat> ClassLevelStats;
-        public static DbSet<uint, Knownspells> Knownspells;
-        public static DbSet<uint, Knowntalents> Knowntalents;
+        public static DbSet<uint, KnownSpells> KnownSpells;
+        public static DbSet<uint, KnownTalents> KnownTalents;
         public static DbSet<uint, CreateActionButton> CreateActionButtons;
         public static DbSet<uint, CreatePlayerInfo> CreatePlayerInfo;
         public static DbSet<uint, CreateSkillInfo> CreateSkillInfo;
@@ -51,8 +51,8 @@ namespace WorldServer.Storage
         {
             AreaTriggers = new DbSet<uint, AreaTrigger>();
             ClassLevelStats = new DbSet<uint, ClassLevelStat>();
-            Knownspells = new DbSet<uint, Knownspells>();
-            Knowntalents = new DbSet<uint, Knowntalents>();
+            KnownSpells = new DbSet<uint, KnownSpells>();
+            KnownTalents = new DbSet<uint, KnownTalents>();
             CreateActionButtons = new DbSet<uint, CreateActionButton>();
             CreatePlayerInfo = new DbSet<uint, CreatePlayerInfo>();
             CreateSkillInfo = new DbSet<uint, CreateSkillInfo>();

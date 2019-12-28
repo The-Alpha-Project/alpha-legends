@@ -300,7 +300,7 @@ namespace WorldServer.Packets.Handlers
 
                 // TODO: 2 spells with same id crash server
                 List<string> columns = new List<string>{
-                    "guid", "Talent"
+                    "guid", "talent"
                 };
 
                 List<MySqlParameter> parameters = new List<MySqlParameter>
@@ -309,7 +309,7 @@ namespace WorldServer.Packets.Handlers
                      new MySqlParameter("@Talent", spellID),
                 };
 
-                BaseContext.SaveEntity("Knowntalents", columns, parameters, Globals.CONNECTION_STRING);
+                BaseContext.SaveEntity("knowntalents", columns, parameters, Globals.CONNECTION_STRING);
 
             }
             else if (Database.Creatures.ContainsKey(guid)) //NPC Spell purchase
@@ -337,16 +337,16 @@ namespace WorldServer.Packets.Handlers
                 Console.WriteLine("Learn Spell ID: " + spellID);
                 // TODO: 2 spells with same id crash server
                 List<string> columns = new List<string>{
-                    "guid", "Spell"
+                    "guid", "spell"
                 };
 
                 List<MySqlParameter> parameters = new List<MySqlParameter>
                 {
                      new MySqlParameter("@guid", player.Guid),
-                     new MySqlParameter("@Spell", spellID),
+                     new MySqlParameter("@spell", spellID),
                 };
 
-                BaseContext.SaveEntity("Knownspells", columns, parameters, Globals.CONNECTION_STRING);
+                BaseContext.SaveEntity("knownspells", columns, parameters, Globals.CONNECTION_STRING);
             }
         }
 
