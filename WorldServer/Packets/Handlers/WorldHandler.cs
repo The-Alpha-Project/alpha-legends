@@ -46,6 +46,7 @@ namespace WorldServer.Packets.Handlers
              */
             manager.Character.SendInitialSpells();
             manager.Character.SendInitalizeFactions();
+            manager.Character.SendReputationStandingUpdate();
             manager.Character.SendMOTD();
             manager.Character.PreLoad();
 

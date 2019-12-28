@@ -531,11 +531,23 @@ namespace WorldServer.Game.Objects
         //Basic Factions
         public void SendInitalizeFactions()
         {
+            const int count = 0x40;
             PacketWriter pkt = new PacketWriter(Opcodes.SMSG_INITIALIZE_FACTIONS);
-            pkt.WriteUInt32(0x00000040);
+            pkt.WriteUInt32(count);
             //var rep = reps[(FactionReputationIndex);
-            pkt.WriteUInt16((byte)1); //flags
-            pkt.WriteUInt16(0);
+            pkt.WriteUInt16((byte)2); //rep.flags
+            pkt.WriteUInt16(0); //rep.value
+            this.Client.Send(pkt);
+        }
+
+        public void SendReputationStandingUpdate()
+        {
+            PacketWriter pkt = new PacketWriter(Opcodes.SMSG_SET_FACTION_STANDING);
+            pkt.WriteUInt32((byte)1);
+            pkt.WriteUInt16(0); // count (we only ever send 1)
+            pkt.WriteUInt16(0); //rep index
+            pkt.WriteUInt16(0); //rep.value
+
             this.Client.Send(pkt);
         }
 
