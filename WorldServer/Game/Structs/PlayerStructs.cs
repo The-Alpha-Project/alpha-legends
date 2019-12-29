@@ -144,9 +144,11 @@ namespace WorldServer.Game.Structs
     public class KnownSpells
     {
         [Key]
+        [Column("id")]
+        public uint Id { get; set; }
         [Column("guid")]
         public ulong Player { get; set; }
-        [Key]
+        
         [Column("spell")]
         public ushort SpellID { get; set; }
     }
@@ -155,9 +157,11 @@ namespace WorldServer.Game.Structs
     public class KnownTalents
     {
         [Key]
+        [Column("id")]
+        public uint Id { get; set; }
         [Column("guid")]
         public ulong Player { get; set; }
-        [Key]
+
         [Column("talent")]
         public ushort TalentID { get; set; }
     }
