@@ -98,5 +98,25 @@ namespace Common.Database.DBC.Structures
             if (match.Success)
                 int.TryParse(match.Groups[1].Value, out m_rank);
         }
+
+        public float GetMinCastRange()
+        {
+            Common.Database.DBC.Structures.SpellRange range;
+            if (DBC.SpellRange.TryGetValue((int)rangeIndex, out range))
+            {
+                return range.m_rangeMin;
+            }
+            return 0;
+        }
+
+        public float GetMaxCastRange()
+        {
+            Common.Database.DBC.Structures.SpellRange range;
+            if (DBC.SpellRange.TryGetValue((int)rangeIndex, out range))
+            {
+                return range.m_rangeMax;
+            }
+            return float.MaxValue;
+        }
     }
 }

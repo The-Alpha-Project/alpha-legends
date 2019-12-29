@@ -46,6 +46,8 @@ namespace WorldServer.Game.Structs
         public bool MovementType { get; set; }
         [Column("equipment_id")]
         public int EquipmentID { get; set; }
+        [Column("spell_list_id")]
+        public uint SpellListID { get; set; }
         [Column("pet_spell_list_id")]
         public uint PetSpellDataID { get; set; }
         [Column("rank")]

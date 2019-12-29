@@ -1226,7 +1226,7 @@ namespace Common.Constants
         NUM_SPELL_TARGET_TYPES = 0x10,
     }
 
-    public enum SpellFailedReason
+    public enum SpellCheckCastResult
     {
         SPELL_FAILED_AFFECTING_COMBAT = 0x0,
         SPELL_FAILED_ALREADY_HAVE_CHARM = 0x1,
@@ -1315,7 +1315,7 @@ namespace Common.Constants
         SPELL_FAILED_TARGET_DUELING = 0x54,
         SPELL_FAILED_NOTUNSHEATHED = 0x55,
         SPELL_FAILED_NOT_FISHABLE = 0x56,
-        SPELL_FAILED_NO_REASON = 0x57
+        SPELL_CAST_OK = 0x57
     }
 
     public enum SpellAttributes : uint

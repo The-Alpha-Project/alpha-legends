@@ -291,9 +291,9 @@ namespace WorldServer.Game.Objects.PlayerExtensions.Quests
             p.Dirty = true;
 
             if (quest.RewSpell > 0)
-                p.ForceCastSpell(quest.RewSpell);
+                p.ForceCastSpell(quest.RewSpell, p);
             else if (quest.RewSpellCast > 0)
-                p.ForceCastSpell(quest.RewSpellCast);
+                p.ForceCastSpell(quest.RewSpellCast, p);
         }
 
 

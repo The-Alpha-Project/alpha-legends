@@ -100,7 +100,8 @@ namespace WorldServer.Storage
             if (!this.Data.ContainsKey(key))
                 return false;
 
-            return this.Data.TryRemove(key, out List<object> dump);
+            List<object> dump;
+            return this.Data.TryRemove(key, out dump);
         }
 
         public bool TryRemove(T value)

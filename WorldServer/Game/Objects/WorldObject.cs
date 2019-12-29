@@ -4,7 +4,9 @@ using Common.Helpers;
 using Common.Helpers.Extensions;
 using Common.Network.Packets;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using WorldServer.Game.Managers;
 using WorldServer.Storage;
 
 namespace WorldServer.Game.Objects
@@ -41,6 +43,49 @@ namespace WorldServer.Game.Objects
         public bool IsTypeOf(ObjectTypes type)
         {
             return this.ObjectType.HasFlag(type);
+        }
+
+        public bool IsUnit()
+        {
+            return IsTypeOf(ObjectTypes.TYPE_UNIT);
+        }
+
+        public bool IsPlayer()
+        {
+            return IsTypeOf(ObjectTypes.TYPE_PLAYER);
+        }
+
+        public bool IsCreature()
+        {
+            return IsTypeOf(ObjectTypes.TYPE_UNIT) && !IsTypeOf(ObjectTypes.TYPE_PLAYER);
+        }
+
+        public Unit ToUnit()
+        {
+            return IsUnit() ? (Unit)this : null;
+        }
+
+        public Player ToPlayer()
+        {
+            return IsPlayer() ? (Player)this : null;
+        }
+
+        public Creature ToCreature()
+        {
+            return IsCreature() ? (Creature)this : null;
+        }
+
+        public Unit FindNearestPlayer(float range)
+        {
+            HashSet<Grid> grids = GridManager.Instance.GetSurrounding(this);
+            foreach (Grid grid in grids)
+            {
+                Unit player = grid.GetNearestPlayer(this, range);
+                if (player != null)
+                    return player;
+            }
+
+            return ToPlayer();
         }
 
         public bool HasQuest(uint id)

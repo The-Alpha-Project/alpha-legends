@@ -66,35 +66,35 @@ namespace WorldServer.Game.Structs
             if (Spell.ChannelInterruptFlags.HasFlag((uint)SpellChannelInterruptFlags.CHANNEL_FLAG_MOVEMENT) && this.m_location != Caster.Location)
             {
                 Cancel();
-                Caster.SendCastResult(SpellFailedReason.SPELL_FAILED_MOVING, Spell.Id);
+                Caster.SendCastResult(SpellCheckCastResult.SPELL_FAILED_MOVING, Spell.Id);
                 return;
             }
 
             if (Spell.InterruptFlags.HasFlag((uint)SpellInterruptFlags.SPELL_INTERRUPT_FLAG_MOVEMENT) && (this.m_location != Caster.Location))
             {
                 Cancel();
-                Caster.SendCastResult(SpellFailedReason.SPELL_FAILED_MOVING, Spell.Id);
+                Caster.SendCastResult(SpellCheckCastResult.SPELL_FAILED_MOVING, Spell.Id);
                 return;
             }
 
             if (Spell.ChannelInterruptFlags.HasFlag((uint)SpellChannelInterruptFlags.CHANNEL_FLAG_TURNING) && this.m_orientation != Caster.Orientation)
             {
                 Cancel();
-                Caster.SendCastResult(SpellFailedReason.SPELL_FAILED_MOVING, Spell.Id);
+                Caster.SendCastResult(SpellCheckCastResult.SPELL_FAILED_MOVING, Spell.Id);
                 return;
             }
 
             if (Spell.ChannelInterruptFlags.HasFlag((uint)SpellChannelInterruptFlags.CHANNEL_FLAG_DAMAGE) && Caster.Health.Current < this.m_health)
             {
                 Cancel();
-                Caster.SendCastResult(SpellFailedReason.SPELL_FAILED_INTERRUPTED_COMBAT, Spell.Id);
+                Caster.SendCastResult(SpellCheckCastResult.SPELL_FAILED_INTERRUPTED_COMBAT, Spell.Id);
                 return;
             }
 
             if (Spell.InterruptFlags.HasFlag((uint)SpellInterruptFlags.SPELL_INTERRUPT_FLAG_ABORT_ON_DMG) && Caster.Health.Current < this.m_health)
             {
                 Cancel();
-                Caster.SendCastResult(SpellFailedReason.SPELL_FAILED_INTERRUPTED_COMBAT, Spell.Id);
+                Caster.SendCastResult(SpellCheckCastResult.SPELL_FAILED_INTERRUPTED_COMBAT, Spell.Id);
                 return;
             }
 
@@ -457,9 +457,6 @@ namespace WorldServer.Game.Structs
             this.State = SpellState.SPELL_STATE_PREPARING;
             this.SetCastTime();
 
-            if (!Caster.IsTypeOf(ObjectTypes.TYPE_PLAYER))
-                return;
-
             PacketWriter pkt = new PacketWriter(Opcodes.SMSG_SPELL_START);
 
             if (Targets.Target.IsTypeOf(ObjectTypes.TYPE_ITEM))
@@ -470,9 +467,10 @@ namespace WorldServer.Game.Structs
             pkt.WriteUInt64(Caster.Guid);
             pkt.WriteUInt32(Spell.Id);
             pkt.WriteUInt16(2);
-            pkt.WriteUInt32(0);
+            pkt.WriteUInt32((uint)(this.Duration * 1000));
             Targets.WriteTargets(ref pkt);
-            ((Player)Caster).Client.Send(pkt);
+            GridManager.Instance.SendSurrounding(pkt, Caster);
+            //((Player)Caster).Client.Send(pkt);
         }
 
         public void SendChannelUpdate(uint time)
@@ -492,10 +490,6 @@ namespace WorldServer.Game.Structs
 
         public void SendSpellGo()
         {
-
-            if (!Caster.IsTypeOf(ObjectTypes.TYPE_PLAYER))
-                return;
-
             PacketWriter pkt = new PacketWriter(Opcodes.SMSG_SPELL_GO);
 
             if (Targets.Target.IsTypeOf(ObjectTypes.TYPE_ITEM))
@@ -585,7 +579,6 @@ namespace WorldServer.Game.Structs
                 this.Duration = CastTime.m_base / 1000;
                 this.Timer = Globals.GetFutureTime(this.Duration);
             }
-
         }
 
         private uint SetPowerCost()

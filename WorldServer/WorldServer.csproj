@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WorldServer</RootNamespace>
     <AssemblyName>WorldServer</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -61,6 +61,7 @@
     <Compile Include="Game\Commands\GameMasterCommands.cs" />
     <Compile Include="Game\Globals.cs" />
     <Compile Include="Game\Managers\ChatManager.cs" />
+    <Compile Include="Game\Managers\ScriptMgr.cs" />
     <Compile Include="Game\Objects\Account.cs" />
     <Compile Include="Game\Objects\Container.cs" />
     <Compile Include="Game\Objects\GameObject.cs" />

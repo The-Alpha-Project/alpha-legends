@@ -169,6 +169,74 @@ namespace WorldServer.Game.Objects
 
         #region Combat Functions
 
+        public Unit GetVictim()
+        {
+            if (Database.Players.ContainsKey(this.CombatTarget))
+            {
+                return Database.Players.TryGet(this.CombatTarget);
+            }
+            if (Database.Creatures.ContainsKey(this.CombatTarget))
+            {
+                return Database.Creatures.TryGet(this.CombatTarget);
+            }
+            return null;
+        }
+
+        public Unit FindFriendlyUnitInRange(float range)
+        {
+            HashSet<Grid> grids = GridManager.Instance.GetSurrounding(this);
+            foreach (Grid grid in grids)
+            {
+                Unit friendly = grid.GetFriendlyUnitInRange(this, range);
+                if (friendly != null)
+                    return friendly;
+            }
+
+            return this;
+        }
+
+        public Unit FindInjuredFriendlyUnitInRange(float range, float health_pct, Unit except)
+        {
+            HashSet<Grid> grids = GridManager.Instance.GetSurrounding(this);
+            foreach (Grid grid in grids)
+            {
+                Unit friendly = grid.GetInjuredFriendlyUnitInRange(this, range, health_pct, except);
+                if (friendly != null)
+                    return friendly;
+            }
+
+            if ((this != except) && (100 - GetHealthPercent() > health_pct))
+                return this;
+
+            return null;
+        }
+
+        public Player FindNearestFriendlyPlayer(float range)
+        {
+            HashSet<Grid> grids = GridManager.Instance.GetSurrounding(this);
+            foreach (Grid grid in grids)
+            {
+                Player player = grid.GetNearestFriendlyPlayer(this, range);
+                if (player != null)
+                    return player;
+            }
+
+            return ToPlayer();
+        }
+
+        public Player FindNearestHostilePlayer(float range)
+        {
+            HashSet<Grid> grids = GridManager.Instance.GetSurrounding(this);
+            foreach (Grid grid in grids)
+            {
+                Player player = grid.GetNearestFriendlyPlayer(this, range);
+                if (player != null)
+                    return player;
+            }
+
+            return null;
+        }
+
         public void DealSpellDamage(SpellCast spell, int damage, SpellDamageType type, int index)
         {
             bool isHeal = false;
@@ -258,6 +326,23 @@ namespace WorldServer.Game.Objects
             return 0;
         }
 
+        public bool HasPowerType(PowerTypes type)
+        {
+            switch (type)
+            {
+                case PowerTypes.TYPE_ENERGY:
+                    return Energy.Maximum != 0;
+                case PowerTypes.TYPE_FOCUS:
+                    return Focus.Maximum != 0;
+                case PowerTypes.TYPE_MANA:
+                    return Mana.Maximum != 0;
+                case PowerTypes.TYPE_RAGE:
+                    return Rage.Maximum != 0;
+            }
+
+            return true;
+        }
+
         public void SetPowerValue(PowerTypes type, uint value, bool maximum)
         {
             switch (type)
@@ -292,6 +377,21 @@ namespace WorldServer.Game.Objects
         public void SetPowerValue(uint value, bool maximum)
         {
             SetPowerValue((PowerTypes)this.PowerType, value, maximum);
+        }
+
+        public uint GetHealth()
+        {
+            return Health.Current;
+        }
+
+        public uint GetMaxHealth()
+        {
+            return Health.Maximum;
+        }
+
+        public float GetHealthPercent()
+        {
+            return (GetHealth() * 100.0f) / GetMaxHealth();
         }
 
         public bool Attack(Unit victim, bool melee)
@@ -350,7 +450,8 @@ namespace WorldServer.Game.Objects
                     ((Player)this).LeaveCombat();
                 else
                 {
-                    this.Attackers.TryRemove(victim.Guid, out Unit dump);
+                    Unit dump;
+                    this.Attackers.TryRemove(victim.Guid, out dump);
                     this.IsAttacking = false;
                 }
 
@@ -445,7 +546,8 @@ namespace WorldServer.Game.Objects
                 }
             }
 
-            CalculateMeleeDamage(victim, 0, out UnitStructs.CalcDamageInfo damageInfo, at);
+            UnitStructs.CalcDamageInfo damageInfo;
+            CalculateMeleeDamage(victim, 0, out damageInfo, at);
             SendAttackStateUpdate(damageInfo);
 
             //Extra attack only at any non extra attack
@@ -805,16 +907,17 @@ namespace WorldServer.Game.Objects
 
                     if (target.Health.Current <= 0)
                     {
+                        Unit dump;
                         if (target is Creature)
                         {
                             ((Creature)target).Die(p);
                             if (p.Attackers.ContainsKey(target.Guid))
-                                p.Attackers.TryRemove(target.Guid, out Unit dump);
+                                p.Attackers.TryRemove(target.Guid, out dump);
                         }
                         else
                         {
                             if (target.Attackers.ContainsKey(p.Guid))
-                                target.Attackers.TryRemove(p.Guid, out Unit dump);
+                                target.Attackers.TryRemove(p.Guid, out dump);
                             killPlayer = true;
                         }
                     }
@@ -870,6 +973,35 @@ namespace WorldServer.Game.Objects
                 else
                     spell.Update();
             }
+        }
+
+        public SpellCheckCastResult ForceCastSpell(uint spellid, Unit target)
+        {
+            if (!DBC.Spell.ContainsKey(spellid))
+                return SpellCheckCastResult.SPELL_FAILED_ERROR;
+
+            SpellTargets targets = new SpellTargets
+            {
+                Target = target
+            };
+
+            SpellCast cast = new SpellCast(this)
+            {
+                Targets = targets,
+                Spell = DBC.Spell[spellid],
+                Triggered = false
+            };
+            return this.PrepareSpell(cast);
+        }
+
+        public bool IsNonMeleeSpellCasted()
+        {
+            foreach (SpellCast spell in this.SpellCast.Values)
+            {
+                if (spell.SpellType != CurrentSpellType.CURRENT_MELEE_SPELL && spell.State == SpellState.SPELL_STATE_CASTING)
+                    return true;
+            }
+            return false;
         }
 
         #endregion
