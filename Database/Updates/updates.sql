@@ -93,6 +93,48 @@ begin not atomic
 
         insert into applied_updates values('011020191');
     end if;
+
+    -- 30/12/2019 1
+    if (select count(*) from applied_updates where id='301220191') = 0 then
+        delete from playercreateinfo_spell where Spell = 2479;
+        insert into playercreateinfo_spell (race, class, Spell, Note) values
+        (3, 8, 20594, 'Stoneform'),
+        (3, 8, 20595, 'Gun Specialization'),
+        (3, 8, 20596, 'Frost Resistance'),
+        (3, 8, 21651, 'Opening'),
+        (3, 8, 21652, 'Closing'),
+        (3, 8, 22027, 'Remove Insignia'),
+        (3, 8, 22810, 'Opening - No Text'),
+
+        (3, 8, 81, 'Dodge'),
+        (3, 8, 133, 'Fireball'),
+        (3, 8, 168, 'Frost Armor'),
+        (3, 8, 203, 'Unarmed'),
+        (3, 8, 204, 'Defense'),
+        (3, 8, 227, 'Staves'),
+        (3, 8, 522, 'SPELLDFENSE (DND)'),
+        (3, 8, 668, 'Language Common'),
+        (3, 8, 672, 'Language Dwarven'),
+        (3, 8, 2382, 'Generic'),
+        (3, 8, 3050, 'Detect'),
+        (3, 8, 3365, 'Opening'),
+        (3, 8, 5009, 'Wands'),
+        (3, 8, 5019, 'Shoot'),
+        (3, 8, 6233, 'Closing'),
+        (3, 8, 6246, 'Closing'),
+        (3, 8, 6247, 'Opening'),
+        (3, 8, 6477, 'Opening'),
+        (3, 8, 6478, 'Opening'),
+        (3, 8, 6603, 'Attack'),
+        (3, 8, 7266, 'Duel'),
+        (3, 8, 7267, 'Grovel'),
+        (3, 8, 7355, 'Stuck'),
+        (3, 8, 8386, 'Attacking'),
+        (3, 8, 9078, 'Cloth'),
+        (3, 8, 9125, 'Generic');
+
+        insert into applied_updates values('301220191');
+    end if;
 end $
 delimiter ;
 
