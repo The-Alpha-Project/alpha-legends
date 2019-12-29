@@ -141,7 +141,7 @@ namespace WorldServer.Game.Structs
     }
 
     [Table("knownspells")]
-    public class Knownspells
+    public class KnownSpells
     {
         [Key]
         [Column("guid")]
@@ -152,7 +152,7 @@ namespace WorldServer.Game.Structs
     }
 
     [Table("knowntalents")]
-    public class Knowntalents
+    public class KnownTalents
     {
         [Key]
         [Column("guid")]
