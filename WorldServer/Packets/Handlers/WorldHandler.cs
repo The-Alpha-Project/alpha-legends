@@ -41,9 +41,8 @@ namespace WorldServer.Packets.Handlers
             manager.Character.IsOnline = true;
 
             MiscHandler.HandleLoginSetTimespeed(ref manager);
-            /*
-             * SMSG_ACTION_BUTTONS
-             */
+
+            manager.Character.ActionButtonsInitalize();
             manager.Character.SendInitialSpells();
             manager.Character.SendInitalizeFactions();
             manager.Character.SendReputationStandingUpdate();

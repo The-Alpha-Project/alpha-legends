@@ -515,6 +515,23 @@ namespace WorldServer.Game.Objects
                 this.Spells.Add(spell, new PlayerSpell(spell));
         }
 
+        public void ActionButtonsInitalize()
+        {
+            PacketWriter pkt = new PacketWriter(Opcodes.SMSG_ACTION_BUTTONS);
+
+            for (var button = 0; button < 119; button++) //  119    'or 480 ?
+            {
+                var ActionBarInit = Database.CreateActionButtons.Values.Find(x => x.Button == button);
+
+                if (ActionBarInit != null)
+                    pkt.WriteUInt32((uint)ActionBarInit.Action | ((uint)ActionBarInit.Type << 24));
+                else
+                    pkt.WriteUInt32(0);
+
+                this.Client.Send(pkt);
+            }
+        }
+
         public void SendInitialSpells()
         {
             ushort slot = 1;
