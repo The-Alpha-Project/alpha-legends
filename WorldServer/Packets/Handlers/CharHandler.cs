@@ -243,10 +243,9 @@ namespace WorldServer.Packets.Handlers
         {
             Log.Message(LogType.DEBUG, "WORLD: Received opcode CMSG_SET_ACTION_BUTTON!");
             byte button = packet.ReadUInt8();
+            ushort action = packet.ReadUInt16();
             byte misc = packet.ReadUInt8();
-            var actionAndType = packet.ReadUInt16();
-            var action = (ushort)(actionAndType & 0x00FFFFFF);
-            var type = (byte)((actionAndType & 0xFF000000) >> 24);
+            byte type = packet.ReadUInt8();
 
             Log.Message(LogType.DEBUG, "BUTTON: {0} ACTION: {1} TYPE: {2}!", button, action, type);
             if (action == 0)

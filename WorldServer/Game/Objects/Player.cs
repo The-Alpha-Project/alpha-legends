@@ -654,7 +654,9 @@ namespace WorldServer.Game.Objects
         public void AddActionButton(byte button, ushort action, byte type, byte misc)
         {
             ActionButton ab = new ActionButton(action, misc, type);
-            this.ActionButtons.Add(button, ab);
+
+            if (this.ActionButtons.ContainsKey(button))
+                this.ActionButtons.Add(button, ab);
         }
 
         public void RemoveActionButton(byte button)
