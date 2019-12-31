@@ -54,8 +54,6 @@ namespace WorldServer.Storage
         {
             AreaTriggers = new DbSet<uint, AreaTrigger>();
             ClassLevelStats = new DbSet<uint, ClassLevelStat>();
-            KnownSpells = new DbSet<uint, KnownSpells>();
-            KnownTalents = new DbSet<uint, KnownTalents>();
             CreateActionButtons = new DbSet<uint, CreateActionButton>();
             CreatePlayerInfo = new DbSet<uint, CreatePlayerInfo>();
             CreateSkillInfo = new DbSet<uint, CreateSkillInfo>();
@@ -83,6 +81,8 @@ namespace WorldServer.Storage
             GameObjects = new DbSet<ulong, GameObject>(true);
             Items = new DbSet<ulong, Item>(true, true);
             Players = new DbSet<ulong, Player>(true, true);
+            KnownSpells = new DbSet<uint, KnownSpells>(false, true);
+            KnownTalents = new DbSet<uint, KnownTalents>(false, true);
             SocialList = new GroupedDbSet<ulong, List<SocialList>>(QueryDefault + "character_social", "Social Lists", true);
         }
 
@@ -164,6 +164,8 @@ namespace WorldServer.Storage
             Accounts.UpdateChanges();
             Items.UpdateChanges();
             Players.UpdateChanges();
+            KnownSpells.UpdateChanges();
+            KnownTalents.UpdateChanges();
         }
     }
 }

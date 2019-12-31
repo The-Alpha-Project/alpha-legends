@@ -264,7 +264,7 @@ namespace WorldServer.Packets.Handlers
                         Log.Message(LogType.DEBUG, "MISC: Added Item {0} into button {1}", action, button);
                         break;
                     default:
-                        Log.Message(LogType.ERROR, "MISC: Unknown action button type {0} for action %u into button {1}", type, action, button);
+                        Log.Message(LogType.ERROR, "MISC: Unknown action button type {0} for action %u into button {1}", action, button);
                         return;
                 }
 

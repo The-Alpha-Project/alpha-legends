@@ -254,17 +254,13 @@ namespace WorldServer.Packets.Handlers
             ulong guid = packet.ReadUInt64();
             uint spellID = packet.ReadUInt32();
 
-            //temp added here
             PacketWriter pkt = new PacketWriter(Opcodes.SMSG_LEARNED_SPELL);
             pkt.WriteUInt32((ushort)spellID);
-            pkt.WriteUInt16(0); //slot ?!?
             manager.Send(pkt);
 
             Spell spell = null;
             if (!DBC.Spell.TryGetValue(spellID, out spell)) //Only use those with spells
                 return;
-
-            //TODO: Check if spell/talent exist in db (as already learner) (SendTalentList)
 
             if (guid == player.Guid) //Talent purchase
             {
@@ -283,11 +279,11 @@ namespace WorldServer.Packets.Handlers
                         player.Talents.Add(ability.m_ID);
                         player.TalentPoints -= 10;
 
-                        //TODO ADD SPELL TO SPELLBOOK
-
                         player.SendBuySpellSucceed(guid, spellID);
                         manager.Character.Dirty = true;
                         player.SendPlaySpellVisual(guid, 0xB3);
+
+                        //player.Spells.Add(spellID, new PlayerSpell(spell)); //TODO : Check why crash server after adding talents from here
 
                         Console.WriteLine("Learn Talent Guid: " + player.Guid);
                         Console.WriteLine("Learn Talent ID: " + spellID);
@@ -298,7 +294,6 @@ namespace WorldServer.Packets.Handlers
 
                 player.SendTalentList();
 
-                // TODO: 2 spells with same id crash server
                 List<string> columns = new List<string>{
                     "guid", "talent"
                 };
@@ -330,6 +325,8 @@ namespace WorldServer.Packets.Handlers
                 player.SendBuySpellSucceed(guid, spellID);
                 manager.Character.Dirty = true;
                 player.SendPlaySpellVisual(guid, 0xB3);
+
+                player.Spells.Add(spellID, new PlayerSpell(spell));
 
                 creature.SendSpellList(player);
 
