@@ -164,8 +164,6 @@ namespace WorldServer.Storage
             Accounts.UpdateChanges();
             Items.UpdateChanges();
             Players.UpdateChanges();
-            KnownSpells.UpdateChanges();
-            KnownTalents.UpdateChanges();
         }
     }
 }

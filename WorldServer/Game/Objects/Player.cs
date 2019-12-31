@@ -506,6 +506,7 @@ namespace WorldServer.Game.Objects
 
             foreach (ushort spell in knownspells)
                 this.Spells.Add(spell, new PlayerSpell(spell));
+                Database.KnownSpells.Reload();
 
             var knowntalent = Database.KnownTalents.Values
               .Where(x => x.Player == Guid)
@@ -513,6 +514,7 @@ namespace WorldServer.Game.Objects
 
             foreach (ushort spell in knowntalent)
                 this.Spells.Add(spell, new PlayerSpell(spell));
+                Database.KnownTalents.Reload();
         }
 
         public void ActionButtonsInitalize()
