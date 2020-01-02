@@ -305,7 +305,7 @@ namespace WorldServer.Packets.Handlers
                 };
 
                 BaseContext.SaveEntity("knowntalents", columns, parameters, Globals.CONNECTION_STRING);
-
+                Database.KnownTalents.Reload();
             }
             else if (Database.Creatures.ContainsKey(guid)) //NPC Spell purchase
             {
@@ -344,6 +344,7 @@ namespace WorldServer.Packets.Handlers
                 };
 
                 BaseContext.SaveEntity("knownspells", columns, parameters, Globals.CONNECTION_STRING);
+                Database.KnownSpells.Reload();
             }
         }
 
