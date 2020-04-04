@@ -300,8 +300,26 @@ namespace WorldServer.Game.Objects
 
             damage += benefit;
 
+            uint health = GetHealth();
+            if (isHeal)
+            {
+                if (GetHealth() != GetMaxHealth())
+                {
+                    health += (uint)damage;
+                    if (health > GetMaxHealth())
+                        Health.Current = Health.Maximum;
+                    else
+                        Health.Current = health;
 
-
+                    if (damage != 0)
+                        GridManager.Instance.SendSurrounding(this.BuildUpdate(), this);
+                }
+            }
+            else
+            {
+                caster.Attack(this, false);
+                caster.DealDamage(this.Guid, (uint)damage);
+            }
         }
 
         public uint GetPowerValue(bool maximum)
@@ -861,21 +879,26 @@ namespace WorldServer.Game.Objects
             GridManager.Instance.SendSurrounding(data, this);
 
             //Damage Effects
-            if (damageInfo.damage > 0)
+            DealDamage(damageInfo.target, damageInfo.damage);
+        }
+
+        public void DealDamage(ulong targetGuid, uint damage)
+        {
+            if (damage > 0)
             {
                 bool killPlayer = true;
 
                 if (!this.UnitFlags.HasFlag((uint)Common.Constants.UnitFlags.UNIT_FLAG_IN_COMBAT))
                     Flag.SetFlag(ref UnitFlags, (uint)Common.Constants.UnitFlags.UNIT_FLAG_IN_COMBAT);
 
-                Unit target = Database.Creatures.TryGet<Unit>(damageInfo.target) ?? Database.Players.TryGet<Unit>(damageInfo.target);
+                Unit target = Database.Creatures.TryGet<Unit>(targetGuid) ?? Database.Players.TryGet<Unit>(targetGuid);
                 if (target == null)
                     return;
 
                 if (!target.UnitFlags.HasFlag((uint)Common.Constants.UnitFlags.UNIT_FLAG_IN_COMBAT))
                     Flag.SetFlag(ref target.UnitFlags, (uint)Common.Constants.UnitFlags.UNIT_FLAG_IN_COMBAT);
 
-                int health = (int)target.Health.Current - (int)damageInfo.damage;
+                int health = (int)target.Health.Current - (int)damage;
                 if (health < 0) health = 0; //Prevent uint overflow
 
                 target.Health.Current = (uint)health; //Update health

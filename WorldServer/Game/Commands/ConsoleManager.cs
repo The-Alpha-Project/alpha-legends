@@ -73,13 +73,13 @@ namespace WorldServer.Game.Commands
             DefineCommand("additem", GameMasterCommands.AddItem);
             DefineCommand("addskill", GameMasterCommands.AddSkill);
             DefineCommand("setskill", GameMasterCommands.SetSkill);
-            DefineCommand("kill", GameMasterCommands.Kill);
+            DefineCommand("die", GameMasterCommands.Kill);
             DefineCommand("level", GameMasterCommands.SetLevel);
             DefineCommand("kick", GameMasterCommands.Kick);
             DefineCommand("money", GameMasterCommands.Money);
             DefineCommand("setpower", GameMasterCommands.SetPower);
             DefineCommand("gps", GameMasterCommands.GPS);
-            DefineCommand("tel", GameMasterCommands.Teleport);
+            DefineCommand("tele", GameMasterCommands.Teleport);
             DefineCommand("port", GameMasterCommands.Port);
             DefineCommand("speed", GameMasterCommands.Speed);
             DefineCommand("swim", GameMasterCommands.Swim);
