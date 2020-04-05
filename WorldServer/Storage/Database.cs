@@ -15,6 +15,8 @@ namespace WorldServer.Storage
     {
         public static DbSet<uint, AreaTrigger> AreaTriggers;
         public static DbSet<uint, ClassLevelStat> ClassLevelStats;
+        public static DbSet<uint, KnownSpells> KnownSpells;
+        public static DbSet<uint, KnownTalents> KnownTalents;
         public static DbSet<uint, CreateActionButton> CreateActionButtons;
         public static DbSet<uint, CreatePlayerInfo> CreatePlayerInfo;
         public static DbSet<uint, CreateSkillInfo> CreateSkillInfo;
@@ -79,6 +81,8 @@ namespace WorldServer.Storage
             GameObjects = new DbSet<ulong, GameObject>(true);
             Items = new DbSet<ulong, Item>(true, true);
             Players = new DbSet<ulong, Player>(true, true);
+            KnownSpells = new DbSet<uint, KnownSpells>(false, true);
+            KnownTalents = new DbSet<uint, KnownTalents>(false, true);
             SocialList = new GroupedDbSet<ulong, List<SocialList>>(QueryDefault + "character_social", "Social Lists", true);
         }
 

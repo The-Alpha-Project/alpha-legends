@@ -498,6 +498,39 @@ namespace WorldServer.Game.Objects
 
             foreach (ushort spell in spellinfo)
                 this.Spells.Add(spell, new PlayerSpell(spell));
+
+            //Known Spells/Talents
+            var knownspells = Database.KnownSpells.Values
+              .Where(x => x.Player == Guid)
+              .Select(x => x.SpellID);
+
+            foreach (ushort spell in knownspells)
+                this.Spells.Add(spell, new PlayerSpell(spell));
+
+            var knowntalent = Database.KnownTalents.Values
+              .Where(x => x.Player == Guid)
+              .Select(x => x.TalentID);
+
+            foreach (ushort spell in knowntalent)
+                this.Spells.Add(spell, new PlayerSpell(spell));
+
+        }
+
+        public void ActionButtonsInitalize()
+        {
+            PacketWriter pkt = new PacketWriter(Opcodes.SMSG_ACTION_BUTTONS);
+
+            for (var button = 0; button < 119; button++) //  119    'or 480 ?
+            {
+                var ActionBarInit = Database.CreateActionButtons.Values.Find(x => x.Button == button);
+
+                if (ActionBarInit != null)
+                    pkt.WriteUInt32((uint)ActionBarInit.Action | ((uint)ActionBarInit.Type << 24));
+                else
+                    pkt.WriteUInt32(0);
+
+                this.Client.Send(pkt);
+            }
         }
 
         public void SendInitialSpells()
@@ -512,6 +545,29 @@ namespace WorldServer.Game.Objects
                 pkt.WriteUInt16(slot++);
             }
             pkt.WriteUInt16(0);
+
+            this.Client.Send(pkt);
+        }
+
+        //Basic Factions
+        public void SendInitalizeFactions()
+        {
+            const int count = 0x40;
+            PacketWriter pkt = new PacketWriter(Opcodes.SMSG_INITIALIZE_FACTIONS);
+            pkt.WriteUInt32(count);
+            //var rep = reps[(FactionReputationIndex);
+            pkt.WriteUInt16((byte)2); //rep.flags
+            pkt.WriteUInt16(0); //rep.value
+            this.Client.Send(pkt);
+        }
+
+        public void SendReputationStandingUpdate()
+        {
+            PacketWriter pkt = new PacketWriter(Opcodes.SMSG_SET_FACTION_STANDING);
+            pkt.WriteUInt32((byte)1);
+            pkt.WriteUInt16(0); // count (we only ever send 1)
+            pkt.WriteUInt16(0); //rep index
+            pkt.WriteUInt16(0); //rep.value
 
             this.Client.Send(pkt);
         }
@@ -599,7 +655,9 @@ namespace WorldServer.Game.Objects
         public void AddActionButton(byte button, ushort action, byte type, byte misc)
         {
             ActionButton ab = new ActionButton(action, misc, type);
-            this.ActionButtons.Add(button, ab);
+
+            if (this.ActionButtons.ContainsKey(button))
+                this.ActionButtons.Add(button, ab);
         }
 
         public void RemoveActionButton(byte button)

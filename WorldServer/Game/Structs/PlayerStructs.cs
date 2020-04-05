@@ -140,6 +140,32 @@ namespace WorldServer.Game.Structs
         public uint Spi { get; set; }
     }
 
+    [Table("knownspells")]
+    public class KnownSpells
+    {
+        [Key]
+        [Column("id")]
+        public uint Id { get; set; }
+        [Column("guid")]
+        public ulong Player { get; set; }
+        
+        [Column("spell")]
+        public ushort SpellID { get; set; }
+    }
+
+    [Table("knowntalents")]
+    public class KnownTalents
+    {
+        [Key]
+        [Column("id")]
+        public uint Id { get; set; }
+        [Column("guid")]
+        public ulong Player { get; set; }
+
+        [Column("talent")]
+        public ushort TalentID { get; set; }
+    }
+
     [Table("player_classlevelstats")]
     public class ClassLevelStat
     {

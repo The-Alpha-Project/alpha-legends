@@ -48,13 +48,14 @@ namespace WorldServer.Game.Objects.UnitExtensions
                 u.ChannelObject = spell.Targets.Target.Guid;
                 GridManager.Instance.SendSurrounding(u.BuildUpdate(), u);
 
-                if (u.IsTypeOf(ObjectTypes.TYPE_PLAYER))
+                //Temp Disable Channel
+                /*if (u.IsTypeOf(ObjectTypes.TYPE_PLAYER))
                 {
                     PacketWriter channel = new PacketWriter(Opcodes.MSG_CHANNEL_START);
                     channel.WriteUInt32(spell.Spell.Id);
                     channel.WriteInt32(spell.Duration * 1000);
                     ((Player)u).Client.Send(channel);
-                }
+                }*/
             }
             return SpellCheckCastResult.SPELL_CAST_OK;
         }

@@ -7,6 +7,7 @@ using WorldServer.Game.Objects;
 using WorldServer.Game.Objects.UnitExtensions;
 using WorldServer.Network;
 using WorldServer.Storage;
+using Common.Logging;
 
 namespace WorldServer.Packets.Handlers
 {
@@ -240,15 +241,35 @@ namespace WorldServer.Packets.Handlers
 
         public static void HandleSetActionButtonOpcode(ref PacketReader packet, ref WorldManager manager)
         {
+            Log.Message(LogType.DEBUG, "WORLD: Received opcode CMSG_SET_ACTION_BUTTON!");
             byte button = packet.ReadUInt8();
             ushort action = packet.ReadUInt16();
             byte misc = packet.ReadUInt8();
             byte type = packet.ReadUInt8();
 
+            Log.Message(LogType.DEBUG, "BUTTON: {0} ACTION: {1} TYPE: {2}!", button, action, type);
             if (action == 0)
+            {
+                Log.Message(LogType.DEBUG, "MISC: Remove action from button {0}", button);
                 manager.Character.RemoveActionButton(button);
+            }
             else
+            {
+                switch (type)
+                {
+                    case (byte)ActionButtonTypes.ACTION_BUTTON_SPELL:
+                        Log.Message(LogType.DEBUG, "MISC: Added Spell {0} into button {1}", action, button);
+                        break;
+                    case (byte)ActionButtonTypes.ACTION_BUTTON_ITEM:
+                        Log.Message(LogType.DEBUG, "MISC: Added Item {0} into button {1}", action, button);
+                        break;
+                    default:
+                        Log.Message(LogType.ERROR, "MISC: Unknown action button type {0} for action %u into button {1}", action, button);
+                        return;
+                }
+
                 manager.Character.AddActionButton(button, action, type, misc);
+            }
         }
     }
 }

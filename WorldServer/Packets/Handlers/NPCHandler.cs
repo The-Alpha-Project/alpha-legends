@@ -10,6 +10,10 @@ using WorldServer.Game.Objects.UnitExtensions;
 using WorldServer.Game.Structs;
 using WorldServer.Network;
 using WorldServer.Storage;
+using System;
+using System.Collections.Generic;
+using MySql.Data.MySqlClient;
+using Common.Database;
 
 namespace WorldServer.Packets.Handlers
 {
@@ -250,6 +254,10 @@ namespace WorldServer.Packets.Handlers
             ulong guid = packet.ReadUInt64();
             uint spellID = packet.ReadUInt32();
 
+            PacketWriter pkt = new PacketWriter(Opcodes.SMSG_LEARNED_SPELL);
+            pkt.WriteUInt32((ushort)spellID);
+            manager.Send(pkt);
+
             Spell spell = null;
             if (!DBC.Spell.TryGetValue(spellID, out spell)) //Only use those with spells
                 return;
@@ -271,19 +279,33 @@ namespace WorldServer.Packets.Handlers
                         player.Talents.Add(ability.m_ID);
                         player.TalentPoints -= 10;
 
-                        //TODO ADD SPELL TO SPELLBOOK
-
                         player.SendBuySpellSucceed(guid, spellID);
                         manager.Character.Dirty = true;
                         player.SendPlaySpellVisual(guid, 0xB3);
 
-                        player.Spells.Add(spellID, new PlayerSpell(spell));
+                        //player.Spells.Add(spellID, new PlayerSpell(spell)); //TODO : Check why crash server after adding talents from here
+
+                        Console.WriteLine("Learn Talent Guid: " + player.Guid);
+                        Console.WriteLine("Learn Talent ID: " + spellID);
                     }
 
                     break;
                 }
 
                 player.SendTalentList();
+
+                List<string> columns = new List<string>{
+                    "guid", "talent"
+                };
+
+                List<MySqlParameter> parameters = new List<MySqlParameter>
+                {
+                     new MySqlParameter("@guid", player.Guid),
+                     new MySqlParameter("@talent", spellID),
+                };
+
+                BaseContext.SaveEntity("knowntalents", columns, parameters, Globals.CONNECTION_STRING);
+                Database.KnownTalents.Reload();
             }
             else if (Database.Creatures.ContainsKey(guid)) //NPC Spell purchase
             {
@@ -307,6 +329,22 @@ namespace WorldServer.Packets.Handlers
                 player.Spells.Add(spellID, new PlayerSpell(spell));
 
                 creature.SendSpellList(player);
+
+                Console.WriteLine("Learn Player Guid: " + player.Guid);
+                Console.WriteLine("Learn Spell ID: " + spellID);
+                // TODO: 2 spells with same id crash server
+                List<string> columns = new List<string>{
+                    "guid", "spell"
+                };
+
+                List<MySqlParameter> parameters = new List<MySqlParameter>
+                {
+                     new MySqlParameter("@guid", player.Guid),
+                     new MySqlParameter("@spell", spellID),
+                };
+
+                BaseContext.SaveEntity("knownspells", columns, parameters, Globals.CONNECTION_STRING);
+                Database.KnownSpells.Reload();
             }
         }
 
